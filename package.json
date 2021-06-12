@@ -3,6 +3,6 @@
     "version": "1.0.0",
     "description": "Allows posting of scores to Discord",
     "main": "bot.js",
-    "author": "Eric Faris"
+    "author": "Eric Faris",
     "dependencies": {}
 }
