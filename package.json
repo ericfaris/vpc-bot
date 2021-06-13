@@ -1,10 +1,23 @@
 {
-    "name": "score-bot",
-    "version": "1.0.0",
-    "description": "Allows posting of scores to Discord",
-    "main": "index.js",
-    "author": "Eric Faris",
-    "dependencies": {
-        "discord.js": "^12.5.3"
-    }
+  "name": "score-bot",
+  "version": "1.0.0",
+  "description": "Allows posting of scores to Discord",
+  "main": "index.js",
+  "author": "Eric Faris",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericfaris/score-bot.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericfaris/score-bot/issues"
+  },
+  "homepage": "https://github.com/ericfaris/score-bot#readme"
 }
