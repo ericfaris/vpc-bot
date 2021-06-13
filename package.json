@@ -2,10 +2,9 @@
     "name": "score-bot",
     "version": "1.0.0",
     "description": "Allows posting of scores to Discord",
-    "main": "bot.js",
+    "main": "index.js",
     "author": "Eric Faris",
     "dependencies": {
-        "discord.io": "^2.5.3",
-        "winston": "^3.3.3"
+        "discord.js": "^12.5.3"
     }
 }
