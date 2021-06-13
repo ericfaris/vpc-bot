@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # environment file
-.env
+*.env
