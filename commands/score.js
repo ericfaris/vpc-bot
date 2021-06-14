@@ -3,9 +3,9 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
   slash: true,
   testOnly: true,
-  description: 'A simple ping pong command!!!',
+  description: 'A bot to help with the Competition Corner Weekly Table Scores',
   callback: ({}) => {
-    return 'pong'
+    return 'scores'
   },
 
 // module.exports = {

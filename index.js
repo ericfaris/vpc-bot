@@ -7,7 +7,7 @@ const client = new DiscordJS.Client()
 client.on('ready', () => {
   new WOKCommands(client, {
     commandsDir: 'commands',
-    testServers: [process.env.GUILD_ID],
+    testServers: [process.env.ERICFARIS_TEST_SERVER_ID],
     showWarns: false,
   })
 })
