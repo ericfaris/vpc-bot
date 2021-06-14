@@ -1,7 +1,5 @@
 
 const { simpleSessionStorage } = require('simple-storage')
-const { MessageEmbed } = require('discord.js')
-var markdownConverter = require('json-to-markdown-table');
 var Table = require('easy-table')
 
 module.exports = {
@@ -19,16 +17,15 @@ module.exports = {
      'score'
     ];
     const scores = simpleSessionStorage.getItem("scores") || [];
-    const score1 = scores.find(x => '@' + x.username === userName);
+    const existing = scores.find(x => '@' + x.username === userName);
 
-    if (score1) {
-      score1.score = score;
+    if (existing) {
+      existing.score = score;
     } else {
       scores.push({'username': userName, 'score': score});
     }
 
     simpleSessionStorage.setItem("scores", scores); 
-    const table = markdownConverter(scores, columns);
     
     scores.forEach(function(score) {
       t.cell('User', '**' + score.username + '**')
@@ -38,26 +35,4 @@ module.exports = {
     
     return t.toString();
   },
-
-// module.exports = {
-//   slash: true,
-//   testOnly: true,
-//   description: 'A simple ping pong command!!!',
-//   minArgs: 2,
-//   expectedArgs: '<Name> <Age> [Country]',
-//   callback: ({ message, args }) => {
-//     const embed = new MessageEmbed().setTitle('Example').setDescription('pong')
-
-//     const [name, age, country] = args
-
-//     embed.addField('Name', name)
-//     embed.addField('Age', age)
-//     embed.addField('Country', country || 'None')
-
-//     if (message) {
-//       message.reply('', { embed })
-//     }
-
-//     return embed
-//   },
 }
