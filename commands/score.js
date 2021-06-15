@@ -1,5 +1,5 @@
 
-const { simpleSessionStorage } = require('simple-storage')
+const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 
 module.exports = {
@@ -9,6 +9,7 @@ module.exports = {
   minArgs: 1,
   expectedArgs: '<score>',
   callback: ({args, interaction}) => {
+    const db = new JSONdb('db.json');
     const t = new Table;
     const [score] = args;
     const userName = '@' + interaction.member.user.username;
@@ -16,7 +17,7 @@ module.exports = {
      'username',
      'score'
     ];
-    const scores = simpleSessionStorage.getItem("scores") || [];
+    const scores = JSON.parse(db.get('scores')) || [];
     const existing = scores.find(x => '@' + x.username === userName);
 
     if (existing) {
@@ -25,7 +26,7 @@ module.exports = {
       scores.push({'username': userName, 'score': score});
     }
 
-    simpleSessionStorage.setItem("scores", scores); 
+    db.set('scores', JSON.stringify(scores));
     
     scores.forEach(function(score) {
       t.cell('User', '**' + score.username + '**')

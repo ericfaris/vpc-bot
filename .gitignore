@@ -105,3 +105,6 @@ dist
 
 # environment file
 *.env
+
+# db json file
+db.json
