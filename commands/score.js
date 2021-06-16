@@ -27,6 +27,7 @@ module.exports = {
     // update or add score
     if (existing) {
       existing.score = scoreAsInt;
+      existing.posted = date.format(new Date(), 'MM/DD/YYYY HH:mm:ss');
     } else {
       scores.push({'username': userName, 'score': scoreAsInt, 'posted': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')});
     }
