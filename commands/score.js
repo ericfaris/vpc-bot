@@ -9,7 +9,7 @@ module.exports = {
   description: 'Bot for posting scores for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',
-  callback: ({args, interaction}) => {
+  callback: async ({args, client, interaction}) => {
     const db = new JSONdb('db.json');
     const t = new Table;
     const [score] = args;
@@ -48,8 +48,12 @@ module.exports = {
       t.cell('Posted   ', score.posted, Table.leftPadder(' '))
       t.newRow()
     })
-    
+
+    const channel = await client.channels.fetch('854595057382457366');
+    const message = await channel.messages.fetch('854595173283266571');
+    message.edit(t.toString());
+
     // return text table string
-    return t.toString();
+    return 'Score saved.'
   },
 }
