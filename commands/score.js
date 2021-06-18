@@ -2,6 +2,7 @@ const JSONdb = require('simple-json-db');
 const date = require('date-and-time');
 var Table = require('easy-table')
 var numeral = require('numeral');
+var showScores = require('./show-scores')
 
 module.exports = {
   slash: true,
@@ -11,7 +12,6 @@ module.exports = {
   expectedArgs: '<score>',
   callback: async ({args, client, interaction}) => {
     const db = new JSONdb('db.json');
-    const t = new Table;
     const [score] = args;
     const userName = interaction.member.user.username;
 
@@ -39,21 +39,13 @@ module.exports = {
     db.set('scores', JSON.stringify(scores));
     
     // create text table
-    var i = 0;
-    scores.forEach(function(score) {
-      i++
-      t.cell('Rank   ', i, Table.number(0))
-      t.cell('User    ', '**@' + score.username + '**', Table.rightPadder(' '))
-      t.cell('Score   ', numeral(score.score).format('0,0'), Table.leftPadder(' '))
-      t.cell('Posted   ', score.posted, Table.leftPadder(' '))
-      t.newRow()
-    })
+    return showScores.printScores(scores);
 
-    const channel = await client.channels.fetch('854595057382457366');
-    const message = await channel.messages.fetch('854595173283266571');
-    message.edit(t.toString());
+    // const channel = await client.channels.fetch('854595057382457366');
+    // const message = await channel.messages.fetch('854595173283266571');
+    // message.edit(t.toString());
 
-    // return text table string
-    return 'Score saved.'
+    // // return text table string
+    // return 'Score saved.'
   },
 }

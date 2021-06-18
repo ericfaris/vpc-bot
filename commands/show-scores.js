@@ -1,6 +1,7 @@
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 var numeral = require('numeral');
+var printerHelper = require('../helpers/printerHelper')
 
 module.exports = {
   slash: true,
@@ -21,20 +22,9 @@ module.exports = {
     if (!teams || teams.length === 0) {
       // sort descending
       scores.sort((a, b) => (a.score < b.score) ? 1 : -1)
-    
-      // create text table
-      var i = 0;
-      var t = new Table;
-      scores.forEach(function(score) {
-        i++
-        t.cell('Rank   ', i, Table.number(0))
-        t.cell('User    ', '**@' + score.username + '**', Table.rightPadder(' '))
-        t.cell('Score', numeral(score.score).format('0,0'), Table.leftPadder(' '))
-        t.cell('Posted   ', score.posted, Table.leftPadder(' '))
-        t.newRow()
-      })
-
-      textTableAsString = t.toString();
+      
+      //return text
+      textTableAsString = module.exports.printScores(score);
     } else {
       teams.forEach((team) => {
         const teamMembersScores= [];
@@ -56,25 +46,44 @@ module.exports = {
       
         textTableAsString += 'Team: ' + team.teamName + '\n\n';
 
-        // create text table
-        var i = 0;
-        var t = new Table;
-        teamMembersScores.forEach(function(score) {
-          i++
-          t.cell('Rank   ', i, Table.number(0))
-          t.cell('User    ', '**@' + score.username + '**', Table.rightPadder(' '))
-          t.cell('Score', numeral(score.score).format('0,0'), Table.leftPadder(' '))
-          t.cell('Posted   ', score.posted, Table.leftPadder(' '))
-          t.newRow()
-        })
-
-        t.total('Score');
-
-        textTableAsString += t.toString() + '\n\n\n\n';
+        textTableAsString += module.exports.printScoresWithTotals(teamMembersScores) + '\n\n';
       })
     }
 
     // return text table string
     return textTableAsString;
   },
+
+  createTableRow: (i, t, score) => {
+    t.cell('Rank', numeral(i).format('0,0'))
+    t.cell('User', score.username)
+    t.cell('Score', numeral(score.score).format('0,0'), printerHelper.noDecimal)
+    // t.cell('Posted', score.posted)
+    t.newRow()
+  },
+
+  printScores: (scores) => {
+    var i = 0;
+    var t = new Table;
+    scores.forEach(function(score) {
+      i++
+      module.exports.createTableRow(i, t, score);
+    })
+
+    return t.toString();
+  },
+
+  printScoresWithTotals: (scores) => {
+    var i = 0;
+    var t = new Table;
+    scores.forEach(function(score) {
+      i++
+      module.exports.createTableRow(i, t, score);
+    })
+
+    t.total('Score');
+
+    return t.toString();
+  }
+
 }
