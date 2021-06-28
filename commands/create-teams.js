@@ -4,7 +4,7 @@ var Table = require('easy-table')
 module.exports = {
   slash: true,
   testOnly: true,
-  description: 'Bot for resetting scores for Competition Corner',
+  description: 'Create teams for Competition Corner.',
   minArgs: 1,
   expectedArgs: '<team>',
   callback: ({args, interaction}) => {
@@ -39,6 +39,6 @@ module.exports = {
     })
     
     // return text table string
-    return t.toString();
+    return 'Team created successfully. \n\n' + t.toString();
   },
 }

@@ -7,7 +7,7 @@ var showScores = require('./show-scores')
 module.exports = {
   slash: true,
   testOnly: true,
-  description: 'Bot for posting scores for the Competition Corner',
+  description: 'Post score for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',
   callback: async ({args, client, interaction}) => {

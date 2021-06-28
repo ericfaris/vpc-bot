@@ -6,7 +6,7 @@ var printerHelper = require('../helpers/printerHelper')
 module.exports = {
   slash: true,
   testOnly: true,
-  description: 'Bot for showing scores for the Competition Corner',
+  description: 'Show current scores for the Competition Corner',
   callback: ({args, interaction}) => {
     const db = new JSONdb('db.json');
     let textTableAsString = '';
@@ -81,7 +81,7 @@ module.exports = {
       module.exports.createTableRow(i, t, score);
     })
 
-    t.total('Score');
+    t.total('Score', printerHelper.noDecimal);
 
     return t.toString();
   }
