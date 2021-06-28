@@ -24,7 +24,7 @@ module.exports = {
       scores.sort((a, b) => (a.score < b.score) ? 1 : -1)
       
       //return text
-      textTableAsString = module.exports.printScores(score);
+      textTableAsString = module.exports.printScores(scores);
     } else {
       teams.forEach((team) => {
         const teamMembersScores= [];
