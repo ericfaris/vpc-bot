@@ -14,7 +14,7 @@ module.exports = {
     {
       'period': period,
       'table': table,
-      'tableLink': link 
+      'link': link 
     }
 
     //save scores to db

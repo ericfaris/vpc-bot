@@ -48,12 +48,31 @@ module.exports = {
   },
 
   editChannel: async(scores, client) => {
+    const db = new JSONdb('db.json');
+
+    // get details from db
+    const details = db.get('details') ? JSON.parse(db.get('details')) : null;
+
     const channel = await client.channels.fetch(COMPETITION_CHANNEL_ID);
     const message = await channel.messages.fetch(COMPETITION_POST_ID);
 
-    message.edit(showScores.printScores(scores, 3));
+    message.edit(module.exports.generateBoilerPlateText(scores, details.period, details.table, details.link));
   },
 
-  //TODO: GENERATE COMPETITION POST BOILERPLATE
+  generateBoilerPlateText: (scores, period, table, link) => {
+    var bp = '';
 
+    bp += '**COMPETITION SCOREBOARD**\n';
+    bp += period + '\n';
+    bp += '\n';
+    bp += showScores.printScores(scores, 3);
+    bp += '\n';
+    bp += '**All Current & Historical Results**\n';
+    bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
+    bp += '\n';
+    bp += '**Current Table**: ' + table + "\n";
+    bp += '**Table Link**: ' + link + "\n";
+
+    return bp;
+  }
 }
