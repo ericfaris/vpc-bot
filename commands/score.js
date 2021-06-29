@@ -4,7 +4,7 @@ var Table = require('easy-table');
 var numeral = require('numeral');
 var showScores = require('./show-scores');
 const COMPETITION_CHANNEL_ID = '854595057382457366';
-const COMPETITION_POST_ID = '859279189806415913';
+const COMPETITION_POST_ID = '859544852966408264';
 
 module.exports = {
   slash: true,
@@ -44,7 +44,7 @@ module.exports = {
     await module.exports.editChannel(scores, client);
 
     // return text table string
-    return 'Score saved and posted.'
+    return userName + ' posted a score of ' + numeral(scoreAsInt).format('0,0');
   },
 
   editChannel: async(scores, client) => {
@@ -60,18 +60,18 @@ module.exports = {
   },
 
   generateBoilerPlateText: (scores, period, table, link) => {
-    var bp = '';
+    var bp = '\n';
 
     bp += '**COMPETITION SCOREBOARD**\n';
     bp += period + '\n';
     bp += '\n';
-    bp += showScores.printScores(scores, 3);
+    bp += '**Current Table**: ' + table + "\n";
+    bp += '**Table Link**: ' + link + "\n";
+    bp += '\n';
+    bp += showScores.printAllScores(scores, 3);
     bp += '\n';
     bp += '**All Current & Historical Results**\n';
     bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
-    bp += '\n';
-    bp += '**Current Table**: ' + table + "\n";
-    bp += '**Table Link**: ' + link + "\n";
 
     return bp;
   }
