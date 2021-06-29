@@ -1,8 +1,10 @@
 const JSONdb = require('simple-json-db');
 const date = require('date-and-time');
-var Table = require('easy-table')
+var Table = require('easy-table');
 var numeral = require('numeral');
-var showScores = require('./show-scores')
+var showScores = require('./show-scores');
+const COMPETITION_CHANNEL_ID = '854595057382457366';
+const COMPETITION_POST_ID = '859279189806415913';
 
 module.exports = {
   slash: true,
@@ -38,14 +40,20 @@ module.exports = {
     //save scores to db
     db.set('scores', JSON.stringify(scores));
     
-    // create text table
-    return showScores.printScores(scores);
+    //post to competition channel pinned message
+    await module.exports.editChannel(scores, client);
 
-    // const channel = await client.channels.fetch('854595057382457366');
-    // const message = await channel.messages.fetch('854595173283266571');
-    // message.edit(t.toString());
-
-    // // return text table string
-    // return 'Score saved.'
+    // return text table string
+    return 'Score saved and posted.'
   },
+
+  editChannel: async(scores, client) => {
+    const channel = await client.channels.fetch(COMPETITION_CHANNEL_ID);
+    const message = await channel.messages.fetch(COMPETITION_POST_ID);
+
+    message.edit(showScores.printScores(scores, 3));
+  },
+
+  //TODO: GENERATE COMPETITION POST BOILERPLATE
+
 }
