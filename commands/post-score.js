@@ -3,7 +3,7 @@ const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
 var showScores = require('./show-scores');
-const COMPETITION_CHANNEL_ID = '854595057382457366';
+const COMPETITION_CHANNEL_ID = '859800329800515595'; //test channel on VPC
 const COMPETITION_POST_ID = '859544852966408264';
 
 module.exports = {
