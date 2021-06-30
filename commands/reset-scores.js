@@ -7,7 +7,11 @@ module.exports = {
   description: 'Reset/clear scores and teams for Competition Corner.  This can be used to start a new week.',
   callback: async ({client}) => {
     const db = new JSONdb('db.json');
+    const archive = new JSONdb('archive.json');
     
+    archive.storage.push(db.storage);
+    archive.sync();
+
     // get scores from db
     const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
 
@@ -17,7 +21,7 @@ module.exports = {
     db.delete('teams');
 
     //post to competition channel pinned message
-    await postScore.editChannel(scores, client);
+    await postScore.editChannel([], client);
 
     return "Scores and Teams have been reset."
   },

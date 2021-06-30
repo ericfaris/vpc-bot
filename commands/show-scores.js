@@ -66,36 +66,39 @@ module.exports = {
 
     let textTableAsString = '';
 
-    if (scores.length === 0) return '**NO SCORES CURRENTLY POSTED**\n';
-
-    textTableAsString += '**Top 3 Scores**:\n';
-    textTableAsString += module.exports.printIndividualScores(scores, numOfScoresToShow) + '\n\n';
-
-    if(teams && teams.length > 0) {
-      teams.forEach((team) => {
-        const teamMembersScores = [];
-        team.members.forEach((member) => {
-          const foundMember = scores.find(x => x.username === member);
-          if (foundMember) {
-            teamMembersScores.push(foundMember);
-          } else {
-            teamMembersScores.push(
-              {
-                'username': member,
-                'score': 0,
-                'posted': ''
-              });
-          }
+    if (scores.length === 0) {
+      return '**NO SCORES CURRENTLY POSTED**\n';
+    } else {
+      
+      textTableAsString += '**Top ' + numOfScoresToShow.toString() + ' Scores**:\n';
+      textTableAsString += module.exports.printIndividualScores(scores, numOfScoresToShow) + '\n';
+  
+      if(teams && teams.length > 0) {
+        teams.forEach((team) => {
+          const teamMembersScores = [];
+          team.members.forEach((member) => {
+            const foundMember = scores.find(x => x.username === member);
+            if (foundMember) {
+              teamMembersScores.push(foundMember);
+            } else {
+              teamMembersScores.push(
+                {
+                  'username': member,
+                  'score': 0,
+                  'posted': ''
+                });
+            }
+          })
+  
+          // sort descending
+          teamMembersScores.sort((a, b) => (a.score < b.score) ? 1 : -1);
+  
+          textTableAsString += '**Team: ' + team.teamName + '**\n';
+          textTableAsString += module.exports.printTeamScores(teamMembersScores) + '\n';
         })
-
-        // sort descending
-        teamMembersScores.sort((a, b) => (a.score < b.score) ? 1 : -1);
-
-        textTableAsString += '**Team: ' + team.teamName + '**\n';
-        textTableAsString += module.exports.printTeamScores(teamMembersScores) + '\n';
-      })
+      }
+  
+      return textTableAsString;  
     }
-
-    return textTableAsString;
   }
 }
