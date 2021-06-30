@@ -66,7 +66,7 @@ module.exports = {
 
     let textTableAsString = '';
 
-    if (scores.length === 0) return 'No scores currently posted.';
+    if (scores.length === 0) return '**NO SCORES CURRENTLY POSTED**\n';
 
     textTableAsString += '**Top 3 Scores**:\n';
     textTableAsString += module.exports.printIndividualScores(scores, numOfScoresToShow) + '\n\n';
