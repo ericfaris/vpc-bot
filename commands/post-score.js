@@ -4,7 +4,7 @@ var Table = require('easy-table');
 var numeral = require('numeral');
 var showScores = require('./show-scores');
 const COMPETITION_CHANNEL_ID = '859800329800515595'; //test channel on VPC
-const COMPETITION_POST_ID = '859544852966408264';
+const COMPETITION_POST_ID = '860263483190542396';  //test post on VPC
 
 module.exports = {
   slash: true,
