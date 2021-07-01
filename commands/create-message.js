@@ -1,4 +1,4 @@
-const COMPETITION_CHANNEL_ID = '854595057382457366';
+const COMPETITION_CHANNEL_ID = '859800329800515595';
 
 module.exports = {
   slash: true,
