@@ -3,8 +3,7 @@ const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
 var showScores = require('./show-scores');
-const COMPETITION_CHANNEL_ID = '859800329800515595'; //test channel on VPC
-const COMPETITION_POST_ID = '860263483190542396';  //test post on VPC
+require('dotenv').config()
 
 module.exports = {
   slash: true,
@@ -53,8 +52,8 @@ module.exports = {
     // get details from db
     const details = db.get('details') ? JSON.parse(db.get('details')) : null;
 
-    const channel = await client.channels.fetch(COMPETITION_CHANNEL_ID);
-    const message = await channel.messages.fetch(COMPETITION_POST_ID);
+    const channel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
+    const message = await channel.messages.fetch(process.env.COMPETITION_POST_ID);
 
     message.edit(module.exports.generateBoilerPlateText(scores, details.period, details.table, details.link));
   },
