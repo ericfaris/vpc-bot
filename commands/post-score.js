@@ -7,7 +7,7 @@ require('dotenv').config()
 
 module.exports = {
   slash: true,
-  testOnly: true,
+  testOnly: false,
   description: 'Post score for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',

@@ -4,7 +4,7 @@ var numeral = require('numeral');
 
 module.exports = {
   slash: true,
-  testOnly: true,
+  testOnly: false,
   description: 'Show current scores for the Competition Corner',
   callback: ({ args, interaction }) => {
     const db = new JSONdb('db.json');
