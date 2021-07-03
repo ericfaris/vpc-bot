@@ -3,7 +3,7 @@ const JSONdb = require('simple-json-db');
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
-var showScores = require('./show-scores');
+var leaderboard = require('./show-leaderboard');
 require('dotenv').config()
 
 module.exports = {
@@ -84,7 +84,7 @@ module.exports = {
     bp += '**Current Table**: ' + table + "\n";
     bp += '**Table Link**: ' + link + "\n";
     bp += '\n';
-    bp += showScores.printAllScores(scores, 3);
+    bp += leaderboard.printAllScores(scores, 3);
     bp += '\n';
     bp += '**All Current & Historical Results**\n';
     bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';

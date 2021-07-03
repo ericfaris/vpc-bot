@@ -1,13 +1,14 @@
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 var numeral = require('numeral');
+var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
   slash: true,
   // testOnly: true,
   testOnly: false,
   guildOnly: true,
-  description: 'Show current scores for the Competition Corner',
+  description: 'Show leaderboard for the Competition Corner',
   callback: ({ args, interaction }) => {
     const db = new JSONdb('db.json');
 
@@ -20,28 +21,13 @@ module.exports = {
     return module.exports.printAllScores(scores, 3);
   },
 
-  createTableRow: (i, t, score) => {
-    t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score.username, Table.rightPadder(' '))
-    t.cell('Score', score.score, (val, width) => {
-      var str = numeral(val).format('0,0');
-      return width ? Table.padLeft(str, width) : str;
-    })
-    t.cell('Diff', score.diff, (val, width) => {
-      var str = numeral(val).format('0,0');
-      return width ? Table.padLeft('(+' + str + ')', width + 3) : '(+' + str + ')';
-    })
-    t.cell('Posted', score.posted)
-    t.newRow()
-  },
-
   printIndividualScores: (scores, numOfScoresToShow) => {
     var i = 0;
     var t = new Table;
     scores.forEach(function (score) {
       i++
       if (i < numOfScoresToShow + 1) {
-        module.exports.createTableRow(i, t, score);
+        outputHelper.createTableRow(i, t, score);
       }
     })
 
@@ -53,7 +39,7 @@ module.exports = {
     var t = new Table;
     scores.forEach(function (score) {
       i++
-      module.exports.createTableRow(i, t, score);
+      outputHelper.createTableRow(i, t, score);
     })
 
     t.total('Score', {
