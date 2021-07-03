@@ -4,8 +4,8 @@ var numeral = require('numeral');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
   description: 'Show current scores for the Competition Corner',
   callback: ({ args, interaction }) => {
