@@ -3,7 +3,9 @@ var Table = require('easy-table')
 
 module.exports = {
   slash: true,
+  // testOnly: true,
   testOnly: false,
+  guildOnly: true,
   description: 'Create teams for Competition Corner.',
   minArgs: 1,
   expectedArgs: '<team>',

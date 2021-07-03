@@ -3,7 +3,9 @@ var postScore = require('./post-score');
 
 module.exports = {
   slash: true,
+  // testOnly: true,
   testOnly: false,
+  guildOnly: true,
   description: 'Edit message for Competition Corner.',
   minArgs: 3,
   expectedArgs: '<period> <table> <link>',

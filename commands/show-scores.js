@@ -4,7 +4,9 @@ var numeral = require('numeral');
 
 module.exports = {
   slash: true,
-  testOnly: false,
+  testOnly: true,
+  // testOnly: false,
+  guildOnly: true,
   description: 'Show current scores for the Competition Corner',
   callback: ({ args, interaction }) => {
     const db = new JSONdb('db.json');
@@ -24,6 +26,10 @@ module.exports = {
     t.cell('Score', score.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
+    })
+    t.cell('Diff', score.diff, (val, width) => {
+      var str = numeral(val).format('0,0');
+      return width ? Table.padLeft('(+' + str + ')', width + 3) : '(+' + str + ')';
     })
     t.cell('Posted', score.posted)
     t.newRow()
