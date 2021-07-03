@@ -55,7 +55,7 @@ module.exports = {
 
     const embed = new MessageEmbed()
       .setTitle(userName + ' posted a new score:')
-      .addField('New Score', numeral(scoreAsInt).format('0,0') + '(+' + numeral(scoreAsInt-previousScore).format(0,0) + ')')
+      .addField('New Score', numeral(scoreAsInt).format('0,0') + ' (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')')
 
     // return text table string
     //return userName + ' posted a score of ' + numeral(scoreAsInt).format('0,0') + ' (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')';
