@@ -12,7 +12,7 @@ module.exports = {
   callback: async ({client, channel}) => {
     let retVal;
     
-    if(channel.name !== 'competition-corner') {
+    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       retVal = 'The reset-scores slash command can only be used in the competition-corner channel.';
     } else {
       const db = new JSONdb('db.json');
