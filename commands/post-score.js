@@ -8,8 +8,8 @@ require('dotenv').config()
 
 module.exports = {
   slash: true,
-  // testOnly: false,
-  testOnly: true,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
   hidden: false,
   description: 'Post score for the Competition Corner',
