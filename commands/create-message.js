@@ -13,7 +13,7 @@ module.exports = {
   description: 'Create message for Competition Corner.',
   callback: async ({client, channel, interaction}) => {
     let retVal;
-    if(channel.name !== 'competition-corner') {
+    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       // await client.api.interactions(interaction.id, interaction.token).callback.post({data: {
       //   type: 4,
       //   data: {
