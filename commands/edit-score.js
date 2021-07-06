@@ -1,3 +1,4 @@
+require('dotenv').config()
 const JSONdb = require('simple-json-db');
 var postScore = require('./post-score');
 
@@ -15,7 +16,7 @@ module.exports = {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = 'The edit-score slash command can only be used in the competition-corner channel.';
+      retVal = 'The edit-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
       const [username, score] = args;
       retVal = postScore.saveScore(username, score, client, interaction);

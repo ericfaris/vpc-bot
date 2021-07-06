@@ -1,3 +1,4 @@
+require('dotenv').config()
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 
@@ -15,7 +16,7 @@ module.exports = {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = 'The create-team slash command can only be used in the competition-corner channel.';
+      retVal = 'The create-team slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
 
       const db = new JSONdb('db.json');

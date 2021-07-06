@@ -1,10 +1,10 @@
+require('dotenv').config()
 const { MessageEmbed } = require('discord.js')
 const JSONdb = require('simple-json-db');
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
-var leaderboard = require('./show-leaderboard');
-require('dotenv').config()
+const outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
   slash: true,
@@ -19,7 +19,7 @@ module.exports = {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = 'The post-score slash command can only be used in the competition-corner channel.';
+      retVal = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
       retVal = module.exports.saveScore(null, args[0], client, interaction)
     }
@@ -61,9 +61,15 @@ module.exports = {
 
     //save scores to db
     db.set('scores', JSON.stringify(scores));
-    
+
+    // get details from db
+    const details = db.get('details') ? JSON.parse(db.get('details')) : null;
+
+    // get teams from db
+    const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
+
     //post to competition channel pinned message
-    await module.exports.editChannel(scores, client);
+    await outputHelper.editCompetitionCornerMessage(scores, client, details, teams);
 
     const embed = new MessageEmbed()
       .setTitle(userName + ' posted a new score:')
@@ -75,32 +81,4 @@ module.exports = {
     return embed;
   },
 
-  editChannel: async(scores, client) => {
-    const db = new JSONdb('db.json');
-
-    // get details from db
-    const details = db.get('details') ? JSON.parse(db.get('details')) : null;
-
-    const channel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
-    const message = await channel.messages.fetch(process.env.COMPETITION_POST_ID);
-
-    message.edit(module.exports.generateBoilerPlateText(scores, details.period, details.table, details.link));
-  },
-
-  generateBoilerPlateText: (scores, period, table, link) => {
-    var bp = '\n';
-
-    bp += '**COMPETITION SCOREBOARD**\n';
-    bp += period + '\n';
-    bp += '\n';
-    bp += '**Current Table**: ' + table + "\n";
-    bp += '**Table Link**: ' + link + "\n";
-    bp += '\n';
-    bp += leaderboard.printAllScores(scores, 3);
-    bp += '\n';
-    bp += '**All Current & Historical Results**\n';
-    bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
-
-    return bp;
-  }
 }

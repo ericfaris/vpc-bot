@@ -47,7 +47,7 @@ module.exports = {
       //   3000
       // });
 
-      retVal = 'The create-message slash command can only be used in the <#CHANNELID> channel.';
+      retVal = 'The create-message slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
       const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
       compChannel.send('new message');
