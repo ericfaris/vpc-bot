@@ -5,20 +5,29 @@ var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
   slash: true,
-  // testOnly: true,
-  testOnly: false,
+  testOnly: true,
+  // testOnly: false,
   guildOnly: true,
   description: 'Show leaderboard for the Competition Corner',
-  callback: ({ args, interaction }) => {
-    const db = new JSONdb('db.json');
+  callback: ({ args, interaction, channel }) => {
+    let retVal;
+    
+    if(channel.name !== 'competition-corner') {
+      retVal = 'The show-leaderboard slash command can only be used in the competition-corner channel.';
+    } else {
+      
+      const db = new JSONdb('db.json');
 
-    // get scores from db
-    const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
+      // get scores from db
+      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
 
-    // sort descending
-    scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
+      // sort descending
+      scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
 
-    return module.exports.printAllScores(scores, 3);
+      retVal =  module.exports.printAllScores(scores, 3);
+    }
+
+    return retVal;
   },
 
   printIndividualScores: (scores, numOfScoresToShow) => {
@@ -92,5 +101,5 @@ module.exports = {
   
       return textTableAsString;  
     }
-  }
+  },
 }

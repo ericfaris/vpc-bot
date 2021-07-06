@@ -5,33 +5,39 @@ var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
   slash: true,
-  // testOnly: true,
-  testOnly: false,
+  testOnly: true,
+  // testOnly: false,
   guildOnly: true,
   description: 'Show current score for the Competition Corner',
-  callback: ({ args, interaction }) => {
-    const db = new JSONdb('db.json');
-    const username = interaction.member.user.username;
-    var t = new Table;
-    var retVal;
-
-    // get scores from db
-    const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
-
-    // sort descending
-    scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
-
-    const score = scores.find(x => x.username === username);
+  callback: ({ args, interaction, channel }) => {    
+    let retVal;
     
-    if (score) {
-      score.rank = scores.findIndex(x => x.username === username) + 1;
-      const numOfScores = scores.length;
-
-      outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score);
-
-      retVal = '`' + t.toString() + '`';
+    if(channel.name !== 'competition-corner') {
+      retVal = 'The show-score slash command can only be used in the #competition-corner channel.';
     } else {
-      retVal = 'No score found for ' + username;
+
+      const db = new JSONdb('db.json');
+      const username = interaction.member.user.username;
+      var t = new Table;
+
+      // get scores from db
+      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
+
+      // sort descending
+      scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
+
+      const score = scores.find(x => x.username === username);
+      
+      if (score) {
+        score.rank = scores.findIndex(x => x.username === username) + 1;
+        const numOfScores = scores.length;
+
+        outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score);
+
+        retVal = '`' + t.toString() + '`';
+      } else {
+        retVal = 'No score found for ' + username;
+      }
     }
 
     return retVal;

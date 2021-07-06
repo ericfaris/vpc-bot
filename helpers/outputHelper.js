@@ -1,5 +1,6 @@
 var Table = require('easy-table')
 var numeral = require('numeral');
+const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 
@@ -17,5 +18,20 @@ module.exports = {
         t.cell('Posted', score.posted)
         t.newRow()
       },
+
+    createEmbed: (title, description, color, fields) => {
+      const embed = new MessageEmbed()
+        .setColor(color)
+        .setTitle(title)
+        .setDescription(description)
+
+      fields.forEach(field => {
+        embed.addField(field.key, field.value)
+      });  
+
+      embed.setFooter();
+
+      return embed;
+    }
     
 }

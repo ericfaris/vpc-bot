@@ -8,16 +8,27 @@ require('dotenv').config()
 
 module.exports = {
   slash: true,
-  // testOnly: true,
-  testOnly: false,
+  testOnly: true,
+  // testOnly: false,
   guildOnly: true,
   description: 'Post score for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',
-  callback: async ({args, client, interaction}) => {
+  callback: async ({args, client, interaction, channel}) => {
+    let retVal;
+    
+    if(channel.name !== 'competition-corner') {
+      retVal = 'The post-score slash command can only be used in the competition-corner channel.';
+    } else {
+      retVal = saveScore(null, args[0])
+    }
+
+    return retVal;
+  },
+
+  saveScore: async(username, score, client, intereaction) => { 
     const db = new JSONdb('db.json');
-    const [score] = args;
-    const userName = interaction.member.user.username;
+    const userName = username || interaction.member.user.username;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
     let previousScore = 0;
 
