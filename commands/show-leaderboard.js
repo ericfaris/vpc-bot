@@ -5,9 +5,10 @@ var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
+  hidden: false,
   description: 'Show leaderboard for the Competition Corner',
   callback: ({ args, interaction, channel }) => {
     let retVal;

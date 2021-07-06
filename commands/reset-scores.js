@@ -3,9 +3,11 @@ var postScore = require('./post-score');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
+  hidden: true,
+  permissions: ['ADMINISTRATOR'],
   description: 'Reset/clear scores and teams for Competition Corner.  This can be used to start a new week.',
   callback: async ({client, channel}) => {
     let retVal;

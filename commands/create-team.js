@@ -3,10 +3,12 @@ var Table = require('easy-table')
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
+  hidden: true,
   description: 'Create teams for Competition Corner.',
+  permissions: ['ADMINISTRATOR'],
   minArgs: 1,
   expectedArgs: '<team>',
   callback: ({args, channel}) => {

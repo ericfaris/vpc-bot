@@ -3,10 +3,12 @@ var postScore = require('./post-score');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
+  hidden: true,
   description: 'Edit score for Competition Corner.',
+  permissions: ['ADMINISTRATOR'],
   minArgs: 2,
   expectedArgs: '<username> <score>',
   callback: async ({args, channel, client, interaction}) => {

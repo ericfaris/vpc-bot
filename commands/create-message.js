@@ -5,9 +5,11 @@ const fetch = require('node-fetch');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
+  hidden: true,
+  permissions: ['ADMINISTRATOR'],
   description: 'Create message for Competition Corner.',
   callback: async ({client, channel, interaction}) => {
     let retVal;
