@@ -30,6 +30,7 @@ module.exports = {
   saveScore: async(username, score, client, interaction) => { 
     const db = new JSONdb('db.json');
     const userName = username || interaction.member.user.username;
+    const user = await client.users.fetch(interaction.member.user.id);
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
     let previousScore = 0;
 
@@ -72,6 +73,8 @@ module.exports = {
     await outputHelper.editCompetitionCornerMessage(scores, client, details, teams);
 
     const embed = new MessageEmbed()
+      .setAuthor(userName, user.displayAvatarURL())
+      // .setImage(user.displayAvatarURL())
       .setTitle(userName + ' posted a new score:')
       .addField('New Score', numeral(scoreAsInt).format('0,0') + ' (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')')
 
