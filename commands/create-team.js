@@ -1,6 +1,7 @@
 require('dotenv').config()
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
+const permissionHelper = require('../helpers/permissionHelper');
 
 module.exports = {
   slash: true,
@@ -8,12 +9,17 @@ module.exports = {
   testOnly: false,
   guildOnly: true,
   hidden: true,
-  description: 'Create teams for Competition Corner.',
+  description: 'Create teams for Competition Corner (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   minArgs: 1,
   expectedArgs: '<team>',
-  callback: ({args, channel}) => {
+  callback: async ({args, channel, interaction, client}) => {
     let retVal;
+
+    if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {
+      console.log(interaction.member.user.username + ' DOES NOT have ADMINISTRATOR permissions to run create-team.')
+      return 'The create-team slash command can only be executed by an admin.';
+    }
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       retVal = 'The create-team slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';

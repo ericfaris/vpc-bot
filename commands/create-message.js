@@ -11,7 +11,7 @@ module.exports = {
   guildOnly: true,
   hidden: true,
   permissions: ['ADMINISTRATOR'],
-  description: 'Create message for Competition Corner. (ADMINISTRATOR)',
+  description: 'Create message for Competition Corner (ADMINISTRATOR)',
   callback: async ({client, channel, interaction}) => {
     let retVal;
 

@@ -11,7 +11,7 @@ module.exports = {
   guildOnly: true,
   hidden: false,
   description: 'Show leaderboard for the Competition Corner',
-  callback: ({ args, interaction, channel }) => {
+  callback: async ({ channel }) => {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {

@@ -1,6 +1,7 @@
 require('dotenv').config()
 const JSONdb = require('simple-json-db');
 const outputHelper = require('../helpers/outputHelper');
+const permissionHelper = require('../helpers/permissionHelper');
 
 module.exports = {
   slash: true,
@@ -8,13 +9,18 @@ module.exports = {
   testOnly: false,
   guildOnly: true,
   hidden: true,
-  description: 'Edit message for Competition Corner.',
+  description: 'Edit message for Competition Corner (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   minArgs: 3,
   expectedArgs: '<week> <period> <table> <link>',
-  callback: async ({args, client, channel}) => {
+  callback: async ({args, client, channel, interaction}) => {
     let retVal;
     
+    if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {
+      console.log(interaction.member.user.username + ' DOES NOT have ADMINISTRATOR permissions to run edit-message.')
+      return 'The edit-message slash command can only be executed by an admin.';
+    }
+
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       retVal = 'The edit-message slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
