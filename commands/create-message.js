@@ -2,6 +2,7 @@ const DiscordJS = require('discord.js')
 const https =  require('https');
 require('dotenv').config()
 const fetch = require('node-fetch');
+const permissionHelper = require('../helpers/permissionHelper');
 
 module.exports = {
   slash: true,
@@ -10,9 +11,15 @@ module.exports = {
   guildOnly: true,
   hidden: true,
   permissions: ['ADMINISTRATOR'],
-  description: 'Create message for Competition Corner.',
+  description: 'Create message for Competition Corner. (ADMINISTRATOR)',
   callback: async ({client, channel, interaction}) => {
     let retVal;
+
+    if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {
+      console.log(interaction.member.user.username + ' DOES NOT have ADMINISTRATOR permissions to run create-message.')
+      return 'The create-message slash command can only be executed by an admin.';
+    }
+
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       // await client.api.interactions(interaction.id, interaction.token).callback.post({data: {
       //   type: 4,
