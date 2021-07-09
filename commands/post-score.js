@@ -16,7 +16,7 @@ module.exports = {
   description: 'Post score for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',
-  callback: async ({args, client, interaction, channel}) => {
+  callback: async ({args, client, interaction, channel, instance}) => {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {

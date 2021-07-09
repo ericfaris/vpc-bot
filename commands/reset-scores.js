@@ -12,7 +12,7 @@ module.exports = {
   hidden: true,
   description: 'Reset/clear scores and teams for Competition Corner, Archives current week data (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
-  callback: async ({client, channel, interaction}) => {
+  callback: async ({client, channel, interaction, instance}) => {
     let retVal;
 
     if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {

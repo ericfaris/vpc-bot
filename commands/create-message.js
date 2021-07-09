@@ -13,7 +13,7 @@ module.exports = {
   hidden: true,
   permissions: ['ADMINISTRATOR'],
   description: 'Create message for Competition Corner (ADMINISTRATOR)',
-  callback: async ({client, channel, interaction}) => {
+  callback: async ({client, channel, interaction, instance}) => {
     let retVal;
 
     if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {

@@ -14,7 +14,7 @@ module.exports = {
   permissions: ['ADMINISTRATOR'],
   minArgs: 1,
   expectedArgs: '<team>',
-  callback: async ({args, channel, interaction, client}) => {
+  callback: async ({args, channel, interaction, client, instance}) => {
     let retVal;
 
     if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {
