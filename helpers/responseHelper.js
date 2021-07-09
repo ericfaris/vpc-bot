@@ -9,7 +9,7 @@ module.exports = {
             'method': 'DELETE',
             'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '/messages/@original',
             'headers': {
-              'Authorization': 'Bearer ODYwMzEwODgxNTc3NDY3OTA0.YN5Y8Q.0P5EwvlXHG6YOtNfkWKt_xOFTtc'
+              'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
             }
         };
 
