@@ -15,7 +15,7 @@ module.exports = {
         if(expandedLayout) {
           t.cell('+/- Last Score', score.diff, (val, width) => {
             var str = numeral(val).format('0,0');
-            return width ? Table.padLeft('(+' + str + ')', width) : '(+' + str + ')';
+            return width ? Table.padLeft('(' + (val > 0 ? '+' : '') + str + ')', width) : '(' + (val > 0 ? '+' : '') + str + ')';
           })
           t.cell('Posted', score.posted)
         }
@@ -28,6 +28,20 @@ module.exports = {
       t.cell('Score', team.totalScore, (val, width) => {
         var str = numeral(val).format('0,0');
         return width ? Table.padLeft(str, width) : str;
+      })
+      t.newRow()
+    },
+
+    createTableRowForChanges: (i, t, changedScore) => {
+      t.cell('Rank', i, Table.leftPadder(' '))
+      t.cell('User', changedScore.username, Table.rightPadder(' '))
+      t.cell('Score', changedScore.score, (val, width) => {
+        var str = numeral(val).format('0,0');
+        return width ? Table.padLeft(str, width) : str;
+      })
+      t.cell('Rank Change', changedScore.rankChange, (val, width) => {
+        var str = numeral(val).format('0,0');
+        return width ? Table.padLeft('(' + (val > 0 ? '+' : '') + str + ')', width) : '(' + (val > 0 ? '+' : '') + str + ')';
       })
       t.newRow()
     },
@@ -125,6 +139,19 @@ module.exports = {
         return textTableAsString;  
       }
     },
+
+    printLeaderBoardChanges: (changedScores) => {
+      var i = 0;
+      var t = new Table;
+   
+      changedScores.forEach(function (score) {
+        i++;
+        module.exports.createTableRowForChanges(i, t, score);
+      })
+  
+      return '`' + t.toString() + '`';
+    },
+
 
     calculateTeamTotals: (teams, scores) => {
       teams.forEach((team) => {

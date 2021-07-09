@@ -6,6 +6,7 @@ var Table = require('easy-table');
 var numeral = require('numeral');
 const outputHelper = require('../helpers/outputHelper');
 const responseHelper = require('../helpers/responseHelper');
+const scoreHelper = require('../helpers/scoreHelper');
 
 module.exports = {
   slash: true,
@@ -47,6 +48,7 @@ module.exports = {
     }
 
     // get scores from db
+    const prevScores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
     const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
 
     //search for existing score
@@ -64,6 +66,8 @@ module.exports = {
 
     // sort descending
     scores.sort((a, b) => (a.score < b.score) ? 1 : -1)
+    const changeInRank = scoreHelper.getRankChange(userName, prevScores, scores);
+    const currentRank = scoreHelper.getCurrentRank(userName, scores);
 
     //save scores to db
     db.set('scores', JSON.stringify(scores));
@@ -82,10 +86,14 @@ module.exports = {
       // .setImage(user.displayAvatarURL())
       .setTitle(userName + ' posted a new score:')
       .addField('New Score', numeral(scoreAsInt).format('0,0') + ' (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')')
+      .addField('+/- Rank', (changeInRank >= 0 ? '+' + changeInRank : changeInRank))
+      .addField('New Rank', currentRank)
 
     // return text table string
     //return userName + ' posted a score of ' + numeral(scoreAsInt).format('0,0') + ' (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')';
     
+    //responseHelper.showChangedScores(changedScores, interaction);
+
     return embed;
   },
 
