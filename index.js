@@ -9,7 +9,7 @@ client.on('ready', () => {
     commandsDir: process.env.COMMANDS_DIR,
     // testServers: [process.env.GUILD_ID],
     showWarns: false,
-    del: 5
+    del: process.env.SECONDS_TO_DELETE_MESSAGE
   })
 })
 
