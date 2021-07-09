@@ -24,13 +24,13 @@ module.exports = {
       retVal = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      retVal = module.exports.saveScore(null, args[0], client, interaction)
+      retVal = module.exports.saveScore(null, args[0], client, interaction, instance)
     }
 
     return retVal;
   },
 
-  saveScore: async(username, score, client, interaction) => { 
+  saveScore: async(username, score, client, interaction, instance) => { 
     const db = new JSONdb('db.json');
     const userName = username || interaction.member.user.username;
     const user = await client.users.fetch(interaction.member.user.id);
@@ -41,7 +41,9 @@ module.exports = {
     const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
     if (scoreAsInt == NaN || !re.test(scoreAsInt)) {
-      return 'The score needs to be a number between 1 and 999999999999999';
+      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      return 'The score needs to be a number between 1 and 999999999999999.'
+        + ' This message will be deleted in ' + instance.del + ' seconds.';
     }
 
     // get scores from db
