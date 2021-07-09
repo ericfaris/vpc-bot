@@ -6,8 +6,8 @@ const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
   hidden: false,
   description: 'Show current score for the Competition Corner',
@@ -36,7 +36,7 @@ module.exports = {
         const numOfScores = scores.length;
 
         responseHelper.showEphemeralScore(score, numOfScores, t, interaction);
-        responseHelper.deleteOriginalMessage(interaction);
+        responseHelper.deleteOriginalMessage(interaction, 0);
 
         retVal = 'showing score...';
       } else {

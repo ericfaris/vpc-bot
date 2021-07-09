@@ -30,7 +30,7 @@ module.exports = {
       scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
 
       responseHelper.showEphemeralLeaderboard(scores, teams, interaction)
-      responseHelper.deleteOriginalMessage(interaction);
+      responseHelper.deleteOriginalMessage(interaction, 0);
 
       retVal = 'showing leaderboard...';
     }
