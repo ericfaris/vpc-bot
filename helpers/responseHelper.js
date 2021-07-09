@@ -4,7 +4,7 @@ var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
 
-    deleteOriginalMessage: async(interaction) => {
+    deleteOriginalMessage: async(interaction, secondsToWait) => {
         var options = {
             'method': 'DELETE',
             'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '/messages/@original',
@@ -13,10 +13,12 @@ module.exports = {
             }
         };
 
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
-            console.log(response.body);
-        });         
+        setTimeout(function(){ 
+            request(options, function (error, response) {
+                if (error) throw new Error(error);
+                console.log(response.body);
+            });         
+        }, secondsToWait * 1000);
 
     },
 

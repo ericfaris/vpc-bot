@@ -5,6 +5,7 @@ const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
 const outputHelper = require('../helpers/outputHelper');
+const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
@@ -19,7 +20,9 @@ module.exports = {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
+      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      retVal = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
+        + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
       retVal = module.exports.saveScore(null, args[0], client, interaction)
     }

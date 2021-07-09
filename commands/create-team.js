@@ -2,6 +2,7 @@ require('dotenv').config()
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 const permissionHelper = require('../helpers/permissionHelper');
+const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
@@ -18,11 +19,15 @@ module.exports = {
 
     if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {
       console.log(interaction.member.user.username + ' DOES NOT have ADMINISTRATOR permissions to run create-team.')
-      return 'The create-team slash command can only be executed by an admin.';
+      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      return 'The create-team slash command can only be executed by an admin.'
+        + ' This message will be deleted in ' + instance.del + ' seconds.';
     }
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = 'The create-team slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
+      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      retVal = 'The create-team slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
+        + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
 
       const db = new JSONdb('db.json');

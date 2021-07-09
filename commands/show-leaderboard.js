@@ -15,7 +15,9 @@ module.exports = {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = 'The show-leaderboard slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
+      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      retVal = 'The show-leaderboard slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
+        + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
       
       const db = new JSONdb('db.json');
