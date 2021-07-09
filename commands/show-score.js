@@ -2,7 +2,7 @@ require('dotenv').config()
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 var numeral = require('numeral');
-var outputHelper = require('../helpers/outputHelper');
+const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
@@ -17,10 +17,8 @@ module.exports = {
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       retVal = 'The show-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
-
       const db = new JSONdb('db.json');
       const username = interaction.member.user.username;
-      var t = new Table;
 
       // get scores from db
       const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
@@ -31,12 +29,13 @@ module.exports = {
       const score = scores.find(x => x.username === username);
       
       if (score) {
+        var t = new Table;
         score.rank = scores.findIndex(x => x.username === username) + 1;
         const numOfScores = scores.length;
 
-        outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score, true);
+        responseHelper.showEphemeralScore(score, numOfScores, t, interaction);
 
-        retVal = '`' + t.toString() + '`';
+        retVal = 'showing score...';
       } else {
         retVal = 'No score found for ' + username;
       }

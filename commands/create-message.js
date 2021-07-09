@@ -21,39 +21,6 @@ module.exports = {
     }
 
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      // await client.api.interactions(interaction.id, interaction.token).callback.post({data: {
-      //   type: 4,
-      //   data: {
-      //     content: interaction.token
-      //   }
-      // }});
-
-      // const options = {
-      //   hostname: 'discordapp.com',
-      //   port: 443,
-      //   path: '/api/webhooks/860310881577467904/' + interaction.token + '/messages/@original',
-      //   method: 'DELETE'
-      // }
-
-      //   // await https.request(options);
-      
-      // const req = https.request(options, (res) => {
-      //   console.log('statusCode:', res.statusCode);
-      //   console.log('headers:', res.headers);
-      
-      //   res.on('data', (d) => {
-      //     process.stdout.write(d);
-      //   });
-      // });
-
-      // new DiscordJS.WebhookClient(client.user.id, interaction.token).send('test')
-
-      // setTimeout(() => {
-      //   // client.api.interactions(interaction.id, interaction.token).callback.delete()
-      //   request.request(options), 
-      //   3000
-      // });
-
       retVal = 'The create-message slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.';
     } else {
       const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);

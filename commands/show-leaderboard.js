@@ -2,7 +2,7 @@ require('dotenv').config()
 const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 var numeral = require('numeral');
-var outputHelper = require('../helpers/outputHelper');
+const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
@@ -11,7 +11,7 @@ module.exports = {
   guildOnly: true,
   hidden: false,
   description: 'Show leaderboard for the Competition Corner',
-  callback: async ({ channel }) => {
+  callback: async ({ channel, interaction }) => {
     let retVal;
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
@@ -27,7 +27,9 @@ module.exports = {
       // sort descending
       scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
 
-      retVal = outputHelper.printCombinedLeaderboard(scores, null, teams, true, true);
+      responseHelper.showEphemeralLeaderboard(scores, teams, interaction)
+
+      retVal = 'showing leaderboard...';
     }
 
     return retVal;
