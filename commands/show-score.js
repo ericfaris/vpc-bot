@@ -34,6 +34,7 @@ module.exports = {
         const numOfScores = scores.length;
 
         responseHelper.showEphemeralScore(score, numOfScores, t, interaction);
+        responseHelper.deleteOriginalMessage(interaction);
 
         retVal = 'showing score...';
       } else {

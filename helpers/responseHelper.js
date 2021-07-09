@@ -4,7 +4,23 @@ var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
 
-    showEphemeralLeaderboard: async (scores, teams, interaction) =>{
+    deleteOriginalMessage: async(interaction) => {
+        var options = {
+            'method': 'DELETE',
+            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '/messages/@original',
+            'headers': {
+              'Authorization': 'Bearer ODYwMzEwODgxNTc3NDY3OTA0.YN5Y8Q.0P5EwvlXHG6YOtNfkWKt_xOFTtc'
+            }
+        };
+
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            console.log(response.body);
+        });         
+
+    },
+
+    showEphemeralLeaderboard: async (scores, teams, interaction) => {
         var options = {
             'method': 'POST',
             'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
@@ -24,7 +40,7 @@ module.exports = {
         });
     },
 
-    showEphemeralScore: async (score, numOfScores, t, interaction) =>{
+    showEphemeralScore: async (score, numOfScores, t, interaction) => {
         outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score, true);
         var options = {
             'method': 'POST',
