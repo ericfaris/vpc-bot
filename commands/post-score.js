@@ -81,22 +81,9 @@ module.exports = {
     //post to competition channel pinned message
     await outputHelper.editCompetitionCornerMessage(scores, client, details, teams);
 
-    // const embed = new MessageEmbed()
-    //   .setAuthor(userName, user.displayAvatarURL())
-    //   // .setImage(user.displayAvatarURL())
-    //   .setTitle(userName + ' posted a new score:')
-    //   .addField('New Score', numeral(scoreAsInt).format('0,0') + ' (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')')
-    //   .addField('+/- Rank', (changeInRank >= 0 ? '+' + changeInRank : changeInRank))
-    //   .addField('New Rank', currentRank)
-
     // return text table string
     return '**' + userName + '** posted a new score:\n' 
       + '**' + numeral(scoreAsInt).format('0,0') + '** (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')\n'
       + '**Rank ' + currentRank + '** (' + (changeInRank >= 0 ? '+' + changeInRank : changeInRank) + ')';
-    
-    //responseHelper.showChangedScores(changedScores, interaction);
-
-    // return embed;
-  },
-
+    },
 }

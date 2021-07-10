@@ -16,7 +16,7 @@ module.exports = {
         setTimeout(function(){ 
             request(options, function (error, response) {
                 if (error) throw new Error(error);
-                console.log(response.body);
+                console.log('removing original message, response.body: ' + response.body);
             });         
         }, secondsToWait * 1000);
 
@@ -31,7 +31,7 @@ module.exports = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "content": outputHelper.printCombinedLeaderboard(scores, null, teams, true, true),
+                "content": outputHelper.printCombinedLeaderboard(scores, null, teams, true, false),
                 "flags": 64
             })
         };
@@ -62,23 +62,4 @@ module.exports = {
             // console.log(response.body);  
         });
     },
-
-    showChangedScores: async(changedScores, interaction) => {
-        var options = {
-            'method': 'POST',
-            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            'headers': {
-                'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "content": outputHelper.printLeaderBoardChanges(changedScores),
-            })
-        };
-    
-        await request(options, function (error, response) {
-            if (error) throw new Error(error);
-            // console.log(response.body);  
-        });
-    }
 }
