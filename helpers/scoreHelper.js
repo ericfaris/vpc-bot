@@ -3,9 +3,15 @@ require('dotenv').config()
 module.exports = {
 
     getRankChange: (username, previousScores, newScores) => {
+        let indexDiff;
         const newIndex = newScores.findIndex(x => x.username === username);
         const previousIndex = previousScores.findIndex(x => x.username === username);
-        const indexDiff = ((newIndex - previousIndex) * -1);
+
+        if(!previousIndex || previousIndex === 0) {
+            indexDiff = newScores.length - newIndex;
+        } else {
+            indexDiff = ((newIndex - previousIndex) * -1);
+        }
 
         return indexDiff;
     },

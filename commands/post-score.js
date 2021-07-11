@@ -9,7 +9,8 @@ const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 
 module.exports = {
-  slash: true,
+  slash: 'both',
+  aliases: ['score'],
   // testOnly: true,
   testOnly: false,
   guildOnly: true,
@@ -17,35 +18,81 @@ module.exports = {
   description: 'Post score for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',
-  callback: async ({args, client, interaction, channel, instance}) => {
+  callback: async ({args, client, interaction, channel, instance, message}) => {
     let retVal;
-    
-    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
-        + ' This message will be deleted in ' + instance.del + ' seconds.';
-    } else {
-      retVal = module.exports.saveScore(null, args[0], client, interaction, instance)
-    }
+    let invalidMessage;
+    let score = args[0];
+    const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
 
-    return retVal;
+    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+      invalidMessage = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
+        + ' This message will be deleted in ' + instance.del + ' seconds.';
+      
+      if(message) {
+        message.reply(invalidMessage).then((reply) => {
+          message.delete();
+          setTimeout(() => {
+            reply.delete();
+          }, instance.del * 1000 )  
+        })
+      } else {
+        responseHelper.deleteOriginalMessage(interaction, instance.del);
+        return invalidMessage;
+      }
+    } else {
+      //parameter is BAD
+      
+      //convert to integer
+      const scoreAsInt = parseInt(score.replace(/,/g, ''));
+
+      // invalid parameter message
+      if (scoreAsInt == NaN || !re.test(scoreAsInt)) {
+        invalidMessage = 'The score needs to be a number between 1 and 999999999999999.'
+          + ' This message will be deleted in ' + instance.del + ' seconds.';
+
+        if(message) {
+          message.reply(invalidMessage).then((reply) => {
+            message.delete();
+            setTimeout(() => {
+              reply.delete();
+            }, instance.del * 1000 )  
+          })
+        } else {
+          responseHelper.deleteOriginalMessage(interaction, instance.del);
+          return invalidMessage;
+        }
+      } else if(!message) {
+        invalidMessage = 'The post-score slash command has been turned off.  Please using the following format to post your score:\n'
+          + '`!score 1234567 (an image should also be posted as an attachment)`\n\n'  
+          + 'This message will be deleted in 60 seconds.';
+
+        responseHelper.deleteOriginalMessage(interaction, 60);
+        return invalidMessage;
+      } else {
+        //parameter is GOOD
+
+        retVal = await module.exports.saveScore(null, score, client, interaction, message)
+        
+        if (message) {
+          let attachment = message.attachments.array()[0];
+          message.reply(retVal, attachment).then(() => {
+            message.delete();
+          });
+        } else {
+          return retVal;
+        }
+      }
+    }
   },
 
-  saveScore: async(username, score, client, interaction, instance) => { 
+  saveScore: async(username, score, client, interaction, message) => { 
     const db = new JSONdb('db.json');
-    const userName = username || interaction.member.user.username;
-    const user = await client.users.fetch(interaction.member.user.id);
-    const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
+    const userName = username || interaction ? interaction.member.user.username : interaction || message ? message.member.user.username : message;
+    const userId = await client.users.fetch(interaction ? interaction.member.user.id : interaction || message ? message.member.user.id : message);
     let previousScore = 0;
 
     //convert to integer
     const scoreAsInt = parseInt(score.replace(/,/g, ''));
-
-    if (scoreAsInt == NaN || !re.test(scoreAsInt)) {
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
-      return 'The score needs to be a number between 1 and 999999999999999.'
-        + ' This message will be deleted in ' + instance.del + ' seconds.';
-    }
 
     // get scores from db
     const prevScores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
@@ -81,9 +128,11 @@ module.exports = {
     //post to competition channel pinned message
     await outputHelper.editCompetitionCornerMessage(scores, client, details, teams);
 
+    let scoreDiff = scoreAsInt-previousScore;
+
     // return text table string
-    return '**' + userName + '** posted a new score:\n' 
-      + '**' + numeral(scoreAsInt).format('0,0') + '** (+' + numeral(scoreAsInt-previousScore).format(0,0) + ')\n'
+    return (message ? '' : '**<@' + userId + '>**,') + ' posted a new score:\n' 
+      + '**' + numeral(scoreAsInt).format('0,0') + '** (' + (scoreDiff >= 0 ? '+' : '') + numeral(scoreAsInt-previousScore).format(0,0) + ')\n'
       + '**Rank ' + currentRank + '** (' + (changeInRank >= 0 ? '+' + changeInRank : changeInRank) + ')';
     },
 }
