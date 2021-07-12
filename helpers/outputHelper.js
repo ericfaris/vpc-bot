@@ -197,6 +197,7 @@ module.exports = {
       const message = await channel.messages.fetch(process.env.COMPETITION_POST_ID);
   
       message.edit(module.exports.generateBoilerPlateText(scores, teams, details.week, details.period, details.table, details.link));
+      message.suppressEmbeds(true);
     },
   
     generateBoilerPlateText: (scores, teams, week, period, table, link) => {
