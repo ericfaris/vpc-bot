@@ -131,7 +131,7 @@ module.exports = {
     let scoreDiff = scoreAsInt-previousScore;
 
     // return text table string
-    return (message ? '' : '**@' + username + '**,') + ' posted a new score:\n' 
+    return (message ? '' : '**@' + userName + '**,') + ' posted a new score:\n' 
       + '**' + numeral(scoreAsInt).format('0,0') + '** (' + (scoreDiff >= 0 ? '+' : '') + numeral(scoreAsInt-previousScore).format(0,0) + ')\n'
       + '**Rank ' + currentRank + '** (' + (changeInRank >= 0 ? '+' + changeInRank : changeInRank) + ')';
     },
