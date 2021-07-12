@@ -87,8 +87,7 @@ module.exports = {
 
   saveScore: async(username, score, client, interaction, message) => { 
     const db = new JSONdb('db.json');
-    const userName = username || interaction ? interaction.member.user.username : interaction || message ? message.member.user.username : message;
-    const userId = await client.users.fetch(interaction ? interaction.member.user.id : interaction || message ? message.member.user.id : message);
+    const userName = username || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 
     //convert to integer
