@@ -7,10 +7,11 @@ module.exports = {
         const newIndex = newScores.findIndex(x => x.username === username);
         const previousIndex = previousScores.findIndex(x => x.username === username);
 
-        if(!previousIndex || previousIndex === 0) {
+        if(previousIndex === -1) {
             indexDiff = newScores.length - newIndex;
         } else {
-            indexDiff = ((newIndex - previousIndex) * -1);
+            indexDiff = newIndex - previousIndex;
+            indexDiff = indexDiff === 0 ? indexDiff : indexDiff * -1;
         }
 
         return indexDiff;
