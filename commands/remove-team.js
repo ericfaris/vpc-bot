@@ -5,8 +5,8 @@ const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
-  testOnly: true,
-  // testOnly: false,
+  // testOnly: true,
+  testOnly: false,
   guildOnly: true,
   hidden: true,
   description: 'Remove team from Competition Corner (ADMINISTRATOR)',
