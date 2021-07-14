@@ -31,7 +31,7 @@ module.exports = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "content": outputHelper.printCombinedLeaderboard(scores, null, teams, true, false),
+                "content": outputHelper.printCombinedLeaderboard(scores, null, teams, false, false),
                 "flags": 64
             })
         };

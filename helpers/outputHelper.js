@@ -32,20 +32,6 @@ module.exports = {
       t.newRow()
     },
 
-    createTableRowForChanges: (i, t, changedScore) => {
-      t.cell('Rank', i, Table.leftPadder(' '))
-      t.cell('User', changedScore.username, Table.rightPadder(' '))
-      t.cell('Score', changedScore.score, (val, width) => {
-        var str = numeral(val).format('0,0');
-        return width ? Table.padLeft(str, width) : str;
-      })
-      t.cell('Rank Change', changedScore.rankChange, (val, width) => {
-        var str = numeral(val).format('0,0');
-        return width ? Table.padLeft('(' + (val > 0 ? '+' : '') + str + ')', width) : '(' + (val > 0 ? '+' : '') + str + ')';
-      })
-      t.newRow()
-    },
-
     printLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
       var i = 0;
       var t = new Table;
@@ -67,6 +53,9 @@ module.exports = {
     printTeamSummary: (teams, scores) => {
 
       module.exports.calculateTeamTotals(teams, scores)
+
+      // sort descending
+      teams.sort((a, b) => (a.totalScore < b.totalScore) ? 1 : -1);
 
       var i = 0;
       var t = new Table;
@@ -140,19 +129,6 @@ module.exports = {
       }
     },
 
-    printLeaderBoardChanges: (changedScores) => {
-      var i = 0;
-      var t = new Table;
-   
-      changedScores.forEach(function (score) {
-        i++;
-        module.exports.createTableRowForChanges(i, t, score);
-      })
-  
-      return '`' + t.toString() + '`';
-    },
-
-
     calculateTeamTotals: (teams, scores) => {
       teams.forEach((team) => {
 
@@ -204,15 +180,14 @@ module.exports = {
       var bp = '\n\n';
   
       bp += '**COMPETITION SCOREBOARD**\n\n';
-      bp += '**Week #**: ' + week + '\n';
-      bp += '**Dates**: ' + period + '\n';
+      bp += '**Week:** ' + week + '\n';
+      bp += '**Dates:** ' + period + '\n';
       bp += '\n';
-      bp += '**Current Table**: ' + table + "\n";
-      bp += '**Table Link**: ' + link + "\n";
-      bp += '\n';
+      bp += '**Current Table:** ' + table + "\n";
+      bp += '**Table Link:** ' + link + "\n";
       bp += module.exports.printCombinedLeaderboard(scores, null, teams, false, false);
       bp += '\n';
-      bp += '**All Current & Historical Results**\n';
+      bp += '**All Current & Historical Results:**\n';
       bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
   
       return bp;
