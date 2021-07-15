@@ -112,6 +112,7 @@ module.exports = {
 
     // sort descending
     scores.sort((a, b) => (a.score < b.score) ? 1 : -1)
+    scoreHelper.modifyPoints(scores);
     const changeInRank = scoreHelper.getRankChange(userName, prevScores, scores);
     const currentRank = scoreHelper.getCurrentRank(userName, scores);
 
