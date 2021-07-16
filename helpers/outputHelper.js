@@ -75,6 +75,7 @@ module.exports = {
     },
 
     printTeamLeaderboard: (scores, teams, expandedLayout) => {
+
       var strText = '**Team Leaderboard**:\n\n';
 
       teams.forEach((team) => {

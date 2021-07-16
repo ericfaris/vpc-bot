@@ -16,7 +16,7 @@ module.exports = {
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = 'The show-temas slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
+      retVal = 'The show-teams slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
       const db = new JSONdb('db.json');
@@ -27,10 +27,11 @@ module.exports = {
       // get teams from db
       const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
      
-      if (teams) {
+      if (teams && teams.length > 0) {
         responseHelper.showEphemeralTeams(scores, teams, interaction);
+        responseHelper.deleteOriginalMessage(interaction, 0);
 
-        retVal = 'showing score...';
+        retVal = 'showing teams...';
       } else {
         retVal = 'No teams found.';
       }
