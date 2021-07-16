@@ -62,4 +62,25 @@ module.exports = {
             // console.log(response.body);  
         });
     },
+
+    showEphemeralTeams: async (scores, teams, interaction) => {
+        var options = {
+            'method': 'POST',
+            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+            'headers': {
+                'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "content": outputHelper.printTeamLeaderboard(scores, teams, false),
+                "flags": 64
+            })
+        };
+    
+        await request(options, function (error, response) {
+            if (error) throw new Error(error);
+            // console.log(response.body);  
+        });
+    },
+
 }

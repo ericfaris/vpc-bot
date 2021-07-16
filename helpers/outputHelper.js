@@ -33,6 +33,8 @@ module.exports = {
     },
 
     printLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
+      var strText = '**Leaderboard:**\n';
+
       var i = 0;
       var t = new Table;
   
@@ -47,11 +49,14 @@ module.exports = {
         }
       })
   
-      return '`' + t.toString() + '`';
+      strText += '`' + t.toString() + '`';
+
+      return strText;
     },
 
     printTeamSummary: (teams, scores) => {
-
+      var strText = '**Team Summary:**\n';
+      
       module.exports.calculateTeamTotals(teams, scores)
 
       // sort descending
@@ -63,26 +68,54 @@ module.exports = {
         i++
         module.exports.createTableRowTeam(i, t, team);
       })
+
+      strText += '`' + t.toString() + '`';
     
-      return '`' + t.toString() + '`';
+      return strText;
     },
 
-    printTeamLeaderboard: (scores, expandedLayout) => {
-      var i = 0;
-      var t = new Table;
-      scores.forEach(function (score) {
-        i++
-        module.exports.createTableRow(i, t, score, expandedLayout);
-      })
-  
-      t.total('Score', {
-        printer: function (val, width) {
-          var str = numeral(val).format('0,0');
-          return width ? Table.padLeft(str, width) : str;
-        }
+    printTeamLeaderboard: (scores, teams, expandedLayout) => {
+      var strText = '**Team Leaderboard**:\n\n';
+
+      teams.forEach((team) => {
+        const teamMembersScores = [];
+        team.members.forEach((member) => {
+          const foundMember = scores.find(x => x.username === member);
+          if (foundMember) {
+            teamMembersScores.push(foundMember);
+          } else {
+            teamMembersScores.push(
+              {
+                'username': member,
+                'score': 0,
+                'posted': ''
+              });
+          }
+        })
+
+        // sort descending
+        teamMembersScores.sort((a, b) => (a.score < b.score) ? 1 : -1);
+
+        var i = 0;
+        var t = new Table;
+
+        strText += '**Team:** ' + team.teamName + '\n';
+        teamMembersScores.forEach(function (score) {
+          i++
+          module.exports.createTableRow(i, t, score, expandedLayout);
+        })
+    
+        t.total('Score', {
+          printer: function (val, width) {
+            var str = 'Total: ' + numeral(val).format('0,0');
+            return width ? Table.padLeft(str, width) : str;
+          }
+        });
+        
+        strText += '`' + t.toString() + '`\n';
       });
-  
-      return '`' + t.toString() + '`';
+
+      return strText;
     },
 
     printCombinedLeaderboard: (scores, numOfScoresToShow, teams, showTeamDetails, expandedLayout) => {
@@ -92,37 +125,12 @@ module.exports = {
         return '**NO SCORES CURRENTLY POSTED**\n';
       } else {    
         if(teams && teams.length > 0) {
-
-          textTableAsString += '**Team Summary:**\n';
           textTableAsString += module.exports.printTeamSummary(teams, scores) + '\n';
-
-          if(showTeamDetails) {
-            teams.forEach((team) => {
-              const teamMembersScores = [];
-              team.members.forEach((member) => {
-                const foundMember = scores.find(x => x.username === member);
-                if (foundMember) {
-                  teamMembersScores.push(foundMember);
-                } else {
-                  teamMembersScores.push(
-                    {
-                      'username': member,
-                      'score': 0,
-                      'posted': ''
-                    });
-                }
-              })
-      
-              // sort descending
-              teamMembersScores.sort((a, b) => (a.score < b.score) ? 1 : -1);
-    
-              textTableAsString += '**Team**: ' + team.teamName + '\n';
-              textTableAsString += module.exports.printTeamLeaderboard(teamMembersScores, expandedLayout) + '\n';
-            })
+          if(showTeamDetails) {   
+            textTableAsString += module.exports.printTeamLeaderboard(scores, teams, expandedLayout) + '\n';
           }
         }
 
-        textTableAsString += '**Current Leaderboard**:\n';
         textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout) + '\n';
     
         return textTableAsString;  
