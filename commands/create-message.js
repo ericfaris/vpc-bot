@@ -19,7 +19,7 @@ module.exports = {
     if(!(await permissionHelper.hasPermission(client, interaction, module.exports.permissions))) {
       console.log(interaction.member.user.username + ' DOES NOT have ADMINISTRATOR permissions to run create-message.')
       responseHelper.deleteOriginalMessage(interaction, instance.del);
-      return 'The create-message slash command can only be executed by an admin. '
+      return 'The create-message slash command can only be executed by an admin.  '
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     }
 
