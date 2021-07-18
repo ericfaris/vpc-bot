@@ -30,7 +30,7 @@ module.exports = {
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
 
-      const db = new JSONdb('db.json');
+      const db = new JSONdb('/data/db.json');
       const t = new Table;
       const [team] = args;
 

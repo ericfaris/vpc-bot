@@ -109,3 +109,4 @@ dist
 # db json file
 db.json
 archive.json
+data/

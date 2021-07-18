@@ -86,7 +86,7 @@ module.exports = {
   },
 
   saveScore: async(username, score, client, interaction, message) => { 
-    const db = new JSONdb('db.json');
+    const db = new JSONdb('/data/db.json');
     const userName = username || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 

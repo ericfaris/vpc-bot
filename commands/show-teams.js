@@ -19,7 +19,7 @@ module.exports = {
       retVal = 'The show-teams slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      const db = new JSONdb('db.json');
+      const db = new JSONdb('/data/db.json');
 
       // get scores from db
       const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];

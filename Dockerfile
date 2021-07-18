@@ -4,6 +4,8 @@ FROM node:14.17.2
 
 WORKDIR /app
 
+RUN mkdir -p /app/data
+
 COPY ["package.json", "package-lock.json*", "./"]
 
 RUN npm install

@@ -29,7 +29,7 @@ module.exports = {
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
       let rank = args[0];
-      const db = new JSONdb('db.json');
+      const db = new JSONdb('/data/db.json');
 
       // get scores from db
       const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];

@@ -27,8 +27,8 @@ module.exports = {
       retVal = 'The reset-scores slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      const db = new JSONdb('db.json');
-      const archive = new JSONdb('archive.json');
+      const db = new JSONdb('/data/db.json');
+      const archive = new JSONdb('/data/archive.json');
       
       archive.storage.push(db.storage);
       archive.sync();

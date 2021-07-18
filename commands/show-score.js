@@ -19,7 +19,7 @@ module.exports = {
       retVal = 'The show-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      const db = new JSONdb('db.json');
+      const db = new JSONdb('/data/db.json');
       const username = interaction.member.user.username;
 
       // get scores from db
