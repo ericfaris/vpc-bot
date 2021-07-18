@@ -43,7 +43,7 @@ module.exports = {
       db.set('teams', JSON.stringify(teams));
      
       // return text table string
-      retVal =  'Team removed successfully. \n\n' + t.toString();
+      retVal =  'Team removed successfully.';
     }
 
     return retVal;
