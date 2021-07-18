@@ -1,7 +1,7 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
 var numeral = require('numeral');
+const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
       retVal = 'The show-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      const db = new JSONdb('/data/db.json');
+      const db = dbHelper.getCurrentDB();
       const username = interaction.member.user.username;
 
       // get scores from db

@@ -1,5 +1,5 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
+const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
@@ -29,7 +29,8 @@ module.exports = {
       retVal = 'The edit-message slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      const db = new JSONdb('/data/db.json');
+      const db = dbHelper.getCurrentDB();
+
       const [week, period, table, link] = args;
 
       var details = 

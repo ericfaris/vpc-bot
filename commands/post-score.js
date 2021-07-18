@@ -1,9 +1,9 @@
 require('dotenv').config()
 const { MessageEmbed } = require('discord.js')
-const JSONdb = require('simple-json-db');
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
+const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
@@ -86,7 +86,7 @@ module.exports = {
   },
 
   saveScore: async(username, score, client, interaction, message) => { 
-    const db = new JSONdb('/data/db.json');
+    const db = dbHelper.getCurrentDB();
     const userName = username || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 

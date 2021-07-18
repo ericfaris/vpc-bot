@@ -1,5 +1,5 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
+const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 
@@ -28,8 +28,7 @@ module.exports = {
       retVal = 'The remove-team slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-
-      const db = new JSONdb('/data/db.json');
+      const db = dbHelper.getCurrentDB();
       const [teamName] = args;
 
       // get teams from db

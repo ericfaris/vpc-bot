@@ -1,6 +1,6 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
 var Table = require('easy-table')
+const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 
@@ -30,7 +30,8 @@ module.exports = {
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
 
-      const db = new JSONdb('/data/db.json');
+      const db = dbHelper.getCurrentDB();
+
       const t = new Table;
       const [team] = args;
 

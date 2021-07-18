@@ -1,5 +1,5 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
+const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
@@ -27,8 +27,8 @@ module.exports = {
       retVal = 'The reset-scores slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
-      const db = new JSONdb('/data/db.json');
-      const archive = new JSONdb('/data/archive.json');
+      const db = dbHelper.getCurrentDB();
+      const archive = dbHelper.archiveDB();
       
       archive.storage.push(db.storage);
       archive.sync();

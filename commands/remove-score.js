@@ -1,5 +1,5 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
+const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 
@@ -29,7 +29,8 @@ module.exports = {
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
       let rank = args[0];
-      const db = new JSONdb('/data/db.json');
+      const db = dbHelper.getCurrentDB();
+
 
       // get scores from db
       const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];

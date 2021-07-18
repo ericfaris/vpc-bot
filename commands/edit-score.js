@@ -1,5 +1,4 @@
 require('dotenv').config()
-const JSONdb = require('simple-json-db');
 var postScore = require('./post-score');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
