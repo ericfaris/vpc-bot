@@ -33,7 +33,7 @@ module.exports = {
 
         retVal = 'showing teams...';
       } else {
-        retVal = 'No teams found.';
+        retVal = 'No teams were found.';
       }
     }
 
