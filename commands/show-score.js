@@ -6,8 +6,7 @@ const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
-  // testOnly: true,
-  testOnly: false,
+  testOnly: process.env.TEST_ONLY,
   guildOnly: true,
   hidden: false,
   description: 'Show current score for the Competition Corner',

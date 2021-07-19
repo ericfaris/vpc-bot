@@ -11,8 +11,7 @@ const scoreHelper = require('../helpers/scoreHelper');
 module.exports = {
   slash: 'both',
   aliases: ['score'],
-  // testOnly: true,
-  testOnly: false,
+  testOnly: process.env.TEST_ONLY,
   guildOnly: true,
   hidden: false,
   description: 'Post score for the Competition Corner',
