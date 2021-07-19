@@ -27,7 +27,7 @@ module.exports = {
         + ' This message will be deleted in ' + instance.del + ' seconds.';
     } else {
       const db = dbHelper.getCurrentDB();
-      const archive = dbHelper.archiveDB();
+      const archive = dbHelper.getArchiveDB();
       
       archive.storage.push(db.storage);
       archive.sync();
