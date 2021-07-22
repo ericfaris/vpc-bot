@@ -86,7 +86,7 @@ module.exports = {
 
   saveScore: async(username, score, client, interaction, message) => { 
     const db = dbHelper.getCurrentDB();
-    const userName = username || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
+    const userName = username.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 
     //convert to integer
