@@ -12,7 +12,7 @@ module.exports = {
   slash: 'both',
   aliases: ['score'],
   testOnly: process.env.TEST_ONLY,
-  hidden: false,
+  guildOnly: true,
   description: 'Post score for the Competition Corner',
   minArgs: 1,
   expectedArgs: '<score>',

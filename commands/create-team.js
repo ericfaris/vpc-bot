@@ -7,7 +7,7 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  hidden: true,
+  guildOnly: true,
   description: 'Create teams for Competition Corner (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   minArgs: 1,

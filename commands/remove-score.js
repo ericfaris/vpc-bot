@@ -6,7 +6,7 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  hidden: true,
+  guildOnly: true,
   description: 'Remove score by rank from Competition Corner (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   minArgs: 1,

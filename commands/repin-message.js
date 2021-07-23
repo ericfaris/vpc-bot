@@ -5,7 +5,7 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  hidden: true,
+  guildOnly: true,
   description: 'Repin the competition corner message (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   callback: async ({client, channel, interaction, instance}) => {

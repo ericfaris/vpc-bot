@@ -1,13 +1,12 @@
 require('dotenv').config()
 var Table = require('easy-table')
-var numeral = require('numeral');
 const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  hidden: false,
+  guildOnly: true,
   description: 'Show current score for the Competition Corner',
   callback: async ({ interaction, channel, instance }) => {    
     let retVal;

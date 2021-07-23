@@ -1,18 +1,15 @@
-const DiscordJS = require('discord.js')
-const https =  require('https');
 require('dotenv').config()
-const fetch = require('node-fetch');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  hidden: true,
-  minArgs: 1,
-  expectedArgs: '<period>',
+  guildOnly: true,
   permissions: ['ADMINISTRATOR'],
   description: 'Create team signup message for Competition Corner (ADMINISTRATOR)',
+  minArgs: 1,
+  expectedArgs: '<period>',
   callback: async ({args, client, channel, interaction, instance}) => {
     let retVal;
     const [period] = args;

@@ -1,13 +1,11 @@
-const DiscordJS = require('discord.js')
-const https =  require('https');
 require('dotenv').config()
-const fetch = require('node-fetch');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
+  guildOnly: true,
   permissions: ['ADMINISTRATOR'],
   description: 'Create message for Competition Corner (ADMINISTRATOR)',
   callback: async ({client, channel, interaction, instance}) => {

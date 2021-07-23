@@ -7,7 +7,7 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  hidden: true,
+  guildOnly: true,
   description: 'Reset/clear scores and teams for Competition Corner, Archives current week data (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   callback: async ({client, channel, interaction, instance}) => {
