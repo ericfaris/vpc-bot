@@ -8,8 +8,6 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
-  guildOnly: true,
-  hidden: true,
   permissions: ['ADMINISTRATOR'],
   description: 'Create message for Competition Corner (ADMINISTRATOR)',
   callback: async ({client, channel, interaction, instance}) => {
