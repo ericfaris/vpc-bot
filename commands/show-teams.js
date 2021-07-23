@@ -1,9 +1,11 @@
 require('dotenv').config()
+const path = require('path');
 var Table = require('easy-table')
 const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
+  commandName: path.basename(__filename).split('.')[0],
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
@@ -13,8 +15,8 @@ module.exports = {
     
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = 'The show-teams slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
-        + ' This message will be deleted in ' + instance.del + ' seconds.';
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
+        + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       const db = dbHelper.getCurrentDB();
 

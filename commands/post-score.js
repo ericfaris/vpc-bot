@@ -1,4 +1,5 @@
 require('dotenv').config()
+const path = require('path');
 const { MessageEmbed } = require('discord.js')
 const date = require('date-and-time');
 var Table = require('easy-table');
@@ -9,6 +10,7 @@ const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 
 module.exports = {
+  commandName: path.basename(__filename).split('.')[0],
   slash: 'both',
   aliases: ['score'],
   testOnly: process.env.TEST_ONLY,
@@ -23,8 +25,8 @@ module.exports = {
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
 
     if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      invalidMessage = 'The post-score slash command can only be used in the <#' + process.env.COMPETITION_CHANNEL_ID + '> channel.' 
-        + ' This message will be deleted in ' + instance.del + ' seconds.';
+      invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
+      + ` This message will be deleted in ${instance.del} seconds.`;
       
       if(message) {
         message.reply(invalidMessage).then((reply) => {
@@ -45,8 +47,8 @@ module.exports = {
 
       // invalid parameter message
       if (scoreAsInt == NaN || !re.test(scoreAsInt)) {
-        invalidMessage = 'The score needs to be a number between 1 and 999999999999999.'
-          + ' This message will be deleted in ' + instance.del + ' seconds.';
+        invalidMessage = `The score needs to be a number between 1 and 999999999999999.`
+          + ` This message will be deleted in ${instance.del} seconds.`;
 
         if(message) {
           message.reply(invalidMessage).then((reply) => {
