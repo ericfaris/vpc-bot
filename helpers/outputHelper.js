@@ -32,6 +32,20 @@ module.exports = {
       t.newRow()
     },
 
+    createTableRowSeason: (i, t, player) => {
+      t.cell('Rank', i, Table.leftPadder(' '))
+      t.cell('User', player.username, Table.rightPadder(' '))
+      t.cell('Points', player.points, (val, width) => {
+        var str = numeral(val).format('0,0');
+        return width ? Table.padLeft(str, width) : str;
+      })
+      t.cell('Score', player.score, (val, width) => {
+        var str = numeral(val).format('0,0');
+        return width ? Table.padLeft(str, width) : str;
+      })
+      t.newRow()
+  },
+
     printLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
       var strText = '**Leaderboard:**\n';
 
@@ -49,6 +63,45 @@ module.exports = {
         }
       })
   
+      strText += '`' + t.toString() + '`';
+
+      return strText;
+    },
+
+    printSeasonLeaderboard: (weeks, expandedLayout) => {
+      var strText = '**Season Leaderboard:**\n';
+
+      leaderboard = []
+      var i = 1;
+      var t = new Table;
+   
+      weeks.forEach(function (week) {
+        scores = JSON.parse(week.scores);
+        scores.forEach( function(score) {
+          player = leaderboard.find(x => x.username === score.username);
+          if(player) {
+            player.points += parseInt(score.points);
+            player.score += parseInt(score.score);
+          } else {
+            leaderboard.push({"username": score.username, "score": score.score, "points": parseInt(score.points)})
+          }
+        })
+      })
+  
+      // sort descending
+      leaderboard.sort((a, b) => {
+        if(a.points === b.points) {
+          return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
+        } else {
+          return (a.points < b.points) ? 1 : -1;
+        }
+      });
+
+      leaderboard.forEach( function(player) {
+        module.exports.createTableRowSeason(i, t, player);
+        i++;
+      })
+
       strText += '`' + t.toString() + '`';
 
       return strText;
