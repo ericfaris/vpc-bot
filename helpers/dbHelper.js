@@ -8,5 +8,10 @@ module.exports = {
     
     getArchiveDB: () => {
         return new JSONdb('./data/archive.json');
+    },
+
+    getSeasonDB: () => {
+        return new JSONdb('./data/season.json');
     }
+
 }

@@ -32,17 +32,19 @@ module.exports = {
       t.newRow()
     },
 
-    createTableRowSeason: (i, t, player) => {
+    createTableRowSeason: (i, t, player, expandedLayout) => {
       t.cell('Rank', i, Table.leftPadder(' '))
       t.cell('User', player.username, Table.rightPadder(' '))
       t.cell('Points', player.points, (val, width) => {
         var str = numeral(val).format('0,0');
         return width ? Table.padLeft(str, width) : str;
       })
-      t.cell('Score', player.score, (val, width) => {
-        var str = numeral(val).format('0,0');
-        return width ? Table.padLeft(str, width) : str;
-      })
+      if(expandedLayout) {
+        t.cell('Score', player.score, (val, width) => {
+          var str = numeral(val).format('0,0');
+          return width ? Table.padLeft(str, width) : str;
+        })
+      }
       t.newRow()
   },
 
@@ -69,23 +71,30 @@ module.exports = {
     },
 
     printSeasonLeaderboard: (weeks, expandedLayout) => {
-      var strText = '**Season Leaderboard:**\n';
+      var strText;
 
+      if (weeks.length === 0) {
+        return '**NO SEASON LEADERBOARD CURRENTLY POSTED**\n';
+      }
+
+      strText = '**Season Leaderboard:**\n';
       leaderboard = []
       var i = 1;
       var t = new Table;
    
       weeks.forEach(function (week) {
-        scores = JSON.parse(week.scores);
-        scores.forEach( function(score) {
-          player = leaderboard.find(x => x.username === score.username);
-          if(player) {
-            player.points += parseInt(score.points);
-            player.score += parseInt(score.score);
-          } else {
-            leaderboard.push({"username": score.username, "score": score.score, "points": parseInt(score.points)})
-          }
-        })
+        if(week.scores) {
+          scores = JSON.parse(week.scores);
+          scores.forEach( function(score) {
+            player = leaderboard.find(x => x.username === score.username);
+            if(player) {
+              player.points += parseInt(score.points);
+              player.score += parseInt(score.score);
+            } else {
+              leaderboard.push({"username": score.username, "score": score.score, "points": parseInt(score.points)})
+            }
+          })
+        }
       })
   
       // sort descending
@@ -98,7 +107,7 @@ module.exports = {
       });
 
       leaderboard.forEach( function(player) {
-        module.exports.createTableRowSeason(i, t, player);
+        module.exports.createTableRowSeason(i, t, player, expandedLayout);
         i++;
       })
 
@@ -230,18 +239,18 @@ module.exports = {
       return embed;
     },
 
-    editCompetitionCornerMessage: async(scores, client, details, teams) => { 
+    editWeeklyCompetitionCornerMessage: async(scores, client, details, teams) => { 
       const channel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
-      const message = await channel.messages.fetch(process.env.COMPETITION_POST_ID);
+      const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
   
-      message.edit(module.exports.generateBoilerPlateText(scores, teams, details.week, details.period, details.table, details.link));
+      message.edit(module.exports.generateWeeklyBoilerPlateText(scores, teams, details.week, details.period, details.table, details.link));
       message.suppressEmbeds(true);
     },
   
-    generateBoilerPlateText: (scores, teams, week, period, table, link) => {
+    generateWeeklyBoilerPlateText: (scores, teams, week, period, table, link) => {
       var bp = '\n\n';
   
-      bp += '**COMPETITION SCOREBOARD**\n\n';
+      bp += '**WEEKLY LEADERBOARD**\n\n';
       bp += '**Week:** ' + week + '\n';
       bp += '**Dates:** ' + period + '\n';
       bp += '\n';
@@ -254,4 +263,28 @@ module.exports = {
   
       return bp;
     },
+
+    editSeasonCompetitionCornerMessage: async(season, weeks, client) => { 
+      const channel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
+      const message = await channel.messages.fetch(process.env.COMPETITION_SEASON_POST_ID);
+  
+      message.edit(module.exports.generateSeasonBoilerPlateText(season, weeks));
+      message.suppressEmbeds(true);
+    },
+  
+    generateSeasonBoilerPlateText: (season, weeks) => {
+      var bp = '\n\n';
+  
+      bp += '**SEASON LEADERBOARD**\n\n';
+      bp += '**Name:** ' + season.storage.description + '\n';
+      bp += '**Dates:** ' + season.storage.period + '\n';
+      bp += '\n';
+      bp += module.exports.printSeasonLeaderboard(weeks, false);
+      bp += '\n';
+      bp += '**Use the "/show-season-leaderboard" command to see total scores...**\n';
+      bp += '\n';
+  
+      return bp;
+    },
+
 }

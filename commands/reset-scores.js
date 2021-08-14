@@ -29,6 +29,7 @@ module.exports = {
     } else {
       const db = dbHelper.getCurrentDB();
       const archive = dbHelper.getArchiveDB();
+      const season = dbHelper.getSeasonDB();
       
       archive.storage.push(db.storage);
       archive.sync();
@@ -42,15 +43,26 @@ module.exports = {
       // get teams from db
       const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
 
+      const seasonWeeks = season.get('weeks');
+
       // clear scores
       db.delete('scores');
       // clear teams
       db.delete('teams');
 
       //post to competition channel pinned message
-      await outputHelper.editCompetitionCornerMessage([], client, details, teams);
+      await outputHelper.editWeeklyCompetitionCornerMessage([], client, details, teams);
 
-      retVal = "Scores and Teams have been reset."
+      //update season competition corner message
+      weeks = [];
+      archive.storage.forEach( function(week) {
+        if( seasonWeeks.includes(week.details ? parseInt(JSON.parse(week.details).week) : '')) {
+          weeks.push(week);
+        }
+      })
+      await outputHelper.editSeasonCompetitionCornerMessage(season, weeks, client);
+
+      retVal = "Scores and Teams have been reset. Season Leaderboard has been updated."
     }
 
     return retVal;

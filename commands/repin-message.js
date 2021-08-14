@@ -25,7 +25,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const message = await channel.messages.fetch(process.env.COMPETITION_POST_ID);
+      const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
       message.unpin()
       message.pin();
 

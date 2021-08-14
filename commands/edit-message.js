@@ -51,7 +51,7 @@ module.exports = {
       const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
 
       //post to competition channel pinned message
-      await outputHelper.editCompetitionCornerMessage(scores, client, details, teams);
+      await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, details, teams);
 
       retVal =  process.env.COMPETITION_CHANNEL_NAME + ' message updated successfully.';
     }
