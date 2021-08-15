@@ -38,16 +38,3 @@ on:
             push: true
             tags: ${{ steps.meta.outputs.tags }}
             labels: ${{ steps.meta.outputs.labels }}
-            args:
-              - --build-arg APPLICATION_ID=${{ secrets.APPLICATION_ID }}
-              - --build-arg BOT_TOKEN=${{ secrets.BOT_TOKEN }}
-              - --build-arg COMMANDS_DIR=${{ secrets.COMMANDS_DIR }}
-              - --build-arg COMPETITION_CHANNEL_ID=${{ secrets.COMPETITION_CHANNEL_ID }}
-              - --build-arg COMPETITION_CHANNEL_NAME=${{ secrets.COMPETITION_CHANNEL_NAME }}
-              - --build-arg COMPETITION_WEEKLY_POST_ID=${{ secrets.COMPETITION_WEEKLY_POST_ID }}
-              - --build-arg COMPETITION_SEASON_POST_ID=${{ secrets.COMPETITION_SEASON_POST_ID }}
-              - --build-arg DISCORD_BASE_API=${{ secrets.DISCORD_BASE_API }}
-              - --build-arg GUILD_ID=${{ secrets.GUILD_ID }}
-              - --build-arg SECONDS_TO_DELETE_MESSAGE=${{ secrets.SECONDS_TO_DELETE_MESSAGE }}
-              - --build-arg TEST_ONLY=${{ secrets.TEST_ONLY }}
-              - --build-arg ENVIRONMENT=${{ secrets.ENVIRONMENT }}
