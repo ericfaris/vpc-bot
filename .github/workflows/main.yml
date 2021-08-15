@@ -15,6 +15,8 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    environment:
+      name: PRODUCTION
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -41,7 +43,7 @@ jobs:
           push: true
           tags: ericfaris/competition-corner-bot:latest
           build-args: |
-            APPLICATION_ID=TEST_ID_123
+            APPLICATION_ID=${{ secrets.APPLICATION_ID }}
             BOT_TOKEN=${{ secrets.BOT_TOKEN }}
             COMMANDS_DIR=${{ secrets.COMMANDS_DIR }}
             COMPETITION_CHANNEL_ID=${{ secrets.COMPETITION_CHANNEL_ID }}
