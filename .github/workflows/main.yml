@@ -41,7 +41,7 @@ jobs:
           push: true
           tags: ericfaris/competition-corner-bot:latest
           build-args: |
-            APPLICATION_ID=${{ secrets.APPLICATION_ID }}
+            APPLICATION_ID=TEST_ID_123
             BOT_TOKEN=${{ secrets.BOT_TOKEN }}
             COMMANDS_DIR=${{ secrets.COMMANDS_DIR }}
             COMPETITION_CHANNEL_ID=${{ secrets.COMPETITION_CHANNEL_ID }}
