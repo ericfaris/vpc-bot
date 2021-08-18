@@ -113,7 +113,7 @@ module.exports = {
   
         const compChannel = await client.channels.fetch(process.env.DATA_BACKUPS_CHANNEL_ID);
   
-        compChannel.send(`Data Backup for ${today}`, {
+        compChannel.send(`Competition Corner Data Backup for ${today}`, {
           files: [
             "./data/db.json",
             "./data/archive.json",
