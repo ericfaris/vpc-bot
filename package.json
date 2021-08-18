@@ -12,6 +12,7 @@
         "discord.js": "^12.5.3",
         "dotenv": "^10.0.0",
         "easy-table": "^1.1.1",
+        "node-cron": "^3.0.0",
         "node-fetch": "^2.6.1",
         "nodemon": "^2.0.7",
         "numeral": "^2.0.6",

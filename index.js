@@ -1,5 +1,7 @@
 const DiscordJS = require('discord.js')
 const WOKCommands = require('wokcommands')
+const cron = require('node-cron');
+const responseHelper = require('./helpers/responseHelper');
 require('dotenv').config()
 
 const client = new DiscordJS.Client()
@@ -24,3 +26,7 @@ client.on('ready', () => {
 })
 
 client.login(process.env.BOT_TOKEN)
+
+cron.schedule('15 0 * * *', function() {
+  responseHelper.postJsonDataFiles(client);
+});
