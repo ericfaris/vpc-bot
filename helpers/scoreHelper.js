@@ -61,7 +61,11 @@ module.exports = {
         }
 
         if(scores.length > 9) {
-            for (let index = 9; index < scores.length; index++) {
+            scores[9].points = 3;
+        }
+
+        if(scores.length > 10) {
+            for (let index = 10; index < scores.length; index++) {
                 scores[index].points = 1;
             }
         }
