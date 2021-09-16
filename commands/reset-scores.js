@@ -31,7 +31,7 @@ module.exports = {
       const archive = dbHelper.getArchiveDB();
       const season = dbHelper.getSeasonDB();
       
-      archive.storage.push(db.storage);
+      archive.storage.push(JSON.parse(JSON.stringify(db.storage)));
       archive.sync();
 
       // get scores from db
