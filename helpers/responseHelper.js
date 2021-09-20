@@ -51,7 +51,7 @@ module.exports = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "content": outputHelper.printSeasonLeaderboard(weeks, true),
+                "content": outputHelper.printSeasonLeaderboard(weeks, false),
                 "flags": 64
             })
         };
