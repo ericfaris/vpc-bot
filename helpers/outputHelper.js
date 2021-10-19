@@ -243,19 +243,22 @@ module.exports = {
       const channel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
       const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
   
-      message.edit(module.exports.generateWeeklyBoilerPlateText(scores, teams, details.week, details.period, details.table, details.link));
+      message.edit(module.exports.generateWeeklyBoilerPlateText(
+        scores, teams, details.week, details.periodStart, details.periodEnd, details.table, details.tableUrl, details.romUrl, details.notes));
       message.suppressEmbeds(true);
     },
   
-    generateWeeklyBoilerPlateText: (scores, teams, week, period, table, link) => {
+    generateWeeklyBoilerPlateText: (scores, teams, week, periodStart, periodEnd, table, tableUrl, romUrl, notes) => {
       var bp = '\n\n';
   
       bp += '**WEEKLY LEADERBOARD**\n\n';
       bp += '**Week:** ' + week + '\n';
-      bp += '**Dates:** ' + period + '\n';
+      bp += '**Dates:** ' + periodStart + " - " + periodEnd + '\n';
       bp += '\n';
       bp += '**Current Table:** ' + table + "\n";
-      bp += '**Table Link:** ' + link + "\n\n";
+      bp += '**Table Url:** ' + tableUrl + "\n";
+      bp += '**Rom Url:** ' + romUrl + "\n";
+      bp += '**Notes:** ' + notes + "\n\n";
       bp += module.exports.printCombinedLeaderboard(scores, null, teams, false, false);
       bp += '\n';
       bp += '**All Current & Historical Results:**\n';

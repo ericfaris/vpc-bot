@@ -13,8 +13,8 @@ module.exports = {
   description: 'Edit message for Competition Corner (ADMINISTRATOR)',
   permissions: ['ADMINISTRATOR'],
   roles: ['Competition Corner Mod'],
-  minArgs: 3,
-  expectedArgs: '<week> <period> <table> <link>',
+  minArgs: 4,
+  expectedArgs: '<week> <periodstart> <periodend> <table> <tableurl> <romurl> <notes>',
   callback: async ({args, client, channel, interaction, instance}) => {
     let retVal;
     
@@ -31,14 +31,17 @@ module.exports = {
     } else {
       const db = dbHelper.getCurrentDB();
 
-      const [week, period, table, link] = args;
+      const [week, periodstart, periodend, table, tableurl, romurl, notes] = args;
 
       var details = 
       {
         'week': week,
-        'period': period,
+        'periodStart': periodstart,
+        'periodEnd': periodend,
         'table': table,
-        'link': link 
+        'tableUrl': tableurl,
+        'romUrl': romurl,
+        'notes': notes
       }
 
       //save scores to db
