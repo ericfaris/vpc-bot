@@ -1,5 +1,6 @@
 require('dotenv').config()
 const path = require('path');
+const moment = require('moment');
 const { MessageEmbed } = require('discord.js')
 const date = require('date-and-time');
 var Table = require('easy-table');
@@ -70,16 +71,41 @@ module.exports = {
         return invalidMessage;
       } else {
         //parameter is GOOD
+        const db = dbHelper.getCurrentDB();
+        const details = db.get('details') ? JSON.parse(db.get('details')) : [];
+        const periodEnd = details ? new Date(details.periodEnd) : null;
+        const utcDeadline = moment.utc(periodEnd).add(1, 'days').add(7, 'hours');
 
-        retVal = await module.exports.saveScore(null, score, client, interaction, message)
-        
-        if (message) {
-          let attachment = message.attachments.array()[0];
-          message.reply(retVal, attachment).then(() => {
-            message.delete();
-          });
+        //checking for deadline
+        if(periodEnd && moment.utc().isSameOrAfter(utcDeadline)) {
+
+          invalidMessage = `You are trying to post a score after the deadline of 12:00 AM PST. This message will be deleted in ${instance.del} seconds.`;
+
+          if(message) {
+            message.reply(invalidMessage).then((reply) => {
+              message.delete();
+              setTimeout(() => {
+                reply.delete();
+              }, instance.del * 1000 )  
+            })
+          } else {
+            responseHelper.deleteOriginalMessage(interaction, instance.del);
+            return invalidMessage;
+          }
+
         } else {
-          return retVal;
+          //before deadline
+
+          retVal = await module.exports.saveScore(null, score, client, interaction, message)
+          
+          if (message) {
+            let attachment = message.attachments.array()[0];
+            message.reply(retVal, attachment).then(() => {
+              message.delete();
+            });
+          } else {
+            return retVal;
+          }
         }
       }
     }
