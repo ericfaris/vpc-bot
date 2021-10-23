@@ -8,6 +8,7 @@
     },
     "author": "Eric Faris",
     "dependencies": {
+        "ava": "^3.15.0",
         "date-and-time": "^1.0.1",
         "discord.js": "^12.5.3",
         "dotenv": "^10.0.0",
