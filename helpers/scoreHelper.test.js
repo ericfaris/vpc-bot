@@ -59,6 +59,7 @@ test ('getRankChange returns hte correct rank change', t => {
 });
 
 test('getCurrentRank returns the correct text', t => {
+    var username = 'farise';
     var scores = 
         [
             {
@@ -115,7 +116,7 @@ test('modifyPoints adds the correct points to the scores', t => {
 
     scoreHelper.modifyPoints(scores);
     const actual = [scores[0].points, scores[1].points, scores[2].points];
-    const expected = [12, 10, 9];
+    const expected = [ 12, 10, 9 ];
 
-    t.is(actual, expected);
+    t.deepEqual(actual, expected);
 })
