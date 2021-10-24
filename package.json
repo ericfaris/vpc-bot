@@ -4,7 +4,8 @@
     "description": "Allows posting of scores to Discord",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js"
+        "start": "node index.js",
+        "test": "npx ava"
     },
     "author": "Eric Faris",
     "dependencies": {
