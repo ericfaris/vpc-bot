@@ -3,6 +3,7 @@ const path = require('path');
 var Table = require('easy-table')
 const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -19,9 +20,10 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       const db = dbHelper.getCurrentDB();
-
+      let scores = await mongoHelper.getAll("scores");
+      
       // get scores from db
-      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
+      scores = scores ? scores[0].scores : [];
       const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
 
       // sort descending

@@ -15,7 +15,7 @@ module.exports = {
         var options = {
             method: 'DELETE',
             url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '/messages/@original',
-            headers: this.getHeader()
+            headers: module.exports.getHeader()
         };
 
         setTimeout(function(){ 
@@ -31,7 +31,7 @@ module.exports = {
         var options = {
             method: 'POST',
             url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: this.getHeader(),
+            headers: module.exports.getHeader(),
             body: JSON.stringify({
                 "content": outputHelper.printCombinedLeaderboard(scores, null, teams, false, false),
                 "flags": 64
@@ -48,7 +48,7 @@ module.exports = {
         var options = {
             method: 'POST',
             url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: this.getHeader(),
+            headers: module.exports.getHeader(),
             body: JSON.stringify({
                 "content": outputHelper.printSeasonLeaderboard(weeks, false),
                 "flags": 64
@@ -66,7 +66,7 @@ module.exports = {
         var options = {
             method: 'POST',
             url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: this.getHeader(),
+            headers: module.exports.getHeader(),
             body: JSON.stringify({
                 "content": "`" + t.toString() + "`",
                 "flags": 64
@@ -83,7 +83,7 @@ module.exports = {
         var options = {
             method: 'POST',
             url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: this.getHeader(),
+            headers: module.exports.getHeader(),
             body: JSON.stringify({
                 "content": outputHelper.printTeamLeaderboard(scores, teams, false),
                 "flags": 64
