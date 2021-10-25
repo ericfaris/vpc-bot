@@ -18,4 +18,24 @@ module.exports = {
 
         return findResult;
     },
+
+    insertMany: async (records, collectionName) => {
+        let findResult;
+
+        const client = await module.exports.connect();
+        const collection = client.db("vpc").collection(collectionName);      
+        await collection.insertMany(records);
+        client.close();
+    },
+
+
+    deleteAll: async (collectionName) => {
+        let findResult;
+
+        const client = await module.exports.connect();
+        const collection = client.db("vpc").collection(collectionName);      
+        await collection.deleteMany({});
+        client.close();
+    },
+
 }

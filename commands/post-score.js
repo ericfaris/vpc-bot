@@ -9,6 +9,7 @@ const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -120,8 +121,8 @@ module.exports = {
     const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
     // get scores from db
-    const prevScores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
-    const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
+    const prevScores = await mongoHelper.getAll("scores");
+    const scores = await mongoHelper.getAll("scores");
 
     //search for existing score
     const existing = scores.find(x => x.username === userName);
@@ -143,7 +144,8 @@ module.exports = {
     const currentRank = scoreHelper.getCurrentRankText(userName, scores);
 
     //save scores to db
-    db.set('scores', JSON.stringify(scores));
+    await mongoHelper.deleteAll("scores");
+    await mongoHelper.insertMany(scores, "scores");
 
     // get details from db
     const details = db.get('details') ? JSON.parse(db.get('details')) : null;
