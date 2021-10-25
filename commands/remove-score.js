@@ -31,7 +31,6 @@ module.exports = {
       let rank = args[0];
       const db = dbHelper.getCurrentDB();
 
-
       // get scores from db
       const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
 

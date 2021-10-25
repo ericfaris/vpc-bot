@@ -40,7 +40,7 @@ module.exports = {
         retVal = 'showing score...';
       } else {
         responseHelper.deleteOriginalMessage(interaction, instance.del);
-        retVal = 'No score found for ' + username + '. This message will be deleted in ' + instance.del + ' seconds.';
+        retVal = `No score found for ${username}. This message will be deleted in ${instance.del} seconds.`;
       }
     }
 

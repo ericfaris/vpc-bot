@@ -27,6 +27,7 @@ client.on('ready', () => {
 
 client.login(process.env.BOT_TOKEN)
 
+//post JSON files to data-backup channel
 cron.schedule('15 0 * * *', function() {
   responseHelper.postJsonDataFiles(client);
 });

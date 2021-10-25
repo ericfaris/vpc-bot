@@ -140,7 +140,7 @@ module.exports = {
     scores.sort((a, b) => (a.score < b.score) ? 1 : -1)
     scoreHelper.modifyPoints(scores);
     const changeInRank = scoreHelper.getRankChange(userName, prevScores, scores);
-    const currentRank = scoreHelper.getCurrentRank(userName, scores);
+    const currentRank = scoreHelper.getCurrentRankText(userName, scores);
 
     //save scores to db
     db.set('scores', JSON.stringify(scores));

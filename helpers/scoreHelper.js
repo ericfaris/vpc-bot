@@ -17,7 +17,7 @@ module.exports = {
         return indexDiff;
     },
 
-    getCurrentRank: (username, newScores) => {
+    getCurrentRankText: (username, newScores) => {
         const newIndex = newScores.findIndex(x => x.username === username) + 1;
         return newIndex + ' of ' + newScores.length;
     },

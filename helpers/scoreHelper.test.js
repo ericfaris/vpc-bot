@@ -58,7 +58,7 @@ test ('getRankChange returns hte correct rank change', t => {
     t.is(actual, expected);
 });
 
-test('getCurrentRank returns the correct text', t => {
+test('getCurrentRankText returns the correct text', t => {
     var username = 'farise';
     var scores = 
         [
@@ -85,7 +85,7 @@ test('getCurrentRank returns the correct text', t => {
             }
         ];
 
-    const actual = scoreHelper.getCurrentRank(username, scores);
+    const actual = scoreHelper.getCurrentRankText(username, scores);
     const expected = '3 of 3';
 
     t.is(actual, expected);

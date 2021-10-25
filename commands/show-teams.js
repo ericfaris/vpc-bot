@@ -29,7 +29,6 @@ module.exports = {
       if (teams && teams.length > 0) {
         responseHelper.showEphemeralTeams(scores, teams, interaction);
         responseHelper.deleteOriginalMessage(interaction, 0);
-
         retVal = 'showing teams...';
       } else {
         retVal = 'No teams were found.';

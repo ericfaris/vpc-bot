@@ -4,13 +4,18 @@ var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
 
+    getHeader: () => {
+        return {
+            'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
+            'Content-Type': 'application/json'
+        };
+    },
+
     deleteOriginalMessage: async(interaction, secondsToWait) => {
         var options = {
-            'method': 'DELETE',
-            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '/messages/@original',
-            'headers': {
-              'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
-            }
+            method: 'DELETE',
+            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '/messages/@original',
+            headers: this.getHeader()
         };
 
         setTimeout(function(){ 
@@ -24,12 +29,9 @@ module.exports = {
 
     showEphemeralLeaderboard: async (scores, teams, interaction) => {
         var options = {
-            'method': 'POST',
-            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            'headers': {
-                'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
-                'Content-Type': 'application/json'
-            },
+            method: 'POST',
+            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+            headers: this.getHeader(),
             body: JSON.stringify({
                 "content": outputHelper.printCombinedLeaderboard(scores, null, teams, false, false),
                 "flags": 64
@@ -44,12 +46,9 @@ module.exports = {
 
     showEphemeralSeasonLeaderboard: async (weeks, interaction) => {
         var options = {
-            'method': 'POST',
-            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            'headers': {
-                'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
-                'Content-Type': 'application/json'
-            },
+            method: 'POST',
+            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+            headers: this.getHeader(),
             body: JSON.stringify({
                 "content": outputHelper.printSeasonLeaderboard(weeks, false),
                 "flags": 64
@@ -65,12 +64,9 @@ module.exports = {
     showEphemeralScore: async (score, numOfScores, t, interaction) => {
         outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score, true);
         var options = {
-            'method': 'POST',
-            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            'headers': {
-                'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
-                'Content-Type': 'application/json'
-            },
+            method: 'POST',
+            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+            headers: this.getHeader(),
             body: JSON.stringify({
                 "content": "`" + t.toString() + "`",
                 "flags": 64
@@ -85,12 +81,9 @@ module.exports = {
 
     showEphemeralTeams: async (scores, teams, interaction) => {
         var options = {
-            'method': 'POST',
-            'url': process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            'headers': {
-                'Authorization': 'Bearer ' + process.env.BOT_TOKEN,
-                'Content-Type': 'application/json'
-            },
+            method: 'POST',
+            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+            headers: this.getHeader(),
             body: JSON.stringify({
                 "content": outputHelper.printTeamLeaderboard(scores, teams, false),
                 "flags": 64
