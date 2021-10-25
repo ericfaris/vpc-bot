@@ -20,10 +20,9 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       const db = dbHelper.getCurrentDB();
-      let scores = await mongoHelper.getAll("scores");
       
       // get scores from db
-      scores = scores ? scores[0].scores : [];
+      const scores = await mongoHelper.getAll("scores");
       const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
 
       // sort descending
