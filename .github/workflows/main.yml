@@ -21,10 +21,10 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
+      - name: Install NPM Dependencies
         run: npm install
 
-      - name: Run tests 
+      - name: Run Unit Tests 
         run: npm test
 
       - name: Set up Docker Buildx

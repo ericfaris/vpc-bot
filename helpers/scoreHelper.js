@@ -61,7 +61,7 @@ module.exports = {
         }
 
         if(scores.length > 9) {
-            scores[9].points = 3;
+            scores[9].points = 2;
         }
 
         if(scores.length > 10) {
