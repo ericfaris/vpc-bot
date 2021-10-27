@@ -10,7 +10,7 @@ module.exports = {
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
   description: 'Show season leaderboard for the Competition Corner',
-  permissions: ['ADMINISTRATOR'],
+  permissions: ['VPC-ADMIN'],
   roles: ['Competition Corner Mod'],
   callback: async ({ channel, interaction, instance }) => {
     let retVal;

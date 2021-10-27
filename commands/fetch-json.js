@@ -8,9 +8,9 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  permissions: ['ADMINISTRATOR'],
+  permissions: ['VPC-ADMIN'],
   roles: ['Competition Corner Mod'],
-  description: 'Fetch JSON files (ADMINISTRATOR)',
+  description: 'Fetch JSON files (VPC-ADMIN)',
   callback: async ({client, channel, interaction, instance}) => {
     let retVal;
 

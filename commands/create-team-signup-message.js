@@ -8,9 +8,9 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  permissions: ['ADMINISTRATOR'],
+  permissions: ['VPC-ADMIN'],
   roles: ['Competition Corner Mod'],
-  description: 'Create team signup message for Competition Corner (ADMINISTRATOR)',
+  description: 'Create team signup message for Competition Corner (VPC-ADMIN)',
   minArgs: 1,
   expectedArgs: '<period>',
   callback: async ({args, client, channel, interaction, instance}) => {
