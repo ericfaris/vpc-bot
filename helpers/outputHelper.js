@@ -70,7 +70,7 @@ module.exports = {
       return strText;
     },
 
-    printSeasonLeaderboard: (weeks, expandedLayout) => {
+    printSeasonLeaderboard: (weeks, numOfScoresToShow, expandedLayout) => {
       var strText;
 
       if (weeks.length === 0) {
@@ -106,10 +106,10 @@ module.exports = {
         }
       });
 
-      leaderboard.forEach( function(player) {
-        module.exports.createTableRowSeason(i, t, player, expandedLayout);
+      while(i <= numOfScoresToShow) {
+        module.exports.createTableRowSeason(i, t, leaderboard[i], expandedLayout);
         i++;
-      })
+      };
 
       strText += '`' + t.toString() + '`';
 
@@ -244,7 +244,8 @@ module.exports = {
       const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
   
       message.edit(module.exports.generateWeeklyBoilerPlateText(
-        scores, teams, details.week, details.periodStart, details.periodEnd, details.table, details.tableUrl, details.romUrl, details.notes));
+        scores, teams, details.week, details.periodStart, details.periodEnd, 
+        details.table, details.tableUrl, details.romUrl, details.notes));
       message.suppressEmbeds(true);
     },
   
@@ -259,7 +260,8 @@ module.exports = {
       bp += '**Table Url:** ' + tableUrl + "\n";
       bp += '**Rom Url:** ' + romUrl + "\n";
       bp += '**Notes:** ' + notes + "\n\n";
-      bp += module.exports.printCombinedLeaderboard(scores, null, teams, false, false);
+      bp += module.exports.printCombinedLeaderboard(scores, 40, teams, false, false);
+      bp += '** \* Only the Top 40 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n';
       bp += '\n';
       bp += '**All Current & Historical Results:**\n';
       bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
@@ -282,10 +284,9 @@ module.exports = {
       bp += '**Name:** ' + season.storage.description + '\n';
       bp += '**Dates:** ' + season.storage.period + '\n';
       bp += '\n';
-      bp += module.exports.printSeasonLeaderboard(weeks, false);
+      bp += module.exports.printSeasonLeaderboard(weeks, 40, false);
       bp += '\n';
-      bp += '**Use the "/show-season-leaderboard" command to see total scores...**\n';
-      bp += '\n';
+      bp += '** \* Only the Top 40 positions will displayed due to Discord character limitations.  Please use the "/show-season-leaderboard" command for full results.**\n';
   
       return bp;
     },
