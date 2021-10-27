@@ -106,10 +106,17 @@ module.exports = {
         }
       });
 
-      while(i <= numOfScoresToShow) {
-        module.exports.createTableRowSeason(i, t, leaderboard[i], expandedLayout);
-        i++;
-      };
+      if(numOfScoresToShow) {
+        while(i <= numOfScoresToShow) {
+          module.exports.createTableRowSeason(i, t, leaderboard[i], expandedLayout);
+          i++;
+        };
+      } else {
+        leaderboard.forEach( function(player) {
+          module.exports.createTableRowSeason(i, t, player, expandedLayout);
+          i++;
+        })  
+      }
 
       strText += '`' + t.toString() + '`';
 

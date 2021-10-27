@@ -50,7 +50,7 @@ module.exports = {
             url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
             headers: module.exports.getHeader(),
             body: JSON.stringify({
-                "content": outputHelper.printSeasonLeaderboard(weeks, false),
+                "content": outputHelper.printSeasonLeaderboard(weeks, null, false),
                 "flags": 64
             })
         };
