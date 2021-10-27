@@ -10,8 +10,8 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  description: 'Recalculates and re-posts the season leaderboard pinned message (ADMINISTRATOR)',
-  permissions: ['ADMINISTRATOR'],
+  description: 'Recalculates and re-posts the season leaderboard pinned message (MANAGE_GUILD)',
+  permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   callback: async ({client, channel, interaction, instance}) => {
     let retVal;

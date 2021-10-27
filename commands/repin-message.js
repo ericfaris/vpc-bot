@@ -8,8 +8,8 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  description: 'Repin the competition corner message (ADMINISTRATOR)',
-  permissions: ['ADMINISTRATOR'],
+  description: 'Repin the competition corner message (MANAGE_GUILD)',
+  permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   callback: async ({client, channel, interaction, instance}) => {
     let retVal;
