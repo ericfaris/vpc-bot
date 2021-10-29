@@ -73,6 +73,7 @@ module.exports = {
 
     printSeasonLeaderboard: (weeks, numOfScoresToShow, expandedLayout) => {
       var strText;
+      let tableArray = [];
 
       if (weeks.length === 0) {
         return '**NO SEASON LEADERBOARD CURRENTLY POSTED**\n';
@@ -120,9 +121,10 @@ module.exports = {
       }
 
       strText += '`' + t.toString() + '`';
+      tableArray = module.exports.splitPosts(leaderboard, strText, 30);
 
-      return strText;
-    },
+      return tableArray;
+  },
 
     printTeamSummary: (teams, scores) => {
       var strText = '**Team Summary:**\n';
@@ -204,38 +206,43 @@ module.exports = {
         }
 
         textTableAsString += module.exports.printLeaderboard(scores, null, expandedLayout) + '\n';
-        var startIndex = 0;
-        numOfScoresToShow = 4;
-        var scoresProcessed = 0;
-        var padding = 0;
-        var i = 0;
-        var endIndex = 0;
+        tableArray = module.exports.splitPosts(scores, textTableAsString, 40);
 
-        while(scores.length > scoresProcessed) {
-          if(i > 0) {
-            textTableAsString = textTableAsString.substr(startIndex, endIndex);
-          }
-          endIndex = textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') != -1 ? textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') : textTableAsString.length;
-          var lastLineBreakIndex = textTableAsString.substr(endIndex-5, endIndex).indexOf('\n', startIndex) + (endIndex -5);
-
-          var post = textTableAsString.substr(0, endIndex + 1 - padding)
-          if(scoresProcessed == 0) {
-            post = post + '`';
-          } else {
-            post = '`' + new Array(padding + 1).join(' ') + post.replace('`', '') + '`';
-          }
-          scoresProcessed = numOfScoresToShow - 1;
-          padding = textTableAsString.substring(lastLineBreakIndex + 1, endIndex + 1).length;
-
-          numOfScoresToShow = numOfScoresToShow + numOfScoresToShow + 1;
-          startIndex = endIndex + 1;
-          endIndex = textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') != -1 ? textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') + 1 : textTableAsString.length;
-          tableArray.push(post);
-          i++;
-        }
-    
-        return tableArray;  
+        return tableArray;
       }
+    },
+
+    splitPosts: (records, textTableAsString, numOfScoresToShow) => {
+      var startIndex = 0;
+      var scoresProcessed = 0;
+      var padding = 0;
+      var i = 0;
+      var endIndex = 0;
+      let tableArray = [];
+
+      while(records.length > scoresProcessed) {
+        if(i > 0) {
+          textTableAsString = textTableAsString.substr(startIndex);
+        }
+        endIndex = textTableAsString.search(" " + (numOfScoresToShow + scoresProcessed + 1) + " ") != -1 ? textTableAsString.search(" " + (numOfScoresToShow + scoresProcessed + 1) + " ") : textTableAsString.length;
+        var lastLineBreakIndex = textTableAsString.substr(endIndex - 8, endIndex).search('\n', startIndex) + (endIndex - 8);
+
+        var post = textTableAsString.substr(0, endIndex + 1 - padding)
+        if(scoresProcessed == 0) {
+          post = post + '`';
+        } else {
+          post = '`' + new Array(padding + 1).join(' ') + post.replace('`', '') + '`';
+        }
+        scoresProcessed += numOfScoresToShow;
+        padding = textTableAsString.substring(lastLineBreakIndex + 1, endIndex).length;
+
+        startIndex = endIndex + 1;
+        endIndex = textTableAsString.search(" " + (scoresProcessed + 1) + " ") != -1 ? textTableAsString.search(" " + (scoresProcessed + 1) + " ") : textTableAsString.length;
+        tableArray.push(post);
+        i++;
+      }
+  
+      return tableArray;  
     },
 
     calculateTeamTotals: (teams, scores) => {

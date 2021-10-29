@@ -32,11 +32,7 @@ module.exports = {
         var contentArray = outputHelper.printCombinedLeaderboard(scores, null, teams, false, false);
         var i = 1;
 
-        contentArray.forEach(async function(post) {
-            if(i > 1) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-
+        for (let post of contentArray) {
             var options = {
                 method: 'POST',
                 url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
@@ -53,24 +49,29 @@ module.exports = {
                 // console.log(response.body);  
             });
 
-        });    
+        }    
     },
 
     showEphemeralSeasonLeaderboard: async (weeks, interaction) => {
-        var options = {
-            method: 'POST',
-            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: module.exports.getHeader(),
-            body: JSON.stringify({
-                "content": outputHelper.printSeasonLeaderboard(weeks, null, false),
-                "flags": 64
-            })
+        var contentArray = outputHelper.printSeasonLeaderboard(weeks, null, false)
+        var i = 1;
+
+        for (let post of contentArray) {
+            var options = {
+                method: 'POST',
+                url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+                headers: module.exports.getHeader(),
+                body: JSON.stringify({
+                    "content": post,
+                    "flags": 64
+                })
+            };
+        
+            await request(options, function (error, response) {
+                if (error) throw new Error(error);
+                // console.log(response.body);  
+            });
         };
-    
-        await request(options, function (error, response) {
-            if (error) throw new Error(error);
-            // console.log(response.body);  
-        });
     },
 
     showEphemeralScore: async (score, numOfScores, t, interaction) => {
