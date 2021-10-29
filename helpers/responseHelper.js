@@ -1,5 +1,6 @@
 require('dotenv').config()
 var request = require('request');
+const { generateSeasonBoilerPlateText } = require('../helpers/outputHelper');
 var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
@@ -28,20 +29,31 @@ module.exports = {
     },
 
     showEphemeralLeaderboard: async (scores, teams, interaction) => {
-        var options = {
-            method: 'POST',
-            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: module.exports.getHeader(),
-            body: JSON.stringify({
-                "content": outputHelper.printCombinedLeaderboard(scores, null, teams, false, false),
-                "flags": 64
-            })
-        };
-    
-        await request(options, function (error, response) {
-            if (error) throw new Error(error);
-            // console.log(response.body);  
-        });
+        var contentArray = outputHelper.printCombinedLeaderboard(scores, null, teams, false, false);
+        var i = 1;
+
+        contentArray.forEach(async function(post) {
+            if(i > 1) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            var options = {
+                method: 'POST',
+                url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+                headers: module.exports.getHeader(),
+                body: JSON.stringify({
+                    "content": post,
+                    "flags": 64
+                })
+            };
+            i++;
+
+            await request(options, function (error, response) {
+                if (error) throw new Error(error);
+                // console.log(response.body);  
+            });
+
+        });    
     },
 
     showEphemeralSeasonLeaderboard: async (weeks, interaction) => {

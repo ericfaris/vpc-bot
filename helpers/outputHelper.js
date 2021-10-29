@@ -1,7 +1,8 @@
 require('dotenv').config()
 var Table = require('easy-table')
 var numeral = require('numeral');
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js');
+const { string } = require('easy-table');
 
 module.exports = {
 
@@ -190,7 +191,8 @@ module.exports = {
 
     printCombinedLeaderboard: (scores, numOfScoresToShow, teams, showTeamDetails, expandedLayout) => {
       let textTableAsString = '\n';
-  
+      let tableArray = [];
+
       if (scores.length === 0) {
         return '**NO SCORES CURRENTLY POSTED**\n';
       } else {    
@@ -201,9 +203,38 @@ module.exports = {
           }
         }
 
-        textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout) + '\n';
+        textTableAsString += module.exports.printLeaderboard(scores, null, expandedLayout) + '\n';
+        var startIndex = 0;
+        numOfScoresToShow = 4;
+        var scoresProcessed = 0;
+        var padding = 0;
+        var i = 0;
+        var endIndex = 0;
+
+        while(scores.length > scoresProcessed) {
+          if(i > 0) {
+            textTableAsString = textTableAsString.substr(startIndex, endIndex);
+          }
+          endIndex = textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') != -1 ? textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') : textTableAsString.length;
+          var lastLineBreakIndex = textTableAsString.substr(endIndex-5, endIndex).indexOf('\n', startIndex) + (endIndex -5);
+
+          var post = textTableAsString.substr(0, endIndex + 1 - padding)
+          if(scoresProcessed == 0) {
+            post = post + '`';
+          } else {
+            post = '`' + new Array(padding + 1).join(' ') + post.replace('`', '') + '`';
+          }
+          scoresProcessed = numOfScoresToShow - 1;
+          padding = textTableAsString.substring(lastLineBreakIndex + 1, endIndex + 1).length;
+
+          numOfScoresToShow = numOfScoresToShow + numOfScoresToShow + 1;
+          startIndex = endIndex + 1;
+          endIndex = textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') != -1 ? textTableAsString.indexOf(' ' + `${numOfScoresToShow}` + ' ') + 1 : textTableAsString.length;
+          tableArray.push(post);
+          i++;
+        }
     
-        return textTableAsString;  
+        return tableArray;  
       }
     },
 
