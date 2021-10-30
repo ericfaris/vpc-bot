@@ -30,33 +30,18 @@ module.exports = {
 
     showEphemeralLeaderboard: async (scores, teams, interaction) => {
         var contentArray = outputHelper.printCombinedLeaderboard(scores, null, teams, false, false);
-        var i = 1;
-
-        for (let post of contentArray) {
-            var options = {
-                method: 'POST',
-                url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-                headers: module.exports.getHeader(),
-                body: JSON.stringify({
-                    "content": post,
-                    "flags": 64
-                })
-            };
-            i++;
-
-            await request(options, function (error, response) {
-                if (error) throw new Error(error);
-                // console.log(response.body);  
-            });
-
-        }    
+        module.exports.postEphemeralMessages(contentArray, interaction);
     },
 
     showEphemeralSeasonLeaderboard: async (weeks, interaction) => {
         var contentArray = outputHelper.printSeasonLeaderboard(weeks, null, false)
-        var i = 1;
+        module.exports.postEphemeralMessages(contentArray, interaction);
+    },
 
-        for (let post of contentArray) {
+    postEphemeralMessages: async (contentArray, interaction) => {
+        const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
+        
+        for (const post of contentArray) {
             var options = {
                 method: 'POST',
                 url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
@@ -67,10 +52,8 @@ module.exports = {
                 })
             };
         
-            await request(options, function (error, response) {
-                if (error) throw new Error(error);
-                // console.log(response.body);  
-            });
+            await request(options);
+            await delay(1000);
         };
     },
 

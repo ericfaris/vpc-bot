@@ -121,7 +121,7 @@ module.exports = {
       }
 
       strText += '`' + t.toString() + '`';
-      tableArray = module.exports.splitPosts(leaderboard, strText, 30);
+      tableArray = module.exports.splitPosts(leaderboard, strText, 40);
 
       return tableArray;
   },
@@ -205,7 +205,7 @@ module.exports = {
           }
         }
 
-        textTableAsString += module.exports.printLeaderboard(scores, null, expandedLayout) + '\n';
+        textTableAsString += module.exports.printLeaderboard(scores, null, expandedLayout);
         tableArray = module.exports.splitPosts(scores, textTableAsString, 40);
 
         return tableArray;
@@ -229,12 +229,16 @@ module.exports = {
 
         var post = textTableAsString.substr(0, endIndex + 1 - padding)
         if(scoresProcessed == 0) {
-          post = post + '`';
+          post = post.trimEnd();
+          post = post.endsWith('\n') ? post.slice(0, -1) + '`' : post;
+          post = post.endsWith('\n`') ? post.slice(0, -2) + '`' : post;
+          post = post.endsWith('`') ? post : post + '`'; 
         } else {
+          post = post.endsWith('\n`') ? post.slice(0, -3) : post;
           post = '`' + new Array(padding + 1).join(' ') + post.replace('`', '') + '`';
         }
         scoresProcessed += numOfScoresToShow;
-        padding = textTableAsString.substring(lastLineBreakIndex + 1, endIndex).length;
+        padding = textTableAsString.substring(lastLineBreakIndex + 1, endIndex + 1).length;
 
         startIndex = endIndex + 1;
         endIndex = textTableAsString.search(" " + (scoresProcessed + 1) + " ") != -1 ? textTableAsString.search(" " + (scoresProcessed + 1) + " ") : textTableAsString.length;
@@ -242,6 +246,10 @@ module.exports = {
         i++;
       }
   
+      if(tableArray.length === 1 && tableArray[0].endsWith("``")) {
+        tableArray[0] = tableArray[0].slice(0, -1);
+      }
+
       return tableArray;  
     },
 
