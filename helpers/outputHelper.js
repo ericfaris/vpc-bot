@@ -121,7 +121,7 @@ module.exports = {
       }
 
       strText += '`' + t.toString() + '`';
-      tableArray = module.exports.splitPosts(leaderboard, strText, 40);
+      tableArray = module.exports.splitPosts(leaderboard, strText, numOfScoresToShow);
 
       return tableArray;
   },
@@ -205,8 +205,8 @@ module.exports = {
           }
         }
 
-        textTableAsString += module.exports.printLeaderboard(scores, null, expandedLayout);
-        tableArray = module.exports.splitPosts(scores, textTableAsString, 40);
+        textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout);
+        tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
 
         return tableArray;
       }
@@ -313,8 +313,10 @@ module.exports = {
       bp += '**Table Url:** ' + tableUrl + "\n";
       bp += '**Rom Url:** ' + romUrl + "\n";
       bp += '**Notes:** ' + notes + "\n\n";
-      bp += module.exports.printCombinedLeaderboard(scores, 40, teams, false, false);
-      bp += '** \* Only the Top 40 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n';
+      bp += module.exports.printCombinedLeaderboard(scores, 30, teams, false, false);
+      bp += '\n';
+      bp += '\n';
+      bp += '** \* Only the Top 30 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n';
       bp += '\n';
       bp += '**All Current & Historical Results:**\n';
       bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';

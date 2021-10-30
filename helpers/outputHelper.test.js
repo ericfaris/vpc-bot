@@ -54,7 +54,7 @@ test('generateWeeklyBoilerPlateText generates the correct text', t => {
     const actual = outputHelper.generateWeeklyBoilerPlateText(JSON.parse(scores), teams, week, periodStart, periodEnd, 
         table, tableUrl, romUrl, notes);
 
-    const expected = '\n\n**WEEKLY LEADERBOARD**\n\n**Week:** 55\n**Dates:** 10/10/2021 - 10/17/2021\n\n**Current Table:** Mystery Castle (Alvin G 1993)\n**Table Url:** htttp://www.google.com\n**Rom Url:** http://www.amazon.com\n**Notes:** Notes for testing.\n\n\n**Leaderboard:**\n\`Rank  User          Score        \n----  ------------  -------------\n   1  PinStratsDan  1,159,571,490\n   2  Lumigado      1,048,247,800\n\`\n** \* Only the Top 40 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n\n**All Current & Historical Results:**\nhttps://www.iscored.info/?mode=public&user=ED209 \n'; 
+    const expected = '\n\n**WEEKLY LEADERBOARD**\n\n**Week:** 55\n**Dates:** 10/10/2021 - 10/17/2021\n\n**Current Table:** Mystery Castle (Alvin G 1993)\n**Table Url:** htttp://www.google.com\n**Rom Url:** http://www.amazon.com\n**Notes:** Notes for testing.\n\n\n**Leaderboard:**\n\`Rank  User          Score        \n----  ------------  -------------\n   1  PinStratsDan  1,159,571,490\n   2  Lumigado      1,048,247,800`\n\n** \* Only the Top 30 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n\n**All Current & Historical Results:**\nhttps://www.iscored.info/?mode=public&user=ED209 \n'; 
 
     t.is(actual, expected);
 }) 
