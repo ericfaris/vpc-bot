@@ -81,7 +81,7 @@ module.exports = {
 
       strText = '**Season Leaderboard:**\n';
       leaderboard = []
-      var i = 1;
+      var i = numOfScoresToShow ? 0 : 1;
       var t = new Table;
    
       weeks.forEach(function (week) {
@@ -110,7 +110,7 @@ module.exports = {
 
       if(numOfScoresToShow) {
         while(i <= numOfScoresToShow) {
-          module.exports.createTableRowSeason(i, t, leaderboard[i], expandedLayout);
+          module.exports.createTableRowSeason(i + 1, t, leaderboard[i], expandedLayout);
           i++;
         };
       } else {
