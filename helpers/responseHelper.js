@@ -1,5 +1,6 @@
 require('dotenv').config()
 var request = require('request');
+const { generateSeasonBoilerPlateText } = require('../helpers/outputHelper');
 var outputHelper = require('../helpers/outputHelper');
 
 module.exports = {
@@ -28,37 +29,32 @@ module.exports = {
     },
 
     showEphemeralLeaderboard: async (scores, teams, interaction) => {
-        var options = {
-            method: 'POST',
-            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: module.exports.getHeader(),
-            body: JSON.stringify({
-                "content": outputHelper.printCombinedLeaderboard(scores, null, teams, false, false),
-                "flags": 64
-            })
-        };
-    
-        await request(options, function (error, response) {
-            if (error) throw new Error(error);
-            // console.log(response.body);  
-        });
+        var contentArray = outputHelper.printCombinedLeaderboard(scores, null, teams, false, false);
+        module.exports.postEphemeralMessages(contentArray, interaction);
     },
 
     showEphemeralSeasonLeaderboard: async (weeks, interaction) => {
-        var options = {
-            method: 'POST',
-            url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
-            headers: module.exports.getHeader(),
-            body: JSON.stringify({
-                "content": outputHelper.printSeasonLeaderboard(weeks, false),
-                "flags": 64
-            })
+        var contentArray = outputHelper.printSeasonLeaderboard(weeks, null, false)
+        module.exports.postEphemeralMessages(contentArray, interaction);
+    },
+
+    postEphemeralMessages: async (contentArray, interaction) => {
+        const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
+        
+        for (const post of contentArray) {
+            var options = {
+                method: 'POST',
+                url: process.env.DISCORD_BASE_API + '/webhooks/' + process.env.APPLICATION_ID + '/' + interaction.token + '?wait=true', 
+                headers: module.exports.getHeader(),
+                body: JSON.stringify({
+                    "content": post,
+                    "flags": 64
+                })
+            };
+        
+            await request(options);
+            await delay(1000);
         };
-    
-        await request(options, function (error, response) {
-            if (error) throw new Error(error);
-            // console.log(response.body);  
-        });
     },
 
     showEphemeralScore: async (score, numOfScores, t, interaction) => {

@@ -1,7 +1,8 @@
 require('dotenv').config()
 var Table = require('easy-table')
 var numeral = require('numeral');
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js');
+const { string } = require('easy-table');
 
 module.exports = {
 
@@ -70,8 +71,9 @@ module.exports = {
       return strText;
     },
 
-    printSeasonLeaderboard: (weeks, expandedLayout) => {
+    printSeasonLeaderboard: (weeks, numOfScoresToShow, expandedLayout) => {
       var strText;
+      let tableArray = [];
 
       if (weeks.length === 0) {
         return '**NO SEASON LEADERBOARD CURRENTLY POSTED**\n';
@@ -79,7 +81,7 @@ module.exports = {
 
       strText = '**Season Leaderboard:**\n';
       leaderboard = []
-      var i = 1;
+      var i = numOfScoresToShow ? 0 : 1;
       var t = new Table;
    
       weeks.forEach(function (week) {
@@ -106,15 +108,28 @@ module.exports = {
         }
       });
 
-      leaderboard.forEach( function(player) {
-        module.exports.createTableRowSeason(i, t, player, expandedLayout);
-        i++;
-      })
+      if(numOfScoresToShow) {
+        while(i <= numOfScoresToShow) {
+          module.exports.createTableRowSeason(i + 1, t, leaderboard[i], expandedLayout);
+          i++;
+        };
+      } else {
+        leaderboard.forEach( function(player) {
+          module.exports.createTableRowSeason(i, t, player, expandedLayout);
+          i++;
+        })  
+      }
 
       strText += '`' + t.toString() + '`';
 
-      return strText;
-    },
+      if(numOfScoresToShow && numOfScoresToShow > 1) {
+        tableArray = module.exports.splitPosts(leaderboard, strText, numOfScoresToShow);
+      } else {
+        tableArray = module.exports.splitPosts(leaderboard, strText, 30);
+      }
+
+      return tableArray;
+  },
 
     printTeamSummary: (teams, scores) => {
       var strText = '**Team Summary:**\n';
@@ -183,7 +198,8 @@ module.exports = {
 
     printCombinedLeaderboard: (scores, numOfScoresToShow, teams, showTeamDetails, expandedLayout) => {
       let textTableAsString = '\n';
-  
+      let tableArray = [];
+
       if (scores.length === 0) {
         return '**NO SCORES CURRENTLY POSTED**\n';
       } else {    
@@ -194,10 +210,57 @@ module.exports = {
           }
         }
 
-        textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout) + '\n';
-    
-        return textTableAsString;  
+        textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout);
+
+        if(numOfScoresToShow && numOfScoresToShow > 1) {
+          tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
+        } else {
+          tableArray = module.exports.splitPosts(scores, textTableAsString, 35);
+        }
+
+        return tableArray;
       }
+    },
+
+    splitPosts: (records, textTableAsString, numOfScoresToShow) => {
+      var startIndex = 0;
+      var scoresProcessed = 0;
+      var padding = 0;
+      var i = 0;
+      var endIndex = 0;
+      let tableArray = [];
+
+      while(records.length > scoresProcessed) {
+        if(i > 0) {
+          textTableAsString = textTableAsString.substr(startIndex);
+        }
+        endIndex = textTableAsString.search(" " + (numOfScoresToShow + scoresProcessed + 1) + " ") != -1 ? textTableAsString.search(" " + (numOfScoresToShow + scoresProcessed + 1) + " ") : textTableAsString.length;
+        var lastLineBreakIndex = textTableAsString.substr(endIndex - 8, endIndex).search('\n', startIndex) + (endIndex - 8);
+
+        var post = textTableAsString.substr(0, endIndex + 1 - padding)
+        if(scoresProcessed == 0) {
+          post = post.trimEnd();
+          post = post.endsWith('\n') ? post.slice(0, -1) + '`' : post;
+          post = post.endsWith('\n`') ? post.slice(0, -2) + '`' : post;
+          post = post.endsWith('`') ? post : post + '`'; 
+        } else {
+          post = post.endsWith('\n`') ? post.slice(0, -3) : post;
+          post = '`' + new Array(padding + 1).join(' ') + post.replace('`', '') + '`';
+        }
+        scoresProcessed += numOfScoresToShow;
+        padding = textTableAsString.substring(lastLineBreakIndex + 1, endIndex + 1).length;
+
+        startIndex = endIndex + 1;
+        endIndex = textTableAsString.search(" " + (scoresProcessed + 1) + " ") != -1 ? textTableAsString.search(" " + (scoresProcessed + 1) + " ") : textTableAsString.length;
+        tableArray.push(post);
+        i++;
+      }
+  
+      if(tableArray.length === 1 && tableArray[0].endsWith("``")) {
+        tableArray[0] = tableArray[0].slice(0, -1);
+      }
+
+      return tableArray;  
     },
 
     calculateTeamTotals: (teams, scores) => {
@@ -244,7 +307,8 @@ module.exports = {
       const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
   
       message.edit(module.exports.generateWeeklyBoilerPlateText(
-        scores, teams, details.week, details.periodStart, details.periodEnd, details.table, details.tableUrl, details.romUrl, details.notes));
+        scores, teams, details.week, details.periodStart, details.periodEnd, 
+        details.table, details.tableUrl, details.romUrl, details.notes));
       message.suppressEmbeds(true);
     },
   
@@ -259,7 +323,10 @@ module.exports = {
       bp += '**Table Url:** ' + tableUrl + "\n";
       bp += '**Rom Url:** ' + romUrl + "\n";
       bp += '**Notes:** ' + notes + "\n\n";
-      bp += module.exports.printCombinedLeaderboard(scores, null, teams, false, false);
+      bp += module.exports.printCombinedLeaderboard(scores, 30, teams, false, false)[0];
+      bp += '\n';
+      bp += '\n';
+      bp += '** \* Only the Top 30 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n';
       bp += '\n';
       bp += '**All Current & Historical Results:**\n';
       bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
@@ -282,10 +349,10 @@ module.exports = {
       bp += '**Name:** ' + season.storage.description + '\n';
       bp += '**Dates:** ' + season.storage.period + '\n';
       bp += '\n';
-      bp += module.exports.printSeasonLeaderboard(weeks, false);
+      bp += module.exports.printSeasonLeaderboard(weeks, 40, false)[0];
       bp += '\n';
-      bp += '**Use the "/show-season-leaderboard" command to see total scores...**\n';
       bp += '\n';
+      bp += '** \* Only the Top 40 positions will displayed due to Discord character limitations.  Please use the "/show-season-leaderboard" command for full results.**\n';
   
       return bp;
     },
