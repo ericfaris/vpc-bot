@@ -121,7 +121,12 @@ module.exports = {
       }
 
       strText += '`' + t.toString() + '`';
-      tableArray = module.exports.splitPosts(leaderboard, strText, numOfScoresToShow);
+
+      if(numOfScoresToShow && numOfScoresToShow > 1) {
+        tableArray = module.exports.splitPosts(leaderboard, strText, numOfScoresToShow);
+      } else {
+        tableArray = module.exports.splitPosts(leaderboard, strText, 30);
+      }
 
       return tableArray;
   },
@@ -206,7 +211,12 @@ module.exports = {
         }
 
         textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout);
-        tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
+
+        if(numOfScoresToShow && numOfScoresToShow > 1) {
+          tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
+        } else {
+          tableArray = module.exports.splitPosts(scores, textTableAsString, 35);
+        }
 
         return tableArray;
       }

@@ -29,12 +29,12 @@ module.exports = {
     },
 
     showEphemeralLeaderboard: async (scores, teams, interaction) => {
-        var contentArray = outputHelper.printCombinedLeaderboard(scores, 35, teams, false, false);
+        var contentArray = outputHelper.printCombinedLeaderboard(scores, null, teams, false, false);
         module.exports.postEphemeralMessages(contentArray, interaction);
     },
 
     showEphemeralSeasonLeaderboard: async (weeks, interaction) => {
-        var contentArray = outputHelper.printSeasonLeaderboard(weeks, 40, false)
+        var contentArray = outputHelper.printSeasonLeaderboard(weeks, null, false)
         module.exports.postEphemeralMessages(contentArray, interaction);
     },
 
