@@ -10,8 +10,8 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  description: 'Reset/clear scores and teams for Competition Corner, Archives current week data (ADMINISTRATOR)',
-  permissions: ['ADMINISTRATOR'],
+  description: 'Reset/clear scores and teams for Competition Corner, Archives current week data (MANAGE_GUILD)',
+  permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   callback: async ({client, channel, interaction, instance}) => {
     let retVal;
