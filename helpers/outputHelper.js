@@ -302,21 +302,22 @@ module.exports = {
       return embed;
     },
 
-    editWeeklyCompetitionCornerMessage: async(scores, client, details, teams) => { 
+    editWeeklyCompetitionCornerMessage: async(scores, client, week, teams) => { 
       const channel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
       const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
   
       message.edit(module.exports.generateWeeklyBoilerPlateText(
-        scores, teams, details.week, details.periodStart, details.periodEnd, 
-        details.table, details.tableUrl, details.romUrl, details.notes));
+        scores, teams, week.weekNumber, week.periodStart, week.periodEnd, 
+        week.table, week.tableUrl, week.romUrl, week.notes, week.currentSeasonWeekNumber));
       message.suppressEmbeds(true);
     },
   
-    generateWeeklyBoilerPlateText: (scores, teams, week, periodStart, periodEnd, table, tableUrl, romUrl, notes) => {
+    generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, table, tableUrl, romUrl, notes, currentSeasonWeekNumber) => {
       var bp = '\n\n';
   
       bp += '**WEEKLY LEADERBOARD**\n\n';
-      bp += '**Week:** ' + week + '\n';
+      bp += '**Week:** ' + weekNumber + '\n';
+      bp += '**Current Season Week:** ' + currentSeasonWeekNumber + '\n';
       bp += '**Dates:** ' + periodStart + " - " + periodEnd + '\n';
       bp += '\n';
       bp += '**Current Table:** ' + table + "\n";
