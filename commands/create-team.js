@@ -4,6 +4,7 @@ var Table = require('easy-table')
 const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -30,29 +31,24 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
 
-      const db = dbHelper.getCurrentDB();
-
       const t = new Table;
-      const [team] = args;
+      const [team] = args || {};
 
       const teamName = team.substring(0, team.indexOf(":"));
       const members = team.substring(team.indexOf(":")+1).split(",");
 
-      // get teams from db
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-
-      //search for existing team
-      const existingTeam = teams.find(x => x.teamName === teamName);
+      const existingTeam = await mongoHelper.findOne({ isArchived: false, 'teams.name' : teamName}, 'vpc', 'weeks');
 
       // update or add teams
       if (existingTeam) {
-        existingTeam.members = members;
+        existingTeam.members = team.members;
+        await mongoHelper.updateOne({ isArchived: false, 'teams.name' : teamName}, {$push : { 'teams': existingTeam }}, 'vpc', 'weeks');
       } else {
-        teams.push({'teamName': teamName, 'members': members});
+        const newTeam = new Object();
+        newTeam.name = teamName;
+        newTeam.members = members;
+        await mongoHelper.updateOne({ isArchived: false }, {$push : { 'teams': newTeam }}, 'vpc', 'weeks');
       }
-
-      //save teams to db
-      db.set('teams', JSON.stringify(teams));
 
       // create text table
       var i = 0;
