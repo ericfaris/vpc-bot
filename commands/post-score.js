@@ -5,10 +5,14 @@ const { MessageEmbed } = require('discord.js')
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
+const axios = require("axios");
+const { createWorker, PSM } = require("tesseract.js");
+const sharp = require('sharp');
 const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
+const { pipeline } = require('stream');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -17,7 +21,6 @@ module.exports = {
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
   description: 'Post score for the Competition Corner',
-  minArgs: 1,
   expectedArgs: '<score>',
   callback: async ({args, client, interaction, channel, instance, message}) => {
     let retVal;
@@ -42,6 +45,27 @@ module.exports = {
       }
     } else {
       //parameter is BAD
+
+      if (!score) {
+        if(message.attachments.size > 0) {
+          var imageUrl = message.attachments.array()[0].proxyURL; 
+          const response = await axios.get(imageUrl,  { responseType: 'arraybuffer' })
+          const buffer = Buffer.from(response.data, "utf-8")
+
+          const worker = createWorker();
+
+          await worker.load();
+          await worker.loadLanguage('eng');
+          await worker.initialize('eng');
+          await worker.setParameters({
+            tessedit_pageseg_mode: PSM.PSM_SINGLE_LINE
+          });
+          const { data: { text } } = await worker.recognize(imageUrl);
+          console.log(text);
+          await worker.terminate();
+          score = text.replace(/\D/g, '');
+        }
+      }
       
       //convert to integer
       const scoreAsInt = parseInt(score.replace(/,/g, ''));
