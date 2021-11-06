@@ -347,8 +347,9 @@ module.exports = {
       var bp = '\n\n';
   
       bp += '**SEASON LEADERBOARD**\n\n';
-      bp += '**Name:** ' + season.storage.description + '\n';
-      bp += '**Dates:** ' + season.storage.period + '\n';
+      bp += '**Season #:** ' + season.seasonNumber + '\n';
+      bp += '**Name:** ' + season.seasonName + '\n';
+      bp += '**Dates:** ' + season.seasonStart + ' - ' + season.seasonEnd + '\n';
       bp += '\n';
       bp += module.exports.printSeasonLeaderboard(weeks, 40, false)[0];
       bp += '\n';

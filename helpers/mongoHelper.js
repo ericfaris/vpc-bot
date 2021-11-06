@@ -45,7 +45,7 @@ module.exports = {
     find: async (filter, dbName, collectionName) => {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, dbName, collectionName)
-        const docs = await collection.find(filter);
+        const docs = await collection.find(filter).toArray();
         client.close();
 
         return docs;
@@ -55,15 +55,6 @@ module.exports = {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, dbName, collectionName)
         const doc = await collection.findOne(filter);
-        client.close();
-
-        return doc;
-    },
-
-    findOne: async (filter, dbName, collectionName) => {
-        const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
-        const doc = await collection.find(filter);
         client.close();
 
         return doc;
