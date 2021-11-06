@@ -10,7 +10,7 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  description: 'Edit message for Competition Corner (MANAGE_GUILD)',
+  description: 'Edit Current Week Details for Competition Corner (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   minArgs: 4,
