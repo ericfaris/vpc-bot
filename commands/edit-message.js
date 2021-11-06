@@ -1,9 +1,9 @@
 require('dotenv').config()
 const path = require('path');
-const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -14,7 +14,7 @@ module.exports = {
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   minArgs: 4,
-  expectedArgs: '<week> <periodstart> <periodend> <table> <tableurl> <romurl> <notes>',
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
   callback: async ({args, client, channel, interaction, instance}) => {
     let retVal;
     
@@ -29,32 +29,25 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const db = dbHelper.getCurrentDB();
 
-      const [week, periodstart, periodend, table, tableurl, romurl, notes] = args;
+      const [weeknumber, periodstart, periodend, table, tableurl, romurl, currentseasonweeknumber, notes] = args;
 
-      var details = 
-      {
-        'week': week,
-        'periodStart': periodstart,
-        'periodEnd': periodend,
-        'table': table,
-        'tableUrl': tableurl,
-        'romUrl': romurl,
-        'notes': notes
-      }
-
-      //save scores to db
-      db.set('details', JSON.stringify(details));
-
-      // get scores from db
-      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
-
-      // get teams from db
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
+      const week = await mongoHelper.findOneAndUpdate({ isArchived: false}, {
+        $set : {
+          'weekNumber': weeknumber,
+          'periodStart': periodstart,
+          'periodEnd': periodend,
+          'table': table,
+          'tableUrl': tableurl,
+          'romUrl': romurl,
+          'currentSeasonWeekNumber': currentseasonweeknumber,
+          'notes': notes
+        }}, 
+        { returnNewDocument: true },
+        'vpc', 'weeks');
 
       //post to competition channel pinned message
-      await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, details, teams);
+      await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
 
       retVal =  process.env.COMPETITION_CHANNEL_NAME + ' message updated successfully.';
     }
