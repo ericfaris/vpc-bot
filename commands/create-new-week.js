@@ -14,7 +14,7 @@ module.exports = {
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   minArgs: 4,
-  expectedArgs: '<week> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweek> <notes>',
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
   callback: async ({args, client, channel, interaction, instance}) => {
     let retVal;
     

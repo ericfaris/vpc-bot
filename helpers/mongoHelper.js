@@ -60,6 +60,24 @@ module.exports = {
         return doc;
     },
 
+    findOne: async (filter, dbName, collectionName) => {
+        const client = await module.exports.connect();
+        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const doc = await collection.find(filter);
+        client.close();
+
+        return doc;
+    },
+
+    findOneAndUpdate: async (filter, update, options, dbName, collectionName) => {
+        const client = await module.exports.connect();
+        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const doc = await collection.findOneAndUpdate(filter, update, options);
+        client.close();
+
+        return doc;
+    },
+
     findCurrentWeek: async (dbName, collectionName) => {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, dbName, collectionName)
