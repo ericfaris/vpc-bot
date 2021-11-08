@@ -43,15 +43,10 @@ module.exports = {
 
       await mongoHelper.insertOne(season, 'vpc', 'seasons');
 
-      const weeks = await mongoHelper.find(
-        { periodStart: {
-            "$gte": season.seasonStart,
-          },
-          periodEndDate: {
-            "$lte": season.seasonEnd,
-          }
-        }, 'vpc', 'weeks'
-      )
+      const weeks = await mongoHelper.find({ 
+        periodStart : {$gte: season.seasonStart },
+        periodEnd : {$lte: season.seasonEnd }
+      }, 'vpc', 'weeks');
 
       await outputHelper.editSeasonCompetitionCornerMessage(season, weeks, client);
 
