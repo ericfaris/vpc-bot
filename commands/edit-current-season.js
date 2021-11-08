@@ -11,7 +11,7 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
-  description: 'RecaEdit current season details and recalculate and re-post the season leaderboard pinned message (MANAGE_GUILD)',
+  description: 'Edit current season details and re-post the season leaderboard pinned message (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   minArgs: 4,
@@ -42,17 +42,12 @@ module.exports = {
         { returnNewDocument: true },
         'vpc', 'seasons');
 
-      const weeks = await mongoHelper.find(
-        { periodStart: {
-            "$gte": season.value.seasonStart,
-          },
-          periodEndDate: {
-            "$lte": season.value.seasonEnd,
-          }
-        }, 'vpc', 'weeks'
-      )
-
-      await outputHelper.editSeasonCompetitionCornerMessage(season.value, weeks, client);
+        const weeks = await mongoHelper.find({ 
+          periodStart : {$gte: season.seasonStart },
+          periodEnd : {$lte: season.seasonEnd }
+        }, 'vpc', 'weeks');
+  
+        await outputHelper.editSeasonCompetitionCornerMessage(season.value, weeks, client);
 
       retVal = "Season has been updated."
     }

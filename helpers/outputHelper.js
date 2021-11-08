@@ -86,7 +86,7 @@ module.exports = {
    
       weeks.forEach(function (week) {
         if(week.scores) {
-          scores = JSON.parse(week.scores);
+          scores = week.scores;
           scores.forEach( function(score) {
             player = leaderboard.find(x => x.username === score.username);
             if(player) {
