@@ -3,6 +3,7 @@ const path = require('path');
 const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -29,22 +30,12 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
 
-      const db = dbHelper.getCurrentDB();
       const [currentTeamName, newTeamName] = args;
 
-      // get teams from db
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-
-      //search for existing team
-      const existingTeam = teams.find(x => x.teamName === currentTeamName);
-
       // update or add teams
-      if (existingTeam) {
-        existingTeam.teamName = newTeamName
-      }
-
-      //save teams to db
-      db.set('teams', JSON.stringify(teams));
+      await mongoHelper.findOneAndUpdate({isArchived: false, 'teams.name': currentTeamName}, 
+        {$set: {'teams.$.name' : newTeamName}
+      }, null, 'vpc', 'weeks');
      
       // return text table string
       retVal = 'Team Name updated successfully.';
