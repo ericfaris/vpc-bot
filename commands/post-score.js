@@ -72,9 +72,8 @@ module.exports = {
         return invalidMessage;
       } else {
         //parameter is GOOD
-        const db = dbHelper.getCurrentDB();
-        const details = db.get('details') ? JSON.parse(db.get('details')) : [];
-        const periodEnd = details ? new Date(details.periodEnd) : null;
+        const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
+        const periodEnd = currentWeek ? new Date(currentWeek.periodEnd) : null;
         const utcDeadline = moment.utc(periodEnd).add(1, 'days').add(7, 'hours');
 
         //checking for deadline
@@ -97,7 +96,7 @@ module.exports = {
         } else {
           //before deadline
 
-          retVal = await module.exports.saveScore(null, score, client, interaction, message)
+          retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message)
           
           if (message) {
             let attachment = message.attachments.array()[0];
@@ -112,8 +111,7 @@ module.exports = {
     }
   },
 
-  saveScore: async(username, score, client, interaction, message) => { 
-    const db = dbHelper.getCurrentDB();
+  saveScore: async(username, score, currentWeek, client, interaction, message) => { 
     const userName = username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 
@@ -147,14 +145,8 @@ module.exports = {
     await mongoHelper.deleteAll("scores");
     await mongoHelper.insertMany(scores, "scores");
 
-    // get details from db
-    const details = db.get('details') ? JSON.parse(db.get('details')) : null;
-
-    // get teams from db
-    const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-
     //post to competition channel pinned message
-    await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, details, teams);
+    await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);
 
     let scoreDiff = scoreAsInt-previousScore;
 
