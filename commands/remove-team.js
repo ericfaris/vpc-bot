@@ -3,6 +3,7 @@ const path = require('path');
 const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -28,20 +29,20 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const db = dbHelper.getCurrentDB();
       const [teamName] = args;
 
-      // get teams from db
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
+      //get current week
+      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
 
-      const index = teams.findIndex(x => x.teamName === teamName);
+      const index = currentWeek.teams.findIndex(x => x.name === teamName);
+      
       if (index > -1) {
-        teams.splice(index, 1);
+        currentWeek.teams.splice(index, 1);
       }
 
       //save teams to db
-      db.set('teams', JSON.stringify(teams));
-     
+      await mongoHelper.updateOne({isArchived: false}, {$set: {teams: currentWeek.teams}}, 'vpc', 'weeks');
+
       // return text table string
       retVal =  'Team removed successfully.';
     }
