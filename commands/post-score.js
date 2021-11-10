@@ -119,8 +119,8 @@ module.exports = {
     const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
     // get scores from db
-    const prevScores = await mongoHelper.getAll("scores");
-    const scores = await mongoHelper.getAll("scores");
+    const prevScores = currentWeek.scores ? JSON.parse(JSON.stringify(currentWeek.scores)) : [];
+    const scores = currentWeek.scores ? JSON.parse(JSON.stringify(currentWeek.scores)) : [];
 
     //search for existing score
     const existing = scores.find(x => x.username === userName);
@@ -142,8 +142,7 @@ module.exports = {
     const currentRank = scoreHelper.getCurrentRankText(userName, scores);
 
     //save scores to db
-    await mongoHelper.deleteAll("scores");
-    await mongoHelper.insertMany(scores, "scores");
+    await mongoHelper.updateOne({isArchived: false}, {$set: {scores: scores}}, 'vpc', 'weeks');
 
     //post to competition channel pinned message
     await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);
