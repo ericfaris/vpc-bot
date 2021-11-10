@@ -1,4 +1,4 @@
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 module.exports = {
 
@@ -7,14 +7,14 @@ module.exports = {
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         return await client.connect();
     },
-    
+
     getCollection: async (client, dbName, collectionName) => {
         const collections = await client.db(dbName).collections();
         if (!collections.some((collection) => collection.collectionName === collectionName)) {
             client.db(dbName).createCollection(collectionName);
         }
-        
-        return client.db(dbName).collection(collectionName);      
+
+        return client.db(dbName).collection(collectionName);
     },
 
     getAll: async (dbName, collectionName) => {
@@ -69,7 +69,7 @@ module.exports = {
     findCurrentWeek: async (dbName, collectionName) => {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, dbName, collectionName)
-        const doc = await collection.findOne({ isArchived: false});
+        const doc = await collection.findOne({ isArchived: false });
         client.close();
         return doc;
     },

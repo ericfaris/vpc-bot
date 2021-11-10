@@ -15,18 +15,18 @@ module.exports = {
   roles: ['Competition Corner Mod'],
   minArgs: 2,
   expectedArgs: '<username> <score>',
-  callback: async ({args, channel, client, interaction, instance}) => {
+  callback: async ({ args, channel, client, interaction, instance }) => {
     let retVal;
 
-    if(!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
+    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       responseHelper.deleteOriginalMessage(interaction, instance.del);
       return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.del} seconds.`;
     }
-    
-    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+
+    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       const [username, score] = args;
