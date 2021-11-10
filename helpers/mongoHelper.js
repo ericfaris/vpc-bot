@@ -47,7 +47,6 @@ module.exports = {
         const collection = await module.exports.getCollection(client, dbName, collectionName)
         const docs = await collection.find(filter).toArray();
         client.close();
-
         return docs;
     },
 
@@ -56,7 +55,6 @@ module.exports = {
         const collection = await module.exports.getCollection(client, dbName, collectionName)
         const doc = await collection.findOne(filter);
         client.close();
-
         return doc;
     },
 
@@ -65,17 +63,15 @@ module.exports = {
         const collection = await module.exports.getCollection(client, dbName, collectionName)
         const doc = await collection.findOneAndUpdate(filter, update, options);
         client.close();
-
         return doc;
     },
 
     findCurrentWeek: async (dbName, collectionName) => {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, dbName, collectionName)
-        const docs = await collection.find({ isArchived: false});
+        const doc = await collection.findOne({ isArchived: false});
         client.close();
-
-        return docs;
+        return doc;
     },
 
     updateOne: async (filter, update, dbName, collectionName) => {
