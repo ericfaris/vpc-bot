@@ -21,7 +21,7 @@ module.exports = {
       const username = interaction.member.user.username;
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(process.env.DB_NAME, 'weeks');
 
       const score = currentWeek.scores ? currentWeek.scores.find(x => x.username === username) : null;
       

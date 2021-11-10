@@ -44,7 +44,7 @@ module.exports = {
           'notes': notes
         }}, 
         { returnNewDocument: true },
-        'vpc', 'weeks');
+        process.env.DB_NAME, 'weeks');
 
       //post to competition channel pinned message
       await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);

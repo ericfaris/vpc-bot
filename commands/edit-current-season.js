@@ -1,6 +1,5 @@
 require('dotenv').config()
 const path = require('path');
-const dbHelper = require('../helpers/dbHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
@@ -32,22 +31,24 @@ module.exports = {
     } else {
       const [seasonnumber, seasonname, seasonstart, seasonend] = args;
 
-      const season = await mongoHelper.findOneAndUpdate({ isArchived: false}, {
-        $set : {
-          'seasonNumber': seasonnumber,
-          'seasonName': seasonname,
-          'seasonStart': seasonstart,
-          'seasonEnd': seasonend,
-        }}, 
-        { returnNewDocument: true },
-        'vpc', 'seasons');
+      const updatedSeason = {
+        'seasonNumber': seasonnumber,
+        'seasonName': seasonname,
+        'seasonStart': seasonstart,
+        'seasonEnd': seasonend,
+      }
 
-        const weeks = await mongoHelper.find({ 
-          periodStart : {$gte: season.seasonStart },
-          periodEnd : {$lte: season.seasonEnd }
-        }, 'vpc', 'weeks');
+      await mongoHelper.findOneAndUpdate({ isArchived: false}, {
+        $set : updatedSeason}, 
+        null,
+        process.env.DB_NAME, 'seasons');
+
+      const weeks = await mongoHelper.find({ 
+        periodStart : {$gte: updatedSeason.seasonStart },
+        periodEnd : {$lte: updatedSeason.seasonEnd }
+      }, process.env.DB_NAME, 'weeks');
   
-        await outputHelper.editSeasonCompetitionCornerMessage(season.value, weeks, client);
+      await outputHelper.editSeasonCompetitionCornerMessage(updatedSeason, weeks, client);
 
       retVal = "Season has been updated."
     }

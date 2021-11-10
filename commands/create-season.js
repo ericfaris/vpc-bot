@@ -39,14 +39,14 @@ module.exports = {
         'isArchived': false
       }
 
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true }}, 'vpc', 'seasons');
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true }}, process.env.DB_NAME, 'seasons');
 
-      await mongoHelper.insertOne(season, 'vpc', 'seasons');
+      await mongoHelper.insertOne(season, process.env.DB_NAME, 'seasons');
 
       const weeks = await mongoHelper.find({ 
         periodStart : {$gte: season.seasonStart },
         periodEnd : {$lte: season.seasonEnd }
-      }, 'vpc', 'weeks');
+      }, process.env.DB_NAME, 'weeks');
 
       await outputHelper.editSeasonCompetitionCornerMessage(season, weeks, client);
 

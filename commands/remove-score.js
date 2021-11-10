@@ -31,13 +31,13 @@ module.exports = {
       let rank = args[0];
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(process.env.DB_NAME, 'weeks');
 
       //remove score based on rank/index
       var retArray = currentWeek.scores.splice(rank-1, 1);
 
       //save scores to db
-      await mongoHelper.updateOne({isArchived: false}, {$set: {scores: currentWeek.scores}}, 'vpc', 'weeks');
+      await mongoHelper.updateOne({isArchived: false}, {$set: {scores: currentWeek.scores}}, process.env.DB_NAME, 'weeks');
 
       if(retArray.length > 0) {
         retVal = 'Score removed successfully.';

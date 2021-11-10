@@ -22,11 +22,11 @@ module.exports = {
     } else {
 
       //get current week
-      const currentSeason = await mongoHelper.findOne({isArchived: false}, 'vpc', 'weeks');
+      const currentSeason = await mongoHelper.findOne({isArchived: false}, process.env.DB_NAME, 'weeks');
       const weeks = await mongoHelper.find({ 
         periodStart : {$gte: currentSeason.seasonStart },
         periodEnd : {$lte: currentSeason.seasonEnd }
-      }, 'vpc', 'weeks');
+      }, process.env.DB_NAME, 'weeks');
 
       responseHelper.showEphemeralSeasonLeaderboard(weeks, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);

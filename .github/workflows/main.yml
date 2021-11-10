@@ -62,3 +62,4 @@ jobs:
             SECONDS_TO_DELETE_MESSAGE=${{ secrets.SECONDS_TO_DELETE_MESSAGE }}
             TEST_ONLY=${{ secrets.TEST_ONLY }}
             ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+            DB_NAME=${{ secrets.DB_NAME }}
