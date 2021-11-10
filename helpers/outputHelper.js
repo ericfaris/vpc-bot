@@ -25,7 +25,7 @@ module.exports = {
 
     createTableRowTeam: (i, t, team, expandedLayout) => {
       t.cell('Rank', i, Table.leftPadder(' '))
-      t.cell('Team', team.teamName, Table.rightPadder(' '))
+      t.cell('Team', team.name, Table.rightPadder(' '))
       t.cell('Score', team.totalScore, (val, width) => {
         var str = numeral(val).format('0,0');
         return width ? Table.padLeft(str, width) : str;
@@ -177,7 +177,7 @@ module.exports = {
         var i = 0;
         var t = new Table;
 
-        strText += '**Team:** ' + team.teamName + '\n';
+        strText += '**Team:** ' + team.name + '\n';
         teamMembersScores.forEach(function (score) {
           i++
           module.exports.createTableRow(i, t, score, expandedLayout);

@@ -1,8 +1,8 @@
 require('dotenv').config()
 const path = require('path');
 var Table = require('easy-table')
-const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -18,21 +18,17 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const db = dbHelper.getCurrentDB();
       const username = interaction.member.user.username;
 
-      // get scores from db
-      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
+      //get current week
+      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
 
-      // sort descending
-      scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
-
-      const score = scores.find(x => x.username === username);
+      const score = currentWeek.scores ? currentWeek.scores.find(x => x.username === username) : null;
       
       if (score) {
         var t = new Table;
-        score.rank = scores.findIndex(x => x.username === username) + 1;
-        const numOfScores = scores.length;
+        score.rank = currentWeek.scores.findIndex(x => x.username === username) + 1;
+        const numOfScores = currentWeek.scores.length;
 
         responseHelper.showEphemeralScore(score, numOfScores, t, interaction);
         responseHelper.deleteOriginalMessage(interaction, 0);
