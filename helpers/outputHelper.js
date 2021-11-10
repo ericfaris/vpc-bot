@@ -76,7 +76,8 @@ module.exports = {
     let tableArray = [];
 
     if (weeks.length === 0) {
-      return '**NO SEASON LEADERBOARD CURRENTLY POSTED**\n';
+      tableArray.push('**NO SEASON LEADERBOARD CURRENTLY POSTED**\n');
+      return tableArray;
     }
 
     strText = '**Season Leaderboard:**\n';
