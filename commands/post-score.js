@@ -71,7 +71,7 @@ module.exports = {
         return invalidMessage;
       } else {
         //parameter is GOOD
-        const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
+        const currentWeek = await mongoHelper.findCurrentWeek(process.env.DB_NAME, 'weeks');
         const periodEnd = currentWeek ? new Date(currentWeek.periodEnd) : null;
         const utcDeadline = moment.utc(periodEnd).add(1, 'days').add(7, 'hours');
 
@@ -141,7 +141,7 @@ module.exports = {
     const currentRank = scoreHelper.getCurrentRankText(userName, scores);
 
     //save scores to db
-    await mongoHelper.updateOne({isArchived: false}, {$set: {scores: scores}}, 'vpc', 'weeks');
+    await mongoHelper.updateOne({isArchived: false}, {$set: {scores: scores}}, process.env.DB_NAME, 'weeks');
 
     //post to competition channel pinned message
     await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);

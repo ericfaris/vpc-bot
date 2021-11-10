@@ -1,6 +1,5 @@
 require('dotenv').config()
 const path = require('path');
-const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
@@ -32,7 +31,7 @@ module.exports = {
       const [teamName] = args;
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(process.env.DB_NAME, 'weeks');
 
       const index = currentWeek.teams.findIndex(x => x.name === teamName);
       
@@ -41,7 +40,7 @@ module.exports = {
       }
 
       //save teams to db
-      await mongoHelper.updateOne({isArchived: false}, {$set: {teams: currentWeek.teams}}, 'vpc', 'weeks');
+      await mongoHelper.updateOne({isArchived: false}, {$set: {teams: currentWeek.teams}}, process.env.DB_NAME, 'weeks');
 
       // return text table string
       retVal =  'Team removed successfully.';
