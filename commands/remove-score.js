@@ -3,6 +3,7 @@ const path = require('path');
 const dbHelper = require('../helpers/dbHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -29,22 +30,21 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       let rank = args[0];
-      const db = dbHelper.getCurrentDB();
 
-      // get scores from db
-      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
+      //get current week
+      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
 
       //remove score based on rank/index
-      var retArray = scores.splice(rank-1, 1);
+      var retArray = currentWeek.scores.splice(rank-1, 1);
+
+      //save scores to db
+      await mongoHelper.updateOne({isArchived: false}, {$set: {scores: currentWeek.scores}}, 'vpc', 'weeks');
 
       if(retArray.length > 0) {
         retVal = 'Score removed successfully.';
       } else {
         retVal = 'No score removed. Rank of ' + rank + ' not found.';
       }
-
-      //save scores to db
-      db.set('scores', JSON.stringify(scores));
     }
 
     return retVal;

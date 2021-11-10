@@ -1,7 +1,6 @@
 require('dotenv').config()
 const path = require('path');
 var Table = require('easy-table')
-const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 
@@ -19,16 +18,10 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const db = dbHelper.getCurrentDB();
+      //get current week
+      const currentWeek = await mongoHelper.findCurrentWeek('vpc', 'weeks');
       
-      // get scores from db
-      const scores = await mongoHelper.getAll("scores");
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-
-      // sort descending
-      scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
-
-      responseHelper.showEphemeralLeaderboard(scores, teams, interaction)
+      responseHelper.showEphemeralLeaderboard(currentWeek.scores, currentWeek.teams, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);
 
       retVal = 'showing leaderboard...';

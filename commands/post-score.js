@@ -5,7 +5,6 @@ const { MessageEmbed } = require('discord.js')
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
-const dbHelper = require('../helpers/dbHelper');
 const outputHelper = require('../helpers/outputHelper');
 const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
