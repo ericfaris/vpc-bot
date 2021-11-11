@@ -40,7 +40,7 @@ module.exports = {
       }
 
       //save teams to db
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { teams: currentWeek.teams } }, process.env.DB_NAME, 'weeks');
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { teams: currentWeek.teams } }, 'weeks');
 
       // return text table string
       retVal = 'Team removed successfully.';

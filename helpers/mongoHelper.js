@@ -1,91 +1,95 @@
+require('dotenv').config()
 const { MongoClient } = require('mongodb');
+
+const DB_NAME = process.env.DB_NAME;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
 module.exports = {
 
-    connect: async (dbName) => {
-        const uri = `mongodb+srv://vpchat:aeMxNmszpIs8tvgH@cluster0.blwxx.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+    connect: async () => {
+        const uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.blwxx.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         return await client.connect();
     },
 
-    getCollection: async (client, dbName, collectionName) => {
-        const collections = await client.db(dbName).collections();
+    getCollection: async (client, collectionName) => {
+        const collections = await client.db(DB_NAME).collections();
         if (!collections.some((collection) => collection.collectionName === collectionName)) {
-            client.db(dbName).createCollection(collectionName);
+            client.db(DB_NAME).createCollection(collectionName);
         }
 
-        return client.db(dbName).collection(collectionName);
+        return client.db(DB_NAME).collection(collectionName);
     },
 
-    getAll: async (dbName, collectionName) => {
+    getAll: async (collectionName) => {
         let findResult;
 
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         findResult = await collection.find({}).toArray();
         client.close();
 
         return findResult;
     },
 
-    insertOne: async (doc, dbName, collectionName) => {
+    insertOne: async (doc, collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         await collection.insertOne(doc);
         client.close();
     },
 
-    insertMany: async (docs, dbName, collectionName) => {
+    insertMany: async (docs, collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         await collection.insertMany(docs);
         client.close();
     },
 
-    find: async (filter, dbName, collectionName) => {
+    find: async (filter, collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         const docs = await collection.find(filter).toArray();
         client.close();
         return docs;
     },
 
-    findOne: async (filter, dbName, collectionName) => {
+    findOne: async (filter, collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         const doc = await collection.findOne(filter);
         client.close();
         return doc;
     },
 
-    findOneAndUpdate: async (filter, update, options, dbName, collectionName) => {
+    findOneAndUpdate: async (filter, update, options, collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         const doc = await collection.findOneAndUpdate(filter, update, options);
         client.close();
         return doc;
     },
 
-    findCurrentWeek: async (dbName, collectionName) => {
+    findCurrentWeek: async (collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         const doc = await collection.findOne({ isArchived: false });
         client.close();
         return doc;
     },
 
-    updateOne: async (filter, update, dbName, collectionName) => {
+    updateOne: async (filter, update, collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         await collection.updateOne(filter, update);
         client.close();
     },
 
-    deleteAll: async (dbName, collectionName) => {
+    deleteAll: async (collectionName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, dbName, collectionName)
+        const collection = await module.exports.getCollection(client, collectionName)
         await collection.deleteMany({});
         client.close();
     },
-
 }

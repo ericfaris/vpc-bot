@@ -35,7 +35,7 @@ module.exports = {
       await mongoHelper.findOneAndUpdate({ isArchived: false, 'teams.name': currentTeamName },
         {
           $set: { 'teams.$.name': newTeamName }
-        }, null, process.env.DB_NAME, 'weeks');
+        }, null, 'weeks');
 
       // return text table string
       retVal = 'Team Name updated successfully.';
