@@ -22,8 +22,9 @@ module.exports = {
     } else {
 
       //get current week
-      const currentSeason = await mongoHelper.findOne({ isArchived: false }, process.env.DB_NAME, 'weeks');
+      const currentSeason = await mongoHelper.findOne({ isArchived: false }, process.env.DB_NAME, 'seasons');
       const weeks = await mongoHelper.find({
+        isArchived: true,
         periodStart: { $gte: currentSeason.seasonStart },
         periodEnd: { $lte: currentSeason.seasonEnd }
       }, process.env.DB_NAME, 'weeks');
