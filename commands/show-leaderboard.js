@@ -19,7 +19,7 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek(process.env.DB_NAME, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
 
       responseHelper.showEphemeralLeaderboard(currentWeek.scores, currentWeek.teams, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);

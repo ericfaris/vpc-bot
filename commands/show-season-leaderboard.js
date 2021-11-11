@@ -20,14 +20,12 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-
-      //get current week
-      const currentSeason = await mongoHelper.findOne({ isArchived: false }, process.env.DB_NAME, 'seasons');
+      const currentSeason = await mongoHelper.findOne({ isArchived: false }, 'seasons');
       const weeks = await mongoHelper.find({
         isArchived: true,
         periodStart: { $gte: currentSeason.seasonStart },
         periodEnd: { $lte: currentSeason.seasonEnd }
-      }, process.env.DB_NAME, 'weeks');
+      }, 'weeks');
 
       responseHelper.showEphemeralSeasonLeaderboard(weeks, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);

@@ -30,7 +30,7 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       const [username, score] = args;
-      const currentWeek = await mongoHelper.findCurrentWeek(process.env.DB_NAME, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
       retVal = await postScore.saveScore(username, score, currentWeek, client, interaction);
     }
 

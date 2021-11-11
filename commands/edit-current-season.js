@@ -42,13 +42,13 @@ module.exports = {
         $set: updatedSeason
       },
         null,
-        process.env.DB_NAME, 'seasons');
+        'seasons');
 
       const weeks = await mongoHelper.find({
         isArchived: true,
         periodStart: { $gte: updatedSeason.seasonStart },
         periodEnd: { $lte: updatedSeason.seasonEnd }
-      }, process.env.DB_NAME, 'weeks');
+      }, 'weeks');
 
       await outputHelper.editSeasonCompetitionCornerMessage(updatedSeason, weeks, client);
 

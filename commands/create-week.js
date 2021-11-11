@@ -46,9 +46,9 @@ module.exports = {
         'isArchived': false
       }
 
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, process.env.DB_NAME, 'weeks');
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, 'weeks');
 
-      await mongoHelper.insertOne(week, process.env.DB_NAME, 'weeks');
+      await mongoHelper.insertOne(week, 'weeks');
 
       await outputHelper.editWeeklyCompetitionCornerMessage(week.scores, client, week, week.teams);
 

@@ -45,7 +45,7 @@ module.exports = {
         }
       },
         { returnNewDocument: true },
-        process.env.DB_NAME, 'weeks');
+        'weeks');
 
       //post to competition channel pinned message
       await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
