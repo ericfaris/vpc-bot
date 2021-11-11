@@ -45,6 +45,7 @@ module.exports = {
         process.env.DB_NAME, 'seasons');
 
       const weeks = await mongoHelper.find({
+        isArchived: true,
         periodStart: { $gte: updatedSeason.seasonStart },
         periodEnd: { $lte: updatedSeason.seasonEnd }
       }, process.env.DB_NAME, 'weeks');
