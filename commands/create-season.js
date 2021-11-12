@@ -1,17 +1,21 @@
 require('dotenv').config()
 const path = require('path');
+const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
+  description: 'Create new season (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  description: 'Create message for Competition Corner (MANAGE_GUILD)',
-  callback: async ({ client, channel, interaction, instance }) => {
+  minArgs: 4,
+  expectedArgs: '<seasonnumber> <seasonname> <seasonstart> <seasonend>',
+  callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
@@ -25,10 +29,29 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
-      compChannel.send('new message');
+      const [seasonnumber, seasonname, seasonstart, seasonend] = args;
 
-      retVal = 'Message created successfully.'
+      var season = {
+        'seasonNumber': seasonnumber,
+        'seasonName': seasonname,
+        'seasonStart': seasonstart,
+        'seasonEnd': seasonend,
+        'isArchived': false
+      }
+
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, 'seasons');
+
+      await mongoHelper.insertOne(season, 'seasons');
+
+      const weeks = await mongoHelper.find({
+        isArchived: true,
+        periodStart: { $gte: season.seasonStart },
+        periodEnd: { $lte: season.seasonEnd }
+      }, 'weeks');
+
+      await outputHelper.editSeasonCompetitionCornerMessage(season, weeks, client);
+
+      retVal = `New season created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
     }
 
     return retVal;

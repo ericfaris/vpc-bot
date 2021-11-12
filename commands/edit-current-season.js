@@ -1,5 +1,7 @@
 require('dotenv').config()
 const path = require('path');
+const mongoHelper = require('../helpers/mongoHelper');
+const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 
@@ -8,10 +10,12 @@ module.exports = {
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
+  description: 'Edit current season details and re-post the season leaderboard pinned message (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  description: 'Create message for Competition Corner (MANAGE_GUILD)',
-  callback: async ({ client, channel, interaction, instance }) => {
+  minArgs: 4,
+  expectedArgs: '<seasonnumber> <seasonname> <seasonstart> <seasonend>',
+  callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
@@ -25,10 +29,30 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
-      compChannel.send('new message');
+      const [seasonnumber, seasonname, seasonstart, seasonend] = args;
 
-      retVal = 'Message created successfully.'
+      const updatedSeason = {
+        'seasonNumber': seasonnumber,
+        'seasonName': seasonname,
+        'seasonStart': seasonstart,
+        'seasonEnd': seasonend,
+      }
+
+      await mongoHelper.findOneAndUpdate({ isArchived: false }, {
+        $set: updatedSeason
+      },
+        null,
+        'seasons');
+
+      const weeks = await mongoHelper.find({
+        isArchived: true,
+        periodStart: { $gte: updatedSeason.seasonStart },
+        periodEnd: { $lte: updatedSeason.seasonEnd }
+      }, 'weeks');
+
+      await outputHelper.editSeasonCompetitionCornerMessage(updatedSeason, weeks, client);
+
+      retVal = "Season has been updated."
     }
 
     return retVal;

@@ -1,17 +1,21 @@
 require('dotenv').config()
 const path = require('path');
+const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
   testOnly: process.env.TEST_ONLY,
   guildOnly: true,
+  description: 'Create new week (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  description: 'Create message for Competition Corner (MANAGE_GUILD)',
-  callback: async ({ client, channel, interaction, instance }) => {
+  minArgs: 4,
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
+  callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
@@ -25,10 +29,30 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
-      compChannel.send('new message');
+      const [weeknumber, periodstart, periodend, table, tableurl, romurl, currentseasonweeknumber, notes] = args;
 
-      retVal = 'Message created successfully.'
+      var week =
+      {
+        'weekNumber': weeknumber,
+        'periodStart': periodstart,
+        'periodEnd': periodend,
+        'table': table,
+        'tableUrl': tableurl,
+        'romUrl': romurl,
+        'currentSeasonWeekNumber': currentseasonweeknumber,
+        'notes': notes,
+        'scores': [],
+        'teams': [],
+        'isArchived': false
+      }
+
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, 'weeks');
+
+      await mongoHelper.insertOne(week, 'weeks');
+
+      await outputHelper.editWeeklyCompetitionCornerMessage(week.scores, client, week, week.teams);
+
+      retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message wasupdated successfully.`;
     }
 
     return retVal;

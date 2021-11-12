@@ -1,8 +1,8 @@
 require('dotenv').config()
 const path = require('path');
 var Table = require('easy-table')
-const dbHelper = require('../helpers/dbHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -12,22 +12,16 @@ module.exports = {
   description: 'Show leaderboard for the Competition Corner',
   callback: async ({ channel, interaction, instance }) => {
     let retVal;
-    
-    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+
+    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
-      const db = dbHelper.getCurrentDB();
+      //get current week
+      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
 
-      // get scores from db
-      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-
-      // sort descending
-      scores.sort((a, b) => (a.score < b.score) ? 1 : -1);
-
-      responseHelper.showEphemeralLeaderboard(scores, teams, interaction)
+      responseHelper.showEphemeralLeaderboard(currentWeek.scores, currentWeek.teams, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);
 
       retVal = 'showing leaderboard...';
