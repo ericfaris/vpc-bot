@@ -76,7 +76,7 @@ module.exports = {
         const utcDeadline = moment.utc(periodEnd).add(1, 'days').add(7, 'hours');
 
         //checking for deadline
-        if (periodEnd && moment.utc().isSameOrBefore(utcDeadline)) {
+        if (periodEnd && moment.utc().isSameOrAfter(utcDeadline)) {
 
           invalidMessage = `You are trying to post a score after the deadline of 12:00 AM PST. This message will be deleted in ${instance.del} seconds.`;
 
