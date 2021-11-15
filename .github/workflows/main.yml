@@ -60,5 +60,4 @@ jobs:
             DISCORD_BASE_API=${{ secrets.DISCORD_BASE_API }}
             GUILD_ID=${{ secrets.GUILD_ID }}
             SECONDS_TO_DELETE_MESSAGE=${{ secrets.SECONDS_TO_DELETE_MESSAGE }}
-            TEST_ONLY=${{ secrets.TEST_ONLY }}
             ENVIRONMENT=${{ secrets.ENVIRONMENT }}
