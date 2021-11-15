@@ -1,9 +1,9 @@
+require('dotenv').config()
 const DiscordJS = require('discord.js')
 const WOKCommands = require('wokcommands')
-const cron = require('node-cron');
 const path = require('path')
-const responseHelper = require('./helpers/responseHelper');
-require('dotenv').config()
+//const cron = require('node-cron');
+//const responseHelper = require('./helpers/responseHelper');
 
 console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`);
 console.log(`GUILD_ID: ${process.env.GUILD_ID}`);
