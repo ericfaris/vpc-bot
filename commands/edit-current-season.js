@@ -8,7 +8,7 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
-  testOnly: process.env.TEST_ONLY,
+  testOnly: true,
   guildOnly: true,
   description: 'Edit current season details and re-post the season leaderboard pinned message (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],

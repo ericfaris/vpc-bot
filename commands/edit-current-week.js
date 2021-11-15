@@ -8,7 +8,7 @@ const mongoHelper = require('../helpers/mongoHelper');
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
-  testOnly: process.env.TEST_ONLY,
+  testOnly: true,
   guildOnly: true,
   description: 'Edit Current Week Details for Competition Corner (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],

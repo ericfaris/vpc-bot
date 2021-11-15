@@ -6,7 +6,7 @@ const responseHelper = require('../helpers/responseHelper');
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
-  testOnly: process.env.TEST_ONLY,
+  testOnly: true,
   guildOnly: true,
   description: 'Repin the competition corner message (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],

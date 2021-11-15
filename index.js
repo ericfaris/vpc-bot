@@ -5,10 +5,6 @@ const path = require('path')
 const responseHelper = require('./helpers/responseHelper');
 require('dotenv').config()
 
-const PRODUCTION = 'production';
-const TEST = 'test';
-
-console.log(`TEST_ONLY: ${process.env.TEST_ONLY}`);
 console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`);
 console.log(`GUILD_ID: ${process.env.GUILD_ID}`);
 
@@ -23,25 +19,18 @@ const client = new DiscordJS.Client({
 })
 
 client.on('ready', () => {
-  if (process.env.ENVIRONMENT === this.PRODUCTION) {
     new WOKCommands(client, {
       commandsDir: path.join(__dirname, process.env.COMMANDS_DIR),
       showWarns: false,
-      del: process.env.SECONDS_TO_DELETE_MESSAGE
+      del: process.env.SECONDS_TO_DELETE_MESSAGE,
+      botOwners: process.env.BOT_OWNER,
+      testServers: process.env.GUILD_ID
     })
-  } else {
-    new WOKCommands(client, {
-      commandsDir: path.join(__dirname, process.env.COMMANDS_DIR),
-      testServers: process.env.GUILD_ID,
-      showWarns: false,
-      del: process.env.SECONDS_TO_DELETE_MESSAGE
-    })
-  }
 })
 
 client.login(process.env.BOT_TOKEN)
 
-//post JSON files to data-backup channel
-cron.schedule('15 0 * * *', function() {
-  responseHelper.postJsonDataFiles(client);
-});
+// //post JSON files to data-backup channel
+// cron.schedule('15 0 * * *', function() {
+//   responseHelper.postJsonDataFiles(client);
+// });

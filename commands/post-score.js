@@ -14,7 +14,7 @@ module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: 'both',
   aliases: ['score'],
-  testOnly: process.env.TEST_ONLY,
+  testOnly: true,
   guildOnly: true,
   description: 'Post score for the Competition Corner',
   minArgs: 1,
