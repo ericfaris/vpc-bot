@@ -37,15 +37,13 @@ module.exports = {
           'weekNumber': weeknumber,
           'periodStart': periodstart,
           'periodEnd': periodend,
-          'table': table,
-          'tableUrl': tableurl,
-          'romUrl': romurl,
-          'currentSeasonWeekNumber': currentseasonweeknumber,
-          'notes': notes
+          'table': table ?? '',
+          'tableUrl': tableurl ?? '',
+          'romUrl': romurl ?? '',
+          'currentSeasonWeekNumber': currentseasonweeknumber ?? '',
+          'notes': notes ?? ''
         }
-      },
-        { returnNewDocument: true },
-        'weeks');
+      }, { returnDocument: 'after' }, 'weeks');
 
       //post to competition channel pinned message
       await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
