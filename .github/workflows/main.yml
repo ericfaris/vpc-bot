@@ -52,6 +52,7 @@ jobs:
             APPLICATION_ID=${{ secrets.APPLICATION_ID }}
             BOT_TOKEN=${{ secrets.BOT_TOKEN }}
             COMMANDS_DIR=${{ secrets.COMMANDS_DIR }}
+            FEATURES_DIR=${{ secrets.FEATURES_DIR }}
             COMPETITION_CHANNEL_ID=${{ secrets.COMPETITION_CHANNEL_ID }}
             COMPETITION_CHANNEL_NAME=${{ secrets.COMPETITION_CHANNEL_NAME }}
             COMPETITION_WEEKLY_POST_ID=${{ secrets.COMPETITION_WEEKLY_POST_ID }}
@@ -60,4 +61,7 @@ jobs:
             DISCORD_BASE_API=${{ secrets.DISCORD_BASE_API }}
             GUILD_ID=${{ secrets.GUILD_ID }}
             SECONDS_TO_DELETE_MESSAGE=${{ secrets.SECONDS_TO_DELETE_MESSAGE }}
-            ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            BOT_OWNER=${{ secrets.BOT_OWNER }}

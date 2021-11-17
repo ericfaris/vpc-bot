@@ -7,11 +7,10 @@ module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
   testOnly: true,
-  testOnly: true,
   guildOnly: true,
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  description: 'Create message for Competition Corner (MANAGE_GUILD)',
+  description: 'Create new message for Competition Corner (MANAGE_GUILD)',
   callback: async ({ client, channel, interaction, instance }) => {
     let retVal;
 
@@ -27,9 +26,9 @@ module.exports = {
         + ` This message will be deleted in ${instance.del} seconds.`;
     } else {
       const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
-      compChannel.send('new message');
+      compChannel.send('This is your new message.');
 
-      retVal = 'Message created successfully.'
+      retVal = 'Message Created Successfully.';
     }
 
     return retVal;

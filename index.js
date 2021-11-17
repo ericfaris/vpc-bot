@@ -1,16 +1,14 @@
 require('dotenv').config()
 const DiscordJS = require('discord.js')
+const { Intents } = DiscordJS
 const WOKCommands = require('wokcommands')
 const path = require('path')
 //const cron = require('node-cron');
 //const responseHelper = require('./helpers/responseHelper');
 
-console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`);
 console.log(`GUILD_ID: ${process.env.GUILD_ID}`);
 
-const { Intents } = DiscordJS
 const client = new DiscordJS.Client({
-  // These intents are recommended for the built in help menu
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MESSAGES,
@@ -21,6 +19,7 @@ const client = new DiscordJS.Client({
 client.on('ready', () => {
     new WOKCommands(client, {
       commandsDir: path.join(__dirname, process.env.COMMANDS_DIR),
+      featuresDir: path.join(__dirname, process.env.FEATURES_DIR),
       showWarns: false,
       del: process.env.SECONDS_TO_DELETE_MESSAGE,
       botOwners: process.env.BOT_OWNER,
