@@ -3,6 +3,8 @@ const DiscordJS = require('discord.js')
 const { Intents } = DiscordJS
 const WOKCommands = require('wokcommands')
 const path = require('path')
+const postHighScoreCommand = require('./commands/post-high-score');
+
 //const cron = require('node-cron');
 //const responseHelper = require('./helpers/responseHelper');
 
@@ -26,6 +28,31 @@ client.on('ready', () => {
       testServers: process.env.GUILD_ID
     })
 })
+
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isSelectMenu()) return;
+
+  if (interaction.customId === 'select') {
+    let commandName = interaction?.message?.interaction?.commandName ?? interaction?.message?.nonce;
+    
+    switch(commandName) {
+      case 'post-high-score':
+          let selectedJson = JSON.parse(interaction.values[0]);
+
+          await postHighScoreCommand.saveHighScore(selectedJson).then(async () => {
+            await interaction.update({
+                content: `**@${selectedJson.u}** just posted a high score for **${selectedJson.t} (${selectedJson.a} ${selectedJson.v})**\n**Score: **${selectedJson.s}\n `, 
+                components: []
+              });
+          })
+
+          break;
+      
+      default:
+        console.log(commandName)
+    }		
+	}
+});
 
 client.login(process.env.BOT_TOKEN)
 
