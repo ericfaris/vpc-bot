@@ -37,7 +37,7 @@ module.exports = {
       var retArray = currentWeek.scores.splice(rank - 1, 1);
 
       //save scores to db
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { scores: currentWeek.scores } }, 'weeks');
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { scores: currentWeek.scores } }, null, 'weeks');
 
       if (retArray.length > 0) {
         retVal = 'Score removed successfully.';

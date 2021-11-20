@@ -1,5 +1,6 @@
 require('dotenv').config()
 const path = require('path');
+const date = require('date-and-time');
 const { MessageActionRow, MessageSelectMenu } = require('discord.js');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
@@ -86,7 +87,20 @@ module.exports = {
     }
   },
 
-  saveHighScore: async (highScoreObject) => {
-    console.log(highScoreObject);
+  saveHighScore: async (data, interaction) => {
+    await mongoHelper.updateOne(
+      { tableName: data.t },
+      { $push: { 'authors.$[a].versions.$[v].scores' : {
+        'username': data.u,
+        'score': data.s,
+        'postUrl': interaction.message.url,
+        'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
+      }}, 
+      { arrayFilters: [
+          { 'a.author': data.a },
+          { 'v.version': data.v }
+        ]},
+      'tables'
+    );
   },
 }

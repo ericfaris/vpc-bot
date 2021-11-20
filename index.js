@@ -39,7 +39,7 @@ client.on('interactionCreate', async interaction => {
       case 'post-high-score':
           let selectedJson = JSON.parse(interaction.values[0]);
 
-          await postHighScoreCommand.saveHighScore(selectedJson).then(async () => {
+          await postHighScoreCommand.saveHighScore(selectedJson, interaction).then(async () => {
             await interaction.update({
                 content: `**@${selectedJson.u}** just posted a high score for **${selectedJson.t} (${selectedJson.a} ${selectedJson.v})**\n**Score: **${selectedJson.s}\n `, 
                 components: []

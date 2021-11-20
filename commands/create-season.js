@@ -39,7 +39,7 @@ module.exports = {
         'isArchived': false
       }
 
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, 'seasons');
+      await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, null, 'seasons');
 
       await mongoHelper.insertOne(season, 'seasons');
 

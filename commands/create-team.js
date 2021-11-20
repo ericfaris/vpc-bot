@@ -41,12 +41,12 @@ module.exports = {
       // update or add teams
       if (existingTeam) {
         existingTeam.members = team.members;
-        await mongoHelper.updateOne({ isArchived: false, 'teams.name': teamName }, { $push: { 'teams': existingTeam } }, 'weeks');
+        await mongoHelper.updateOne({ isArchived: false, 'teams.name': teamName }, { $push: { 'teams': existingTeam } }, null, 'weeks');
       } else {
         const newTeam = new Object();
         newTeam.name = teamName;
         newTeam.members = members;
-        await mongoHelper.updateOne({ isArchived: false }, { $push: { 'teams': newTeam } }, 'weeks');
+        await mongoHelper.updateOne({ isArchived: false }, { $push: { 'teams': newTeam } }, null, 'weeks');
       }
 
       // create text table

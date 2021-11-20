@@ -141,7 +141,7 @@ module.exports = {
     const currentRank = scoreHelper.getCurrentRankText(userName, scores);
 
     //save scores to db
-    await mongoHelper.updateOne({ isArchived: false }, { $set: { scores: scores } }, 'weeks');
+    await mongoHelper.updateOne({ isArchived: false }, { $set: { scores: scores } }, null, 'weeks');
 
     //post to competition channel pinned message
     await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);
