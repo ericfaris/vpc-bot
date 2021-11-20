@@ -55,18 +55,48 @@ module.exports = {
         let existingAuthor = existingTable?.authors?.find(a => a.authorName === authorname);
         let existingVersion = existingAuthor?.versions?.find(v => v.version === version);
 
+        let filter;
+        let update;
+        let options;
+
         if(!existingAuthor) {
-          //TODO: push new author
-          //TODO: push new version
-          return `New author and version created for ${tablename}.`;
+          filter = { tableName: tablename};
+          options = null;
+          update = { $push: { 'authors' :           
+              { 'authorName': authorname,
+                'versions': [
+                  { 'version': version,
+                    'versionUrl': versionurl ?? '',
+                    'romName': romname ?? '',
+                    'scores': []
+                  }]
+              }
+          }};      
+
+          retVal = `New author and version created for ${tablename}.`;
         } else {
           if(!existingVersion) {
-            //TODO: push new version
-            return `New version created for ${tablename} (${authorname}).`;
+            filter = { tableName: tablename };
+            options = { arrayFilters: [
+              { 'a.authorName': authorname }
+            ]};
+            update = { $push: { 'authors.$[a].versions' :
+              { 'version': version,
+                'versionUrl': versionurl ?? '',
+                'romName': romname ?? '',
+                'scores': []
+              }
+            }};
+
+            retVal = `New version created for ${tablename} (${authorname}).`;
           } else {
-            return `${tablename} (${authorname}) (${version}) already exists.`
+            return `${tablename} (${authorname}) (${version}) already exists.`;
           }
         }
+
+        await mongoHelper.updateOne(filter, update, options, 'tables');
+
+        return retVal;
       }
     }
   },
