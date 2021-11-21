@@ -92,4 +92,12 @@ module.exports = {
         await collection.deleteMany({});
         client.close();
     },
+
+    aggregate: async(pipeline, collectionName) => {
+        const client = await module.exports.connect();
+        const collection = await module.exports.getCollection(client, collectionName)
+        const docs = await collection.aggregate(pipeline).toArray();
+        client.close();
+        return docs;
+    }
 }
