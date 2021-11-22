@@ -224,6 +224,26 @@ module.exports = {
     }
   },
 
+  printHighScoreTables: (tables, tablesToShow, expandedLayout) => {
+    var strText;
+    let tableArray = [];
+
+    strText = '**High Score Table List:**\n\n';
+    var t = new Table;
+
+    tables.forEach(function (table) {
+      strText += `[**${table.tableName}**](${table.tableUrl ?? ''}) (${table.authorName ?? ''} ${table.version ?? ''}) \n`;
+    });
+
+    if (tablesToShow && tablesToShow > 1) {
+      tableArray = module.exports.splitPosts(tables, strText, tablesToShow);
+    } else {
+      tableArray = module.exports.splitPosts(tables, strText, 30);
+    }
+
+    return tableArray;
+  },
+
   splitPosts: (records, textTableAsString, numOfScoresToShow) => {
     var startIndex = 0;
     var scoresProcessed = 0;

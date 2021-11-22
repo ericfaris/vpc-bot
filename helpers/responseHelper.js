@@ -38,6 +38,12 @@ module.exports = {
         module.exports.postEphemeralMessages(contentArray, interaction);
     },
 
+    showEphemeralHighScoreTables: async (tables, interaction) => {
+        var contentArray = outputHelper.printHighScoreTables(tables, null, false)
+        module.exports.postEphemeralMessages(contentArray, interaction);
+    },
+
+
     postEphemeralMessages: async (contentArray, interaction) => {
         const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
 

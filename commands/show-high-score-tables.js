@@ -26,6 +26,7 @@ module.exports = {
           tableName: 1,
           authorName: "$authors.authorName",
           version: '$authors.versions.version',
+          tableUrl: '$authors.versions.versionUrl',
           _id: 0
         }},
         { $sort: {tableName: 1, authorName: 1, version: 1} }
@@ -33,8 +34,8 @@ module.exports = {
 
       const tables = await mongoHelper.aggregate(pipeline, 'tables');
 
-      // responseHelper.showEphemeralLeaderboard(currentWeek.scores, currentWeek.teams, interaction)
-      // responseHelper.deleteOriginalMessage(interaction, 0);
+      responseHelper.showEphemeralHighScoreTables(tables, interaction)
+      responseHelper.deleteOriginalMessage(interaction, 0);
 
       retVal = 'showing leaderboard...';
     }
