@@ -22,7 +22,6 @@ module.exports = {
         setTimeout(function () {
             request(options, function (error, response) {
                 if (error) throw new Error(error);
-                console.log('removing original message, response.body: ' + response.body);
             });
         }, secondsToWait * 1000);
 
