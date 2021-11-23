@@ -1,4 +1,5 @@
 require('dotenv').config()
+const Logger = require('./helpers/loggingHelper');
 const DiscordJS = require('discord.js')
 const { Intents } = DiscordJS
 const WOKCommands = require('wokcommands')
@@ -7,8 +8,10 @@ const postHighScoreCommand = require('./commands/post-high-score');
 
 //const cron = require('node-cron');
 //const responseHelper = require('./helpers/responseHelper');
+let logger = (new Logger(null)).logger;
 
-console.log(`GUILD_ID: ${process.env.GUILD_ID}`);
+logger.info('Starting bot');
+logger.info(`GUILD_ID: ${process.env.GUILD_ID}`);
 
 const client = new DiscordJS.Client({
   intents: [
@@ -19,6 +22,7 @@ const client = new DiscordJS.Client({
 })
 
 client.on('ready', () => {
+    logger.info('Loading commands');
     new WOKCommands(client, {
       commandsDir: path.join(__dirname, process.env.COMMANDS_DIR),
       featuresDir: path.join(__dirname, process.env.FEATURES_DIR),
@@ -27,6 +31,7 @@ client.on('ready', () => {
       botOwners: process.env.BOT_OWNER,
       testServers: process.env.GUILD_ID
     })
+    logger.info('Bot is ready for work');
 })
 
 client.on('interactionCreate', async interaction => {
