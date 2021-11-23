@@ -49,6 +49,16 @@ module.exports = {
     t.newRow()
   },
 
+  createTableRowHighScore: (t, table, expandedLayout) => {
+    t.cell('User', table.userName, Table.leftPadder(' '))
+    t.cell('Score', table.highScore, (val, width) => {
+      var str = numeral(val).format('0,0');
+      return width ? Table.padLeft(str, width) : str;
+    })
+    t.cell('Posted', table.posted, Table.rightPadder(' '))
+    t.newRow()
+  },
+
   printLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
     var strText = '**Leaderboard:**\n';
 
@@ -229,10 +239,12 @@ module.exports = {
     let tableArray = [];
 
     strText = '**High Score Table List:**\n\n';
-    var t = new Table;
 
     tables.forEach(function (table) {
-      strText += `[**${table.tableName}**](${table.tableUrl ?? ''}) (${table.authorName ?? ''} ${table.version ?? ''}) \n`;
+      var t = new Table;
+      module.exports.createTableRowHighScore(t, table, false)
+      strText += `[**${table.tableName}**](${table.tableUrl ?? ''}) (${table.authorName ?? ''} ${table.version ?? ''})\n`;
+      strText += '`' + t.toString() + '`' + '\n';
     });
 
     if (tablesToShow && tablesToShow > 1) {

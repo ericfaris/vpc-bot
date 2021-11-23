@@ -9,9 +9,12 @@ module.exports = {
   slash: true,
   testOnly: true,
   guildOnly: true,
-  description: 'Show high score tables',
-  callback: async ({ channel, interaction, instance }) => {
+  description: 'Search high score tables',
+  minArgs: 1,
+  expectedArgs: '<tablesearchterm>',
+  callback: async ({ args, channel, interaction, instance }) => {
     let retVal;
+    const [tableSearchTerm] = args;
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.del);
@@ -20,16 +23,36 @@ module.exports = {
     } else {
 
       const pipeline = [
+        { $match: {tableName:{$regex:'.*' + tableSearchTerm + '.*', $options: 'i'}}},
         { $unwind: "$authors" },
         { $unwind: { "path": "$authors.versions", "preserveNullAndEmptyArrays": true } },
+        { $unwind: { "path": "$authors.versions.scores", "preserveNullAndEmptyArrays": true } },
         { $project: {
-          tableName: 1,
+          tableName: '$tableName',
           authorName: "$authors.authorName",
           version: '$authors.versions.version',
           tableUrl: '$authors.versions.versionUrl',
+          userName: '$authors.versions.scores.username',
+          score: '$authors.versions.scores.score',
           _id: 0
         }},
-        { $sort: {tableName: 1, authorName: 1, version: 1} }
+        { $group: {
+          _id: {
+            tableName: '$tableName',
+            authorName: "$authorName",
+            version: '$version',
+            tableUrl: '$versionUrl'
+          },
+          highScore: {$max: '$score'}
+        }},
+        { $project: {
+          tableName: '$_id.tableName',
+          authorName: "$_id.authorName",
+          version: '$_id.version',
+          tableUrl: '$_id.versionUrl',
+          highScore: '$highScore'
+        }},
+        { $sort: {tableName: 1, authorName: 1} }
       ];
 
       const tables = await mongoHelper.aggregate(pipeline, 'tables');
