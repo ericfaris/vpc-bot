@@ -51,7 +51,7 @@ module.exports = {
 
   createTableRowHighScore: (t, table, expandedLayout) => {
     t.cell('User', table.userName, Table.leftPadder(' '))
-    t.cell('Score', table.highScore, (val, width) => {
+    t.cell('High Score', table.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
@@ -234,16 +234,18 @@ module.exports = {
     }
   },
 
-  printHighScoreTables: (tables, tablesToShow, expandedLayout) => {
+  printHighScoreTables: (searchTerm, tables, tablesToShow, expandedLayout) => {
     var strText;
     let tableArray = [];
 
-    strText = '**High Score Table List:**\n\n';
+    strText = `**Results for '${searchTerm}'**\n\n`;
 
     tables.forEach(function (table) {
       var t = new Table;
       module.exports.createTableRowHighScore(t, table, false)
-      strText += `[**${table.tableName}**](${table.tableUrl ?? ''}) (${table.authorName ?? ''} ${table.version ?? ''})\n`;
+      strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
+        ` (${table.authorName ? table.authorName + ' ' : ''}${table.version ?? ''})` +
+        (table?.postUrl ? `  [photo](${table.postUrl})` : '') + '\n';
       strText += '`' + t.toString() + '`' + '\n';
     });
 

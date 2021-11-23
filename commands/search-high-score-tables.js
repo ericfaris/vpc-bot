@@ -34,30 +34,31 @@ module.exports = {
           tableUrl: '$authors.versions.versionUrl',
           userName: '$authors.versions.scores.username',
           score: '$authors.versions.scores.score',
+          posted: '$authors.versions.scores.createdAt',
+          postUrl: '$authors.versions.scores.postUrl',
           _id: 0
         }},
+        { $sort: {tableName: 1, authorName: -1, version: -1, score: -1} },
         { $group: {
           _id: {
             tableName: '$tableName',
             authorName: "$authorName",
             version: '$version',
-            tableUrl: '$versionUrl'
+            tableUrl: '$versionUrl',
+            userName: '$authors.versions.scores.username',
+            score: '$authors.versions.scores.score',
+            posted: '$authors.versions.scores.createdAt',
+            postUrl: '$authors.versions.scores.postUrl',
           },
-          highScore: {$max: '$score'}
+          group: {$first:'$$ROOT'}
         }},
-        { $project: {
-          tableName: '$_id.tableName',
-          authorName: "$_id.authorName",
-          version: '$_id.version',
-          tableUrl: '$_id.versionUrl',
-          highScore: '$highScore'
-        }},
-        { $sort: {tableName: 1, authorName: 1} }
+        {$replaceRoot:{newRoot:"$group"}},
+        { $sort: {tableName: 1, authorName: -1, version: -1} }
       ];
 
       const tables = await mongoHelper.aggregate(pipeline, 'tables');
 
-      responseHelper.showEphemeralHighScoreTables(tables, interaction)
+      responseHelper.showEphemeralHighScoreTables(tables, tableSearchTerm, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);
 
       retVal = 'showing leaderboard...';
