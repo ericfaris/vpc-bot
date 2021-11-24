@@ -14,9 +14,9 @@ module.exports = {
     let retVal;
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.del} seconds.`;
+        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       const username = interaction.member.user.username;
 
@@ -35,8 +35,8 @@ module.exports = {
 
         retVal = 'showing score...';
       } else {
-        responseHelper.deleteOriginalMessage(interaction, instance.del);
-        retVal = `No score found for ${username}. This message will be deleted in ${instance.del} seconds.`;
+        responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
+        retVal = `No score found for ${username}. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
       }
     }
 

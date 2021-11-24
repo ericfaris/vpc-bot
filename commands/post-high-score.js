@@ -24,65 +24,85 @@ module.exports = {
 
     // if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
     //   console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-    //   responseHelper.deleteOriginalMessage(interaction, instance.del);
-    //   return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.del} seconds.`;
+    //   responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
+    //   return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     // }
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
+      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.del} seconds.`;
+        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       const [score, tableSearchTerm] = args;
 
       const tables = (await mongoHelper.find({tableName:{$regex:'.*' + tableSearchTerm + '.*', $options: 'i'}}, 'tables'))
         .sort((a, b) => a.tableName - b.tableName);
 
-      const options = [];
+      if (tables.length > 0) {
+        const options = [];
 
-      let tableName;
-      let authorName;
-      let versionNumber;
+        let tableName;
+        let authorName;
+        let versionNumber;
 
-      tables.forEach(table => {
-        tableName = table.tableName;
-        table.authors.sort((a,b) => b.author - a.author).forEach(author => {
-          authorName = author.author;
-          author.versions.sort((a,b) => b.version - a.version).forEach(version => {
-            versionNumber = version.version;
-            let option = {
-              label: `${tableName} (${authorName} ${versionNumber})`,
-              value: `{"u":"${user.username}","s":${score},"t":"${tableName}","a":"${authorName}","v":"${versionNumber}"}`
-            };
-            options.push(option);
+        tables.forEach(table => {
+          tableName = table.tableName;
+          table.authors.sort((a,b) => b.authorName - a.authorName).forEach(author => {
+            authorName = author.authorName;
+            author.versions.sort((a,b) => b.version - a.version).forEach(version => {
+              versionNumber = version.version;
+              const scoreAsInt = parseInt(score.replace(/,/g, ''));
+              let option = {
+                label: `${tableName} (${authorName} ${versionNumber})`,
+                value: `{"u":"${user.username}","s":"${scoreAsInt}","t":"${tableName}","a":"${authorName}","v":"${versionNumber}"}`
+              };
+              options.push(option);
+            })
           })
-        })
-      });
-
-      const row = new MessageActionRow()
-        .addComponents(
-          new MessageSelectMenu()
-            .setCustomId('select')
-            .setPlaceholder('Nothing selected')
-            .addOptions(options),
-        );
-
-      if (message) {
-        let attachment = message.attachments?.first();
-        let content = 'Which table do you want to post this high score?';
-
-        message.reply({ 
-          content: content, 
-          nonce: commandName,
-          files: [attachment], 
-          components: [row], 
-          ephemeral: true
-        }).then(() => {
-          message.delete();
         });
 
+        const row = new MessageActionRow()
+          .addComponents(
+            new MessageSelectMenu()
+              .setCustomId('select')
+              .setPlaceholder('Please select table for high score...')
+              .addOptions(options),
+          );
+
+        if (message) {
+          let attachment = message.attachments?.first();
+          let content = 'Which table do you want to post this high score?';
+
+          message.reply({ 
+            content: content, 
+            nonce: commandName,
+            files: [attachment], 
+            components: [row], 
+            ephemeral: true
+          }).then(() => {
+            message.delete();
+          });
+
+        } else {
+          await interaction.reply({ content: content, components: [row], ephemeral: true });
+        }
       } else {
-        await interaction.reply({ content: content, components: [row], ephemeral: true });
+        if (message) {
+          let content = `No high score tables were found using "${tableSearchTerm}".` +
+            `  Try posting high score again using a different table search term.  This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+
+          message.reply({ 
+            content: content, 
+            nonce: commandName,
+            ephemeral: true
+          }).then((reply) => {
+            setTimeout(() => reply.delete(), instance.delErrMsgCooldown * 1000)
+            message.delete();
+          });
+
+        } else {
+          await interaction.reply({ content: content, ephemeral: true });
+        }
       }
     }
   },
@@ -97,7 +117,7 @@ module.exports = {
         'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
       }}, 
       { arrayFilters: [
-          { 'a.author': data.a },
+          { 'a.authorName': data.a },
           { 'v.version': data.v }
         ]},
       'tables'

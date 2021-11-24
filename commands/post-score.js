@@ -27,17 +27,17 @@ module.exports = {
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.del} seconds.`;
+        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
 
       if (message) {
         message.reply(invalidMessage).then((reply) => {
           message.delete();
           setTimeout(() => {
             reply.delete();
-          }, instance.del * 1000)
+          }, instance.delErrMsgCooldown * 1000)
         })
       } else {
-        responseHelper.deleteOriginalMessage(interaction, instance.del);
+        responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
         return invalidMessage;
       }
     } else {
@@ -49,17 +49,17 @@ module.exports = {
       // invalid parameter message
       if (scoreAsInt == NaN || !re.test(scoreAsInt)) {
         invalidMessage = `The score needs to be a number between 1 and 999999999999999.`
-          + ` This message will be deleted in ${instance.del} seconds.`;
+          + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
 
         if (message) {
           message.reply(invalidMessage).then((reply) => {
             message.delete();
             setTimeout(() => {
               reply.delete();
-            }, instance.del * 1000)
+            }, instance.delErrMsgCooldown * 1000)
           })
         } else {
-          responseHelper.deleteOriginalMessage(interaction, instance.del);
+          responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
           return invalidMessage;
         }
       } else if (!message) {
@@ -78,17 +78,17 @@ module.exports = {
         //checking for deadline
         if (periodEnd && moment.utc().isSameOrAfter(utcDeadline)) {
 
-          invalidMessage = `You are trying to post a score after the deadline of 12:00 AM PST. This message will be deleted in ${instance.del} seconds.`;
+          invalidMessage = `You are trying to post a score after the deadline of 12:00 AM PST. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
 
           if (message) {
             message.reply(invalidMessage).then((reply) => {
               message.delete();
               setTimeout(() => {
                 reply.delete();
-              }, instance.del * 1000)
+              }, instance.delErrMsgCooldown * 1000)
             })
           } else {
-            responseHelper.deleteOriginalMessage(interaction, instance.del);
+            responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
             return invalidMessage;
           }
 

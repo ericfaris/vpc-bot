@@ -241,12 +241,17 @@ module.exports = {
     strText = `**Results for '${searchTerm}'**\n\n`;
 
     tables.forEach(function (table) {
-      var t = new Table;
-      module.exports.createTableRowHighScore(t, table, false)
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
         ` (${table.authorName ? table.authorName + ' ' : ''}${table.version ?? ''})` +
         (table?.postUrl ? `  [photo](${table.postUrl})` : '') + '\n';
-      strText += '`' + t.toString() + '`' + '\n';
+
+      if (table?.userName) {
+        var t = new Table;
+        module.exports.createTableRowHighScore(t, table, false)
+        strText += '`' + t.toString() + '`' + '\n';
+      } else {
+        strText += '**NO HIGH SCORES POSTED**'
+      }
     });
 
     if (tablesToShow && tablesToShow > 1) {
