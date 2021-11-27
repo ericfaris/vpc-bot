@@ -65,3 +65,5 @@ jobs:
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             BOT_OWNER=${{ secrets.BOT_OWNER }}
+            HIGH_SCORE_CHANNEL_NAME=${{ secrets.HIGH_SCORE_CHANNEL_NAME }}
+            HIGH_SCORE_CHANNEL_ID=${{ secrets.HIGH_SCORE_CHANNEL_ID }}
