@@ -99,9 +99,19 @@ module.exports = {
 
           if (message) {
             let attachment = message.attachments?.first();
-            message.reply({content: '@' + user.username + ', ' + retVal, files: [attachment]}).then(() => {
-              message.delete();
-            });
+            if (attachment) {
+              message.reply({content: `<@${user.id}>, ` + retVal, files: [attachment]}).then(() => {
+                message.delete();
+              });
+            } else {
+              invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
+              message.reply(invalidMessage).then((reply) => {
+                message.delete();
+                setTimeout(() => {
+                  reply.delete();
+                }, instance.delErrMsgCooldown * 1000)
+              })    
+            }
           } else {
             return retVal;
           }

@@ -28,9 +28,9 @@ module.exports = {
     //   return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     // }
 
-    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+    if (channel.name !== process.env.HIGH_SCORE_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORE_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       const [score, tableSearchTerm] = args;
@@ -71,18 +71,32 @@ module.exports = {
 
         if (message) {
           let attachment = message.attachments?.first();
-          let content = 'Which table do you want to post this high score?';
 
-          message.reply({ 
-            content: content, 
-            nonce: commandName,
-            files: [attachment], 
-            components: [row], 
-            ephemeral: true
-          }).then(() => {
-            message.delete();
-          });
+          if (attachment) {
+            message.reply({content: `<@${user.id}>, ` + retVal, files: [attachment]}).then(() => {
+              message.delete();
+            });
 
+            let content = 'Which table do you want to post this high score?';
+
+            message.reply({ 
+              content: content, 
+              nonce: commandName,
+              files: [attachment], 
+              components: [row], 
+              ephemeral: true
+            }).then(() => {
+              message.delete();
+            });
+          } else {
+            invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
+            message.reply(invalidMessage).then((reply) => {
+              message.delete();
+              setTimeout(() => {
+                reply.delete();
+              }, instance.delErrMsgCooldown * 1000)
+            })    
+          }
         } else {
           await interaction.reply({ content: content, components: [row], ephemeral: true });
         }
