@@ -9,6 +9,7 @@ module.exports = {
   slash: true,
   testOnly: true,
   guildOnly: true,
+  hidden: true,
   description: 'Search high score tables',
   minArgs: 1,
   expectedArgs: '<tablesearchterm>',

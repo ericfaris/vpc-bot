@@ -9,6 +9,7 @@ module.exports = {
   slash: true,
   testOnly: true,
   guildOnly: true,
+  hidden: true,
   description: 'Edit team name for Competition Corner (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],

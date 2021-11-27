@@ -11,6 +11,7 @@ module.exports = {
   guildOnly: true,
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
+  hidden: true,
   description: 'Create new message for Competition Corner (MANAGE_GUILD)',
   callback: async ({ client, channel, interaction, instance, user }) => {
     let logger = (new Logger(user)).logger;

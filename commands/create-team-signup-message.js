@@ -8,6 +8,7 @@ module.exports = {
   slash: true,
   testOnly: true,
   guildOnly: true,
+  hidden: true,
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   description: 'Create team signup message for Competition Corner (MANAGE_GUILD)',
