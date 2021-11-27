@@ -1,6 +1,6 @@
 require('dotenv').config()
 const path = require('path');
-var postScore = require('./post-score');
+const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
@@ -11,12 +11,12 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Edit score for Competition Corner (MANAGE_GUILD)',
+  description: 'Edit Current Week Details for Competition Corner (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  minArgs: 2,
-  expectedArgs: '<username> <score>',
-  callback: async ({ args, channel, client, interaction, instance }) => {
+  minArgs: 4,
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
+  callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
@@ -30,9 +30,26 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
-      const [username, score] = args;
-      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
-      retVal = await postScore.saveScore(username, score, currentWeek, client, interaction);
+
+      const [weeknumber, periodstart, periodend, table, tableurl, romurl, currentseasonweeknumber, notes] = args;
+
+      const week = await mongoHelper.findOneAndUpdate({ isArchived: false }, {
+        $set: {
+          'weekNumber': weeknumber,
+          'periodStart': periodstart,
+          'periodEnd': periodend,
+          'table': table ?? '',
+          'tableUrl': tableurl ?? '',
+          'romUrl': romurl ?? '',
+          'currentSeasonWeekNumber': currentseasonweeknumber ?? '',
+          'notes': notes ?? ''
+        }
+      }, { returnDocument: 'after' }, 'weeks');
+
+      //post to competition channel pinned message
+      await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
+
+      retVal = process.env.COMPETITION_CHANNEL_NAME + ' message updated successfully.';
     }
 
     return retVal;

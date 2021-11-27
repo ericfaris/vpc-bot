@@ -1,9 +1,9 @@
 require('dotenv').config()
 const path = require('path');
-var postScore = require('./post-score');
+const mongoHelper = require('../helpers/mongoHelper');
+const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
-const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -11,12 +11,12 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Edit score for Competition Corner (MANAGE_GUILD)',
+  description: 'Edit current season details and re-post the season leaderboard pinned message (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  minArgs: 2,
-  expectedArgs: '<username> <score>',
-  callback: async ({ args, channel, client, interaction, instance }) => {
+  minArgs: 4,
+  expectedArgs: '<seasonnumber> <seasonname> <seasonstart> <seasonend>',
+  callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
@@ -30,9 +30,30 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
-      const [username, score] = args;
-      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
-      retVal = await postScore.saveScore(username, score, currentWeek, client, interaction);
+      const [seasonnumber, seasonname, seasonstart, seasonend] = args;
+
+      const updatedSeason = {
+        'seasonNumber': seasonnumber,
+        'seasonName': seasonname,
+        'seasonStart': seasonstart,
+        'seasonEnd': seasonend,
+      }
+
+      await mongoHelper.findOneAndUpdate({ isArchived: false }, {
+        $set: updatedSeason
+      },
+        null,
+        'seasons');
+
+      const weeks = await mongoHelper.find({
+        isArchived: true,
+        periodStart: { $gte: updatedSeason.seasonStart },
+        periodEnd: { $lte: updatedSeason.seasonEnd }
+      }, 'weeks');
+
+      await outputHelper.editSeasonCompetitionCornerMessage(updatedSeason, weeks, client);
+
+      retVal = "Season has been updated."
     }
 
     return retVal;

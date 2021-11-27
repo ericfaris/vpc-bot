@@ -1,33 +1,28 @@
 require('dotenv').config()
 const path = require('path');
-var Table = require('easy-table')
-const dbHelper = require('../helpers/dbHelper');
+const Table = require('easy-table')
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
-  testOnly: process.env.TEST_ONLY,
+  testOnly: true,
   guildOnly: true,
   description: 'Show current teams for the Competition Corner',
-  callback: async ({ interaction, channel, instance }) => {    
+  callback: async ({ interaction, channel, instance }) => {
     let retVal;
-    
-    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
-        + ` This message will be deleted in ${instance.del} seconds.`;
+
+    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
+        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
-      const db = dbHelper.getCurrentDB();
+      //get current week
+      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
 
-      // get scores from db
-      const scores = db.get('scores') ? JSON.parse(db.get('scores')) : [];
-
-      // get teams from db
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-     
-      if (teams && teams.length > 0) {
-        responseHelper.showEphemeralTeams(scores, teams, interaction);
+      if (currentWeek.teams && currentWeek.teams.length > 0) {
+        responseHelper.showEphemeralTeams(currentWeek.scores, currentWeek.teams, interaction);
         responseHelper.deleteOriginalMessage(interaction, 0);
         retVal = 'showing teams...';
       } else {

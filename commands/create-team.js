@@ -1,68 +1,64 @@
 require('dotenv').config()
 const path = require('path');
-var Table = require('easy-table')
-const dbHelper = require('../helpers/dbHelper');
+const Table = require('easy-table')
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
+const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
-  testOnly: process.env.TEST_ONLY,
+  testOnly: true,
   guildOnly: true,
+  hidden: true,
   description: 'Create teams for Competition Corner (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   minArgs: 1,
   expectedArgs: '<team>',
-  callback: async ({args, channel, interaction, client, instance}) => {
+  callback: async ({ args, channel, interaction, client, instance }) => {
     let retVal;
 
-    if(!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
+    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
-      return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.del} seconds.`;
+      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
+      return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     }
-    
-    if(channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.del);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.` 
-        + ` This message will be deleted in ${instance.del} seconds.`;
+
+    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
+        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
 
-      const db = dbHelper.getCurrentDB();
-
       const t = new Table;
-      const [team] = args;
+      const [team] = args || {};
 
       const teamName = team.substring(0, team.indexOf(":"));
-      const members = team.substring(team.indexOf(":")+1).split(",");
+      const members = team.substring(team.indexOf(":") + 1).split(",");
 
-      // get teams from db
-      const teams = db.get('teams') ? JSON.parse(db.get('teams')) : [];
-
-      //search for existing team
-      const existingTeam = teams.find(x => x.teamName === teamName);
+      const existingTeam = await mongoHelper.findOne({ isArchived: false, 'teams.name': teamName }, 'weeks');
 
       // update or add teams
       if (existingTeam) {
-        existingTeam.members = members;
+        existingTeam.members = team.members;
+        await mongoHelper.updateOne({ isArchived: false, 'teams.name': teamName }, { $push: { 'teams': existingTeam } }, null, 'weeks');
       } else {
-        teams.push({'teamName': teamName, 'members': members});
+        const newTeam = new Object();
+        newTeam.name = teamName;
+        newTeam.members = members;
+        await mongoHelper.updateOne({ isArchived: false }, { $push: { 'teams': newTeam } }, null, 'weeks');
       }
-
-      //save teams to db
-      db.set('teams', JSON.stringify(teams));
 
       // create text table
       var i = 0;
-      members.forEach(function(member) {
+      members.forEach(function (member) {
         t.cell(teamName, member)
         t.newRow()
       })
-      
+
       // return text table string
-      retVal =  'Team created successfully. \n\n' + t.toString();
+      retVal = 'Team created successfully. \n\n' + t.toString();
     }
 
     return retVal;
