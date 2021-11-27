@@ -1,5 +1,5 @@
 {
-    "name": "score-bot",
+    "name": "competition-corner-bot",
     "version": "1.0.0",
     "description": "Allows posting of scores to Discord",
     "main": "index.js",
