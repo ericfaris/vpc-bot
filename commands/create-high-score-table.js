@@ -25,9 +25,9 @@ module.exports = {
       return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     }
 
-    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+    if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_NAME}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       const [tablename, authorname, version, versionurl, romname] = args;
