@@ -27,7 +27,7 @@ module.exports = {
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_NAME}> channel.`
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       const [tablename, authorname, version, versionurl, romname] = args;
