@@ -27,8 +27,8 @@ logger.info(`DISCORD_BASE_API: ${process.env.DISCORD_BASE_API}`);
 logger.info(`SECONDS_TO_DELETE_MESSAGE: ${process.env.SECONDS_TO_DELETE_MESSAGE}`);
 logger.info(`DB_NAME: ${process.env.DB_NAME}`);
 logger.info(`BOT_OWNER: ${process.env.BOT_OWNER}`);
-logger.info(`HIGH_SCORE_CHANNEL_NAME: ${process.env.HIGH_SCORE_CHANNEL_NAME}`);
-logger.info(`HIGH_SCORE_CHANNEL_ID: ${process.env.HIGH_SCORE_CHANNEL_ID}`);
+logger.info(`HIGH_SCORES_CHANNEL_NAME: ${process.env.HIGH_SCORES_CHANNEL_NAME}`);
+logger.info(`HIGH_SCORES_CHANNEL_ID: ${process.env.HIGH_SCORES_CHANNEL_ID}`);
 
 const client = new DiscordJS.Client({
   intents: [
