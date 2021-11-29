@@ -23,6 +23,10 @@ module.exports = {
     let retVal;
     let invalidMessage;
     let commandName = path.basename(__filename).split('.')[0];
+    const [score, tableSearchTerm] = args;
+    const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
+
+    logger.info(`score: ${score}, tableSearchTerm: ${tableSearchTerm}`);
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
@@ -69,9 +73,6 @@ module.exports = {
         responseHelper.deleteOriginalMessage(interaction, 60);
         return invalidMessage;
       } else {
-        const [score, tableSearchTerm] = args;
-        logger.info(`score: ${score}, tableSearchTerm: ${tableSearchTerm}`);
-
         const tables = (await mongoHelper.find({tableName:{$regex:'.*' + tableSearchTerm + '.*', $options: 'i'}}, 'tables'))
           .sort((a, b) => a.tableName - b.tableName);
 
