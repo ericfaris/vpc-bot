@@ -73,10 +73,6 @@ module.exports = {
           let attachment = message.attachments?.first();
 
           if (attachment) {
-            message.reply({content: `<@${user.id}>, ` + retVal, files: [attachment]}).then(() => {
-              message.delete();
-            });
-
             let content = 'Which table do you want to post this high score?';
 
             message.reply({ 
@@ -90,6 +86,7 @@ module.exports = {
             });
           } else {
             invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
+            
             message.reply(invalidMessage).then((reply) => {
               message.delete();
               setTimeout(() => {
