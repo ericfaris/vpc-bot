@@ -14,9 +14,6 @@ module.exports = {
   aliases: ['high'],
   testOnly: true,
   guildOnly: true,
-  hidden: true,
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
   description: 'Post a high score (MANAGE_GUILD)',
   minArgs: 2,
   expectedArgs: '<score> <tablesearchterm>',
@@ -24,12 +21,6 @@ module.exports = {
     let logger = (new Logger(user)).logger;
     let retVal;
     let commandName = path.basename(__filename).split('.')[0];
-
-    // if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
-    //   console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-    //   responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-    //   return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-    // }
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
