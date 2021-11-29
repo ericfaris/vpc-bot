@@ -1,10 +1,12 @@
 require('dotenv').config()
+const Logger = require('../helpers/loggingHelper');
 const path = require('path');
 const date = require('date-and-time');
 const { MessageActionRow, MessageSelectMenu } = require('discord.js');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { table } = require('console');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -19,6 +21,7 @@ module.exports = {
   minArgs: 2,
   expectedArgs: '<score> <tablesearchterm>',
   callback: async ({ args, client, channel, interaction, instance, message, user }) => {
+    let logger = (new Logger(user)).logger;
     let retVal;
     let commandName = path.basename(__filename).split('.')[0];
 
@@ -34,6 +37,7 @@ module.exports = {
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       const [score, tableSearchTerm] = args;
+      logger.info(`score: ${score}, tableSearchTerm: ${tableSearchTerm}`);
 
       const tables = (await mongoHelper.find({tableName:{$regex:'.*' + tableSearchTerm + '.*', $options: 'i'}}, 'tables'))
         .sort((a, b) => a.tableName - b.tableName);
@@ -60,6 +64,7 @@ module.exports = {
             })
           })
         });
+        logger.info(`found ${tables.length} tables.`)
 
         const row = new MessageActionRow()
           .addComponents(
@@ -68,9 +73,11 @@ module.exports = {
               .setPlaceholder('Please select table for high score...')
               .addOptions(options),
           );
+        logger.info('created row.')
 
         if (message) {
           let attachment = message.attachments?.first();
+          logger.info(`attachment found.  attachment: ${JSON.stringify(attachment)}`)
 
           if (attachment) {
             let content = 'Which table do you want to post this high score?';
@@ -98,6 +105,8 @@ module.exports = {
           await interaction.reply({ content: content, components: [row], ephemeral: true });
         }
       } else {
+        logger.info('No tables found.');
+
         if (message) {
           let content = `No high score tables were found using "${tableSearchTerm}".` +
             `  Try posting high score again using a different table search term.  This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
