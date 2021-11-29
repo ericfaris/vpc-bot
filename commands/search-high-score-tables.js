@@ -62,7 +62,7 @@ module.exports = {
       responseHelper.showEphemeralHighScoreTables(tables, tableSearchTerm, interaction)
       responseHelper.deleteOriginalMessage(interaction, 0);
 
-      retVal = 'showing leaderboard...';
+      retVal = 'Searching for tables...';
     }
 
     return retVal;
