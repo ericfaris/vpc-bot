@@ -44,8 +44,6 @@ module.exports = {
         return invalidMessage;
       }
     } else {
-      //parameter is BAD
-
       //convert to integer
       const scoreAsInt = parseInt(score.replace(/,/g, ''));
 

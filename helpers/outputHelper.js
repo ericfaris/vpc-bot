@@ -8,7 +8,7 @@ module.exports = {
 
   createTableRow: (i, t, score, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score.username, Table.rightPadder(' '))
+    t.cell('User', score.username.replace('`', '\`'), Table.rightPadder(' '))
     t.cell('Score', score.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
