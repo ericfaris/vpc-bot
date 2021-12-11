@@ -14,7 +14,7 @@ module.exports = {
   description: 'Create new high score table (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  minArgs: 3,
+  minArgs: 2,
   expectedArgs: '<tablename> <authorname> <version> <versionUrl> <romName>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
@@ -22,7 +22,7 @@ module.exports = {
     if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      return `The ${module.exports.commandName} slash command can only be executed by an certain roles. You DO NOT have that role. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     }
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
