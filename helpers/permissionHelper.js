@@ -14,6 +14,6 @@ module.exports = {
         const hasManageGuildPermission = member?.permissions.has(Permissions.FLAGS.MANAGE_GUILD);
         logger.info(`hasRole: ${hasRole}, hasManageGuildPermission: ${hasManageGuildPermission}`);
         
-        return(hasRole || hasManageGuildPermission);
+        return hasRole || hasManageGuildPermission;
     }
 }
