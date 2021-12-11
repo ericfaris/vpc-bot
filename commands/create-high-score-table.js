@@ -11,7 +11,7 @@ module.exports = {
   guildOnly: true,
   hidden: true,
   description: 'Create new high score table (High Scores Mod)',
-  roles: ['High Scores Mod'],
+  roles: ['High Score Corner Mod'],
   minArgs: 2,
   expectedArgs: '<tablename> <authorname> <version> <versionUrl> <romName>',
   callback: async ({ args, client, channel, interaction, instance, user}) => {
@@ -51,7 +51,7 @@ module.exports = {
 
       if(!existingTable) {
         await mongoHelper.insertOne(table, 'tables');
-        return `New high score table created.`;
+        return `${table.tableName} (${table.authors[0]?.authorName} ${table.authors[0]?.versions[0]?.version}) created successfully`;
       } else {
         let existingAuthor = existingTable?.authors?.find(a => a.authorName === authorname);
         let existingVersion = existingAuthor?.versions?.find(v => v.version === version);
