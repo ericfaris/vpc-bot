@@ -13,7 +13,7 @@ module.exports = {
   hidden: true,
   description: 'Create new high score table (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
+  roles: ['High Scores Mod'],
   minArgs: 2,
   expectedArgs: '<tablename> <authorname> <version> <versionUrl> <romName>',
   callback: async ({ args, client, channel, interaction, instance }) => {
