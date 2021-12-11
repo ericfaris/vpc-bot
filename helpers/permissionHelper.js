@@ -8,6 +8,6 @@ module.exports = {
         const member = await guild.members.fetch(interaction.member.user.id);
         const hasRole = [...member.roles.cache.values()].some(value => roles?.indexOf(value?.name) > -1);
         
-        return member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) || hasRole;
+        return (hasRole) || (member?.permissions.has(Permissions.FLAGS.MANAGE_GUILD));
     }
 }
