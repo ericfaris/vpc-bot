@@ -235,10 +235,14 @@ module.exports = {
   },
 
   printHighScoreTables: (searchTerm, tables, tablesToShow, expandedLayout) => {
-    var strText;
+    var strText = '';
     let tableArray = [];
 
-    strText = `**Results for '${searchTerm}'**\n\n`;
+    if(searchTerm) {
+      strText = `**Results for '${searchTerm}'...**\n\n`;
+    } else {
+      strText = '**Showing all tables...**\n\n';
+    }
 
     tables.forEach(function (table) {
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
@@ -250,7 +254,7 @@ module.exports = {
         module.exports.createTableRowHighScore(t, table, false)
         strText += '`' + t.toString() + '`' + '\n';
       } else {
-        strText += '**NO HIGH SCORES POSTED**'
+        strText += '**NO HIGH SCORES POSTED**\n\n';
       }
     });
 
