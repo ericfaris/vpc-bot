@@ -16,10 +16,10 @@ module.exports = {
   roles: ['High Scores Mod'],
   minArgs: 2,
   expectedArgs: '<tablename> <authorname> <version> <versionUrl> <romName>',
-  callback: async ({ args, client, channel, interaction, instance }) => {
+  callback: async ({ args, client, channel, interaction, instance, user}) => {
     let retVal;
 
-    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
+    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles, user))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       return `The ${module.exports.commandName} slash command can only be executed by an certain roles. You DO NOT have that role. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;

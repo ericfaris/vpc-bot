@@ -17,7 +17,7 @@ module.exports = {
     let logger = (new Logger(user)).logger;
     let retVal;
 
-    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
+    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles, user))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       const message = `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`
