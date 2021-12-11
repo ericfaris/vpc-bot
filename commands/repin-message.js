@@ -15,7 +15,7 @@ module.exports = {
   callback: async ({ client, channel, interaction, instance }) => {
     let retVal;
 
-    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles))) {
+    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;

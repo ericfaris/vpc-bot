@@ -1,6 +1,5 @@
 require('dotenv').config()
 const path = require('path');
-const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
@@ -11,24 +10,25 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Create new high score table (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
+  description: 'Create new high score table (High Scores Mod)',
   roles: ['High Scores Mod'],
   minArgs: 2,
   expectedArgs: '<tablename> <authorname> <version> <versionUrl> <romName>',
   callback: async ({ args, client, channel, interaction, instance, user}) => {
     let retVal;
 
-    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles, user))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
+    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
+      const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
+      console.log(logMessage)
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      return `The ${module.exports.commandName} slash command can only be executed by an certain roles. You DO NOT have that role. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      return logMessage;
     }
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      return retVal;
     } else {
       const [tablename, authorname, version, versionurl, romname] = args;
 

@@ -9,7 +9,6 @@ module.exports = {
   slash: true,
   testOnly: true,
   guildOnly: true,
-  permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   hidden: true,
   description: 'Create new message for Competition Corner (MANAGE_GUILD)',
@@ -17,10 +16,10 @@ module.exports = {
     let logger = (new Logger(user)).logger;
     let retVal;
 
-    if (!(await permissionHelper.hasPermissionOrRole(client, interaction, module.exports.permissions, module.exports.roles, user))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
+    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
+      console.log(`${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`)
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      const message = `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`
+      const message = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`
       return message;
     }
 
@@ -30,7 +29,7 @@ module.exports = {
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
       try{
-        const compChannel = await client.channels.fetch(234234);
+        const compChannel = await client.channels.fetch(process.env.COMPETITION_CHANNEL_ID);
         compChannel.send('This is your new message.');
         retVal = 'Message Created Successfully.';
         logger.info(retVal);
