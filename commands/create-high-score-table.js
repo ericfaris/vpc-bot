@@ -12,8 +12,8 @@ module.exports = {
   hidden: true,
   description: 'Create new high score table (High Scores Mod)',
   roles: ['High Score Corner Mod'],
-  minArgs: 2,
-  expectedArgs: '<tablename> <authorname> <version> <versionUrl> <romName>',
+  minArgs: 3,
+  expectedArgs: '<tablename> <authorname> <versionnumber> <versionurl> <romname>',
   callback: async ({ args, client, channel, interaction, instance, user}) => {
     let retVal;
 
@@ -30,14 +30,17 @@ module.exports = {
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
       return retVal;
     } else {
-      const [tablename, authorname, version, versionurl, romname] = args;
+      const [tablename, authorname, versionnumber, versionurl, romname] = args;
 
       var table = {
+        '_id': mongoHelper.generateObjectId(),
         'tableName': tablename,
         'authors': [
-          { 'authorName': authorname,
+          { '_id': mongoHelper.generateObjectId(),
+            'authorName': authorname,
             'versions': [
-              { 'version': version,
+              { '_id': mongoHelper.generateObjectId(),
+                'versionNumber': versionnumber,
                 'versionUrl': versionurl ?? '',
                 'romName': romname ?? '',
                 'scores': []
@@ -51,10 +54,10 @@ module.exports = {
 
       if(!existingTable) {
         await mongoHelper.insertOne(table, 'tables');
-        return `${table.tableName} (${table.authors[0]?.authorName} ${table.authors[0]?.versions[0]?.version}) created successfully`;
+        return `${table.tableName} (${table.authors[0]?.authorName} ${table.authors[0]?.versions[0]?.versionNumber}) created successfully`;
       } else {
         let existingAuthor = existingTable?.authors?.find(a => a.authorName === authorname);
-        let existingVersion = existingAuthor?.versions?.find(v => v.version === version);
+        let existingVersion = existingAuthor?.versions?.find(v => v.versionNumber === versionnumber);
 
         let filter;
         let update;
@@ -64,9 +67,10 @@ module.exports = {
           filter = { tableName: tablename};
           options = null;
           update = { $push: { 'authors' :           
-              { 'authorName': authorname,
+              { '_id': mongoHelper.generateObjectId(),
+                'authorName': authorname,
                 'versions': [
-                  { 'version': version,
+                  { 'versionNumber': versionnumber,
                     'versionUrl': versionurl ?? '',
                     'romName': romname ?? '',
                     'scores': []
@@ -82,7 +86,8 @@ module.exports = {
               { 'a.authorName': authorname }
             ]};
             update = { $push: { 'authors.$[a].versions' :
-              { 'version': version,
+              { '_id': mongoHelper.generateObjectId(),
+                'versionNumber': versionnumber,
                 'versionUrl': versionurl ?? '',
                 'romName': romname ?? '',
                 'scores': []
@@ -91,7 +96,7 @@ module.exports = {
 
             retVal = `New version created for ${tablename} (${authorname}).`;
           } else {
-            return `${tablename} (${authorname}) (${version}) already exists.`;
+            return `${tablename} (${authorname}) (${versionnumber}) already exists.`;
           }
         }
 

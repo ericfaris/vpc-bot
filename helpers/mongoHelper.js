@@ -1,6 +1,6 @@
 require('dotenv').config()
 const { MongoClient } = require('mongodb');
-
+const ObjectId = require('mongodb').ObjectId;
 const DB_NAME = process.env.DB_NAME;
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
@@ -31,6 +31,10 @@ module.exports = {
         client.close();
 
         return findResult;
+    },
+
+    generateObjectId: () => {
+        return new ObjectId();
     },
 
     insertOne: async (doc, collectionName) => {

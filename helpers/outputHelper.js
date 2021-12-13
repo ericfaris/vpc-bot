@@ -3,6 +3,7 @@ var Table = require('easy-table')
 var numeral = require('numeral');
 const { MessageEmbed } = require('discord.js');
 const { string } = require('easy-table');
+const date = require('date-and-time');
 
 module.exports = {
 
@@ -55,7 +56,7 @@ module.exports = {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
-    t.cell('Posted', table.posted, Table.rightPadder(' '))
+    t.cell('Posted', date.transform(table.posted, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
     t.newRow()
   },
 
@@ -246,7 +247,7 @@ module.exports = {
 
     tables.forEach(function (table) {
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
-        ` (${table.authorName ? table.authorName + ' ' : ''}${table.version ?? ''})` +
+        ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
         (table?.postUrl ? `  [photo](${table.postUrl})` : '') + '\n';
 
       if (table?.userName) {

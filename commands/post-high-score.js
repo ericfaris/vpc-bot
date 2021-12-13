@@ -1,9 +1,9 @@
 require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
+const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
 const path = require('path');
 const date = require('date-and-time');
 const { MessageActionRow, MessageSelectMenu } = require('discord.js');
-const permissionHelper = require('../helpers/permissionHelper');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { table } = require('console');
@@ -25,6 +25,7 @@ module.exports = {
     let commandName = path.basename(__filename).split('.')[0];
     const [score, tableSearchTerm] = args;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
+    let pipeline = (new SearchPipelineHelper(tableSearchTerm)).pipeline;
 
     logger.info(`score: ${score}, tableSearchTerm: ${tableSearchTerm}`);
 
@@ -71,30 +72,36 @@ module.exports = {
         responseHelper.deleteOriginalMessage(interaction, 60);
         return invalidMessage;
       } else {
-        const tables = (await mongoHelper.find({tableName:{$regex:'.*' + tableSearchTerm + '.*', $options: 'i'}}, 'tables'))
-          .sort((a, b) => a.tableName - b.tableName);
+
+        const tables = await mongoHelper.aggregate(pipeline, 'tables');
 
         if (tables.length > 0) {
           const options = [];
 
+          let tableId;
           let tableName;
+          let authorId;
           let authorName;
+          let versionId;
           let versionNumber;
+          let scoreId;
 
-          tables.forEach(table => {
-            tableName = table.tableName;
-            table.authors.sort((a,b) => b.authorName - a.authorName).forEach(author => {
-              authorName = author.authorName;
-              author.versions.sort((a,b) => b.version - a.version).forEach(version => {
-                versionNumber = version.version;
-                const scoreAsInt = parseInt(score.replace(/,/g, ''));
-                let option = {
-                  label: `${tableName} (${authorName} ${versionNumber})`,
-                  value: `{"u":"${user.username}","s":"${scoreAsInt}","t":"${tableName}","a":"${authorName}","v":"${versionNumber}"}`
-                };
-                options.push(option);
-              })
-            })
+          tables.forEach(item => {
+            
+            tableId = item?.tableId;
+            tableName = item?.tableName;
+            authorId = item?.authorId;
+            authorName = item?.authorName;
+            versionId = item?.versionId;
+            versionNumber = item?.versionNumber;
+            scoreId = item?.scoreId;
+            const scoreAsInt = parseInt(score.replace(/,/g, ''));
+
+            let option = {
+              label: `${tableName} (${authorName} ${versionNumber})`,
+              value: `{"id":"${scoreId ?? versionId ?? authorId ?? tableId}","u":"${user.username}","s":${scoreAsInt}}`
+            };
+            options.push(option);
           });
           logger.info(`found ${tables.length} tables.`)
 
@@ -118,8 +125,7 @@ module.exports = {
                 content: content, 
                 nonce: commandName,
                 files: [attachment], 
-                components: [row], 
-                ephemeral: true
+                components: [row],
               }).then(() => {
                 message.delete();
               });
@@ -146,7 +152,6 @@ module.exports = {
             message.reply({ 
               content: content, 
               nonce: commandName,
-              ephemeral: true
             }).then((reply) => {
               setTimeout(() => reply.delete(), instance.delErrMsgCooldown * 1000)
               message.delete();
@@ -162,16 +167,17 @@ module.exports = {
 
   saveHighScore: async (data, interaction) => {
     await mongoHelper.updateOne(
-      { tableName: data.t },
+      { tableName: data.tableName },
       { $push: { 'authors.$[a].versions.$[v].scores' : {
+        '_id': mongoHelper.generateObjectId(),
         'username': data.u,
         'score': data.s,
         'postUrl': interaction.message.url,
         'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
       }}, 
       { arrayFilters: [
-          { 'a.authorName': data.a },
-          { 'v.version': data.v }
+          { 'a.authorName': data.authorName },
+          { 'v.versionNumber': data.versionNumber }
         ]},
       'tables'
     );

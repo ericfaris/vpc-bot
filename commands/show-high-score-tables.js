@@ -2,6 +2,7 @@ require('dotenv').config()
 const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { AllPipelineHelper } = require('../helpers/pipelineHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -12,46 +13,14 @@ module.exports = {
   description: 'Show high score tables list',
   callback: async ({ channel, interaction, instance }) => {
     let retVal;
+    let pipeline = (new AllPipelineHelper()).pipeline;
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
     } else {
-
-      const pipeline = [
-        { $unwind: "$authors" },
-        { $unwind: { "path": "$authors.versions", "preserveNullAndEmptyArrays": true } },
-        { $unwind: { "path": "$authors.versions.scores", "preserveNullAndEmptyArrays": true } },
-        { $project: {
-          tableName: '$tableName',
-          authorName: "$authors.authorName",
-          version: '$authors.versions.version',
-          tableUrl: '$authors.versions.versionUrl',
-          userName: '$authors.versions.scores.username',
-          score: '$authors.versions.scores.score',
-          posted: '$authors.versions.scores.createdAt',
-          postUrl: '$authors.versions.scores.postUrl',
-          _id: 0
-        }},
-        { $sort: {tableName: 1, authorName: -1, version: -1, score: -1} },
-        { $group: {
-          _id: {
-            tableName: '$tableName',
-            authorName: "$authorName",
-            version: '$version',
-            tableUrl: '$versionUrl',
-            userName: '$authors.versions.scores.username',
-            score: '$authors.versions.scores.score',
-            posted: '$authors.versions.scores.createdAt',
-            postUrl: '$authors.versions.scores.postUrl',
-          },
-          group: {$first:'$$ROOT'}
-        }},
-        {$replaceRoot:{newRoot:"$group"}},
-        { $sort: {tableName: 1, authorName: -1, version: -1} }
-      ];
-
+      
       const tables = await mongoHelper.aggregate(pipeline, 'tables');
 
       responseHelper.showEphemeralHighScoreTables(tables, null, interaction)
