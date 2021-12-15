@@ -7,7 +7,7 @@ module.exports = {
   slash: true,
   testOnly: true,
   guildOnly: true,
-  description: 'Generate a random number between 1 and X',
+  description: 'Generate a random number between 1 and X using Random.org API',
   minArgs: 1,
   expectedArgs: '<max>',
   callback: async ({ args, client, channel, interaction, instance, user }) => {
