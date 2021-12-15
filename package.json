@@ -19,6 +19,7 @@
         "node-cron": "^3.0.0",
         "node-fetch": "^2.6.1",
         "numeral": "^2.0.6",
+        "random-org": "^2.2.0",
         "request": "^2.88.2",
         "winston": "^3.3.3",
         "wokcommands": "^1.5.3"

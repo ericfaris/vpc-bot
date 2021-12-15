@@ -67,3 +67,4 @@ jobs:
             BOT_OWNER=${{ secrets.BOT_OWNER }}
             HIGH_SCORES_CHANNEL_NAME=${{ secrets.HIGH_SCORES_CHANNEL_NAME }}
             HIGH_SCORES_CHANNEL_ID=${{ secrets.HIGH_SCORES_CHANNEL_ID }}
+            RANDOMORG_API_KEY=${{ secrets.RANDOMORG_API_KEY }}
