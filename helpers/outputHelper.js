@@ -51,12 +51,12 @@ module.exports = {
   },
 
   createTableRowHighScore: (t, table, expandedLayout) => {
-    t.cell('User', table.userName, Table.leftPadder(' '))
+    t.cell('User', table.username, Table.leftPadder(' '))
     t.cell('High Score', table.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
-    t.cell('Posted', date.transform(table.posted, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
+    t.cell('Posted', date.transform(table.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
     t.newRow()
   },
 
@@ -250,9 +250,11 @@ module.exports = {
         ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
         (table?.postUrl ? `  [photo](${table.postUrl})` : '') + '\n';
 
-      if (table?.userName) {
+      if (table.scores.length > 0) {
         var t = new Table;
-        module.exports.createTableRowHighScore(t, table, false)
+        table.scores.sort((a, b) => b.score - a.score).forEach((score) => {
+          module.exports.createTableRowHighScore(t, score, false)
+        })
         strText += '`' + t.toString() + '`' + '\n';
       } else {
         strText += '**NO HIGH SCORES POSTED**\n\n';
