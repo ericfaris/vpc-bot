@@ -13,7 +13,9 @@ class SearchPipelineHelper {
               authorName: "$authors.authorName",
               versionId: { $toString: "$authors.versions._id" },
               versionNumber: '$authors.versions.versionNumber',
+              tableUrl: '$authors.versions.versionUrl',
               scores: '$authors.versions.scores',
+              postUrl: { $last: '$authors.versions.scores.postUrl'},
               _id: 0
             }},
             { $sort: { tableName: 1, authorName: -1, versionNumber: -1 } }
@@ -67,7 +69,9 @@ class AllPipelineHelper {
             authorName: "$authors.authorName",
             versionId: { $toString: "$authors.versions._id" },
             versionNumber: '$authors.versions.versionNumber',
+            tableUrl: '$authors.versions.versionUrl',
             scores: '$authors.versions.scores',
+            postUrl: { $last: '$authors.versions.scores.postUrl'},
             _id: 0
           }},
           { $sort: { tableName: 1, authorName: -1, versionNumber: -1 } }

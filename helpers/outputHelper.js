@@ -52,7 +52,7 @@ module.exports = {
 
   createTableRowHighScore: (t, table, expandedLayout) => {
     t.cell('User', table.username, Table.leftPadder(' '))
-    t.cell('High Score', table.score, (val, width) => {
+    t.cell('Score', table.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
@@ -248,7 +248,7 @@ module.exports = {
     tables.forEach(function (table) {
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
         ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
-        (table?.postUrl ? `  [photo](${table.postUrl})` : '') + '\n';
+        (table?.postUrl ? `  [high score photo](${table.postUrl})` : '') + '\n';
 
       if (table.scores.length > 0) {
         var t = new Table;
