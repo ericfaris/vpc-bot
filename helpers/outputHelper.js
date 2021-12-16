@@ -248,7 +248,7 @@ module.exports = {
     tables.forEach(function (table) {
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
         ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
-        (table?.postUrl ? `  [high score photo](${table.postUrl})` : '') + '\n';
+        (table?.postUrl ? ` [high score photo](${table.postUrl})` : '') + '\n';
 
       if (table.scores.length > 0) {
         var t = new Table;
