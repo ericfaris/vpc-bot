@@ -34,6 +34,7 @@ module.exports = {
 
       return retVal;
     } catch (e) {
+      console.log(e);
       logger.error(e);
     }
   },
