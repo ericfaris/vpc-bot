@@ -44,6 +44,26 @@ class SearchScorePipelineHelper {
         postUrl: '$authors.versions.scores.postUrl',
         _id: 0
       }},
+      { $sort: {tableName: 1, authorName: -1, versionNumber: -1, score: -1} },
+      { $group: {
+        _id: {
+          tableId: { $toString: "$_id" },
+          tableName: '$tableName',
+          authorId: { $toString: "$authors._id" },
+          authorName: "$authors.authorName",
+          versionId: { $toString: "$authors.versions._id" },
+          versionNumber: '$authors.versions.versionNumber',
+          tableUrl: '$authors.versions.versionUrl',
+          scoreId: { $toString: "$authors.versions.scores._id" },
+          userName: '$authors.versions.scores.username',
+          score: '$authors.versions.scores.score',
+          posted: '$authors.versions.scores.createdAt',
+          postUrl: '$authors.versions.scores.postUrl',
+          },
+        group: {$first:'$$ROOT'}
+      }},
+      { $replaceRoot:{newRoot:"$group"} },
+      { $sort: {tableName: 1, authorName: -1, versionNumber: -1} },
       { $match: {
         "$expr": {
           "$or": [

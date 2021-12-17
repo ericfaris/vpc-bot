@@ -1,13 +1,15 @@
+const Logger = require('../helpers/loggingHelper');
 const { SearchScorePipelineHelper } = require('../helpers/pipelineHelper');
 const date = require('date-and-time');
 const postHighScoreCommand = require('../commands/post-high-score');
 var numeral = require('numeral');
 const mongoHelper = require('../helpers/mongoHelper');
 
-module.exports = (client, instance) => {
+module.exports = (client, instance, user) => {
+    let logger = (new Logger(user)).logger;
 
     client.on('interactionCreate', async interaction => {
-        if (!interaction.isSelectMenu()) return;
+      if (!interaction.isSelectMenu()) return;
     
       if (interaction.customId === 'select') {
         let commandName = interaction?.message?.interaction?.commandName ?? interaction?.message?.nonce;
