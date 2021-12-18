@@ -39,7 +39,17 @@ module.exports = {
 
     showEphemeralHighScoreTables: async (tables, searchTerm, interaction) => {
         var contentArray = outputHelper.printHighScoreTables(searchTerm, tables, null, false)
-        module.exports.postEphemeralMessages(contentArray, interaction);
+        module.exports.postHighScoreEphemeralMessages(contentArray, interaction);
+    },
+
+    postHighScoreEphemeralMessages: async (contentArray, interaction) => {
+        const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
+
+        for (const post of contentArray) {
+            interaction.reply({ content: post, fetchReply: true}).then((message) => {
+                message.suppressEmbeds(true);
+            })
+        };
     },
 
     postEphemeralMessages: async (contentArray, interaction) => {

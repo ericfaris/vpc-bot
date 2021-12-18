@@ -238,11 +238,14 @@ module.exports = {
   printHighScoreTables: (searchTerm, tables, tablesToShow, expandedLayout) => {
     var strText = '';
     let tableArray = [];
+    let showAll = false;
 
     if(searchTerm) {
       strText = `**Results for '${searchTerm}'...**\n\n`;
+      showAll = false;
     } else {
       strText = '**Showing all tables...**\n\n';
+      showAll = true;
     }
 
     tables.forEach(function (table) {
@@ -250,23 +253,20 @@ module.exports = {
         ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
         (table?.postUrl ? ` [high score photo](${table.postUrl})` : '') + '\n';
 
-      if (table.scores.length > 0) {
-        var t = new Table;
-        table.scores.sort((a, b) => b.score - a.score).forEach((score) => {
-          module.exports.createTableRowHighScore(t, score, false)
-        })
-        strText += '`' + t.toString() + '`' + '\n';
-      } else {
-        strText += '**NO HIGH SCORES POSTED**\n\n';
+      if(!showAll) {
+        if (table.scores.length > 0) {
+          var t = new Table;
+          table.scores.sort((a, b) => b.score - a.score).forEach((score) => {
+            module.exports.createTableRowHighScore(t, score, false)
+          })
+          strText += '`' + t.toString() + '`' + '\n';
+        } else {
+          strText += '**NO HIGH SCORES POSTED**\n\n';
+        }
       }
     });
 
-    if (tablesToShow && tablesToShow > 1) {
-      tableArray = module.exports.splitPosts(tables, strText, tablesToShow);
-    } else {
-      tableArray = module.exports.splitPosts(tables, strText, 30);
-    }
-
+    tableArray.push(strText);
     return tableArray;
   },
 
