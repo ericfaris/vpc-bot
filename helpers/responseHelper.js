@@ -46,7 +46,7 @@ module.exports = {
         const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
 
         for (const post of contentArray) {
-            interaction.reply({ content: post, fetchReply: true}).then((message) => {
+            interaction.reply({ content: post, ephemeral: true, fetchReply: true}).then((message) => {
                 message.suppressEmbeds(true);
             })
         };
@@ -62,7 +62,7 @@ module.exports = {
                 headers: module.exports.getHeader(),
                 body: JSON.stringify({
                     "content": post,
-                    "flags": 64
+                    "flags": 68
                 })
             };
 
