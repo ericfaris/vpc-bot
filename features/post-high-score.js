@@ -19,7 +19,8 @@ module.exports = (client, instance, user) => {
               let selectedJson = JSON.parse(interaction.values[0]);
               let pipeline = (new SearchScorePipelineHelper(selectedJson.id)).pipeline;
               const tables = await mongoHelper.aggregate(pipeline, 'tables');
-    
+              let existingUser;
+
               try {
                 if(tables.length === 1) {
                   let data = tables[0];
@@ -28,23 +29,34 @@ module.exports = (client, instance, user) => {
                   selectedJson.versionNumber = data.versionNumber;
                   let newScore = selectedJson.s;
                   let existingScore = data?.score;
-    
+                  if(data?.user?.id) {
+                    existingUser = await interaction.client.users.fetch(data?.user.id);
+                  }
+
                   if((!existingScore) || (newScore > existingScore)) {
                     await postHighScoreCommand.saveHighScore(selectedJson, interaction).then(async () => {
                       const user = await client.users.cache.find(user => user.username === selectedJson.u)
                       await interaction.update({
-                        content: `**<@${user.id}>** just posted a high score for **${selectedJson.tableName} ` + 
-                          `(${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
+                        content: `**<@${user.id}>** just posted a high score for**\n` + 
+                          `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
                           `**High Score: **${numeral(selectedJson.s).format('0,0')}\n` +
                           `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
                         components: []
                       });
-                    })
-                    .catch(async (err) => {
+                      if(existingUser && (existingUser.username !== user.username)) {
+                        let content = `**<@${user.id}>** just topped your high score for**:\n` +
+                        `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
+                        `**High Score: **${numeral(selectedJson.s).format('0,0')}\n` +
+                        `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n\n` +
+                        `Link: ${interaction?.message?.url}`;
+
+                        await existingUser.send(content);
+                      };
+                    }).catch(async (err) => {
                       logger.error(err)
-                      await interaction.update({
+                      await interaction.followUp({
                         content: `${err}`, 
-                        components: [],
+                        components: [], 
                         files: [],
                       });
                     });
@@ -59,7 +71,7 @@ module.exports = (client, instance, user) => {
                 }
               } catch(e) {
                 logger.error(e);
-                await interaction.update({
+                await interaction.followUp({
                   content: `${e}`, 
                   components: [],
                   files: [],

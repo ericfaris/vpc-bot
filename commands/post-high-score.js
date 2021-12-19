@@ -165,11 +165,12 @@ module.exports = {
     }
   },
 
-  saveHighScore: async (data, interaction) => {
+  saveHighScore: async (data, interaction) => {   
     await mongoHelper.updateOne(
       { tableName: data.tableName },
       { $push: { 'authors.$[a].versions.$[v].scores' : {
         '_id': mongoHelper.generateObjectId(),
+        'user': interaction.user,
         'username': data.u,
         'score': data.s,
         'postUrl': interaction.message.url,
