@@ -16,9 +16,8 @@ module.exports = {
     let retVal;
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+      interaction.reply({content: retVal, ephemeral: true});
     } else {
       const currentSeason = await mongoHelper.findOne({ isArchived: false }, 'seasons');
       const weeks = await mongoHelper.find({
@@ -28,11 +27,6 @@ module.exports = {
       }, 'weeks');
 
       responseHelper.showEphemeralSeasonLeaderboard(weeks, interaction)
-      responseHelper.deleteOriginalMessage(interaction, 0);
-
-      retVal = 'showing season leaderboard...';
     }
-
-    return retVal;
   },
 }

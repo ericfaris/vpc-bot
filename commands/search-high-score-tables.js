@@ -20,19 +20,15 @@ module.exports = {
     let pipeline = (new SearchPipelineHelper(tableSearchTerm)).pipeline;
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
+      interaction.reply({content: retVal, ephemeral: true});
     } else {
-
-      const tables = await mongoHelper.aggregate(pipeline, 'tables');
-
-      responseHelper.showEphemeralHighScoreTables(tables, tableSearchTerm, interaction)
-      responseHelper.deleteOriginalMessage(interaction, 0);
-
-      retVal = 'Searching for tables...';
+      try{
+        const tables = await mongoHelper.aggregate(pipeline, 'tables');
+        responseHelper.showEphemeralHighScoreTables(tables, tableSearchTerm, interaction)
+      } catch(e) {
+        console.log(e);
+      }
     }
-
-    return retVal;
   },
 }

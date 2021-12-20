@@ -50,7 +50,8 @@ module.exports = {
     t.newRow()
   },
 
-  createTableRowHighScore: (t, table, expandedLayout) => {
+  createTableRowHighScore: (i, t, table, expandedLayout) => {
+    t.cell('Rank', i, Table.leftPadder(' '))
     t.cell('User', table.username, Table.leftPadder(' '))
     t.cell('Score', table.score, (val, width) => {
       var str = numeral(val).format('0,0');
@@ -235,10 +236,11 @@ module.exports = {
     }
   },
 
-  printHighScoreTables: (searchTerm, tables, tablesToShow, expandedLayout) => {
+  printHighScoreTables: (searchTerm, tables, scoresToShow, expandedLayout) => {
     var strText = '';
     let tableArray = [];
     let showAll = false;
+    let i = 1;
 
     if(searchTerm) {
       strText = `**Results for '${searchTerm}'...**\n\n`;
@@ -256,8 +258,9 @@ module.exports = {
       if(!showAll) {
         if (table.scores.length > 0) {
           var t = new Table;
-          table.scores.sort((a, b) => b.score - a.score).forEach((score) => {
-            module.exports.createTableRowHighScore(t, score, false)
+          table.scores.sort((a, b) => b.score - a.score).slice(0, scoresToShow).forEach((score) => {
+            module.exports.createTableRowHighScore(i, t, score, false);
+            i++;
           })
           strText += '`' + t.toString() + '`' + '\n';
         } else {

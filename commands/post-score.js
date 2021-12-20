@@ -37,9 +37,9 @@ module.exports = {
           }, instance.delErrMsgCooldown * 1000)
         })
       } else {
-        responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-        return invalidMessage;
-      }
+        retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+        interaction.reply({content: retVal, ephemeral: true});
+      };
     } else {
       //convert to integer
       const scoreAsInt = parseInt(score.replace(/,/g, ''));
@@ -57,62 +57,38 @@ module.exports = {
             }, instance.delErrMsgCooldown * 1000)
           })
         } else {
-          responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-          return invalidMessage;
+          interaction.reply({content: invalidMessage, ephemeral: true}); 
         }
       } else if (!message) {
         invalidMessage = 'The post-score slash command has been turned off.  Please using the following format to post your score:\n'
           + '`!score 1234567 (an image should also be posted as an attachment)`\n\n'
           + 'This message will be deleted in 60 seconds.';
 
-        responseHelper.deleteOriginalMessage(interaction, 60);
-        return invalidMessage;
+        interaction.reply({content: invalidMessage, ephemeral: true}); 
       } else {
         //parameter is GOOD
         const currentWeek = await mongoHelper.findCurrentWeek('weeks');
         const periodEnd = currentWeek ? new Date(currentWeek.periodEnd) : null;
-        const utcDeadline = moment.utc(periodEnd).add(1, 'days').add(7, 'hours');
 
-        //checking for deadline
-        if (periodEnd && moment.utc().isSameOrAfter(utcDeadline)) {
+        retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message)
 
-          invalidMessage = `You are trying to post a score after the deadline of 12:00 AM PST. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-
-          if (message) {
+        if (message) {
+          let attachment = message.attachments?.first();
+          if (attachment) {
+            message.reply({content: `<@${user.id}>, ` + retVal, files: [attachment]}).then(() => {
+              message.delete();
+            });
+          } else {
+            invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
             message.reply(invalidMessage).then((reply) => {
               message.delete();
               setTimeout(() => {
                 reply.delete();
               }, instance.delErrMsgCooldown * 1000)
-            })
-          } else {
-            responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-            return invalidMessage;
+            })    
           }
-
         } else {
-          //before deadline
-
-          retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message)
-
-          if (message) {
-            let attachment = message.attachments?.first();
-            if (attachment) {
-              message.reply({content: `<@${user.id}>, ` + retVal, files: [attachment]}).then(() => {
-                message.delete();
-              });
-            } else {
-              invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
-              message.reply(invalidMessage).then((reply) => {
-                message.delete();
-                setTimeout(() => {
-                  reply.delete();
-                }, instance.delErrMsgCooldown * 1000)
-              })    
-            }
-          } else {
-            return retVal;
-          }
+          return retVal;
         }
       }
     }

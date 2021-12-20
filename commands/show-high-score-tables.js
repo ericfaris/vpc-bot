@@ -17,25 +17,17 @@ module.exports = {
     let retVal;
     let pipeline = (new AllPipelineHelper()).pipeline;
 
-    try {
       if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
-        responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-        retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
-          + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-      } else {
-        
-        const tables = await mongoHelper.aggregate(pipeline, 'tables');
-
-        responseHelper.showEphemeralHighScoreTables(tables, null, interaction)
-        responseHelper.deleteOriginalMessage(interaction, 0);
-
-        retVal = 'Fetching tables...';
+        retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
+        interaction.reply({content: retVal, ephemeral: true});
+      } else { 
+        try {
+          const tables = await mongoHelper.aggregate(pipeline, 'tables');
+          responseHelper.showEphemeralHighScoreTables(tables, null, interaction)
+        } catch (e) {
+          console.log(e);
+          logger.error(e);
+        }
       }
-
-      return retVal;
-    } catch (e) {
-      console.log(e);
-      logger.error(e);
-    }
   },
 }

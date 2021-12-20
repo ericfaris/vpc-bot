@@ -23,17 +23,13 @@ module.exports = {
     },
 
     showEphemeralHighScoreTables: async (tables, searchTerm, interaction) => {
-        var contentArray = outputHelper.printHighScoreTables(searchTerm, tables, null, false)
+        var contentArray = outputHelper.printHighScoreTables(searchTerm, tables, 10, false)
         module.exports.postHighScoreEphemeralMessages(contentArray, interaction);
     },
 
     postHighScoreEphemeralMessages: async (contentArray, interaction) => {
-        const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
-
         for (const post of contentArray) {
-            interaction.reply({ content: post, ephemeral: true, fetchReply: true}).then((message) => {
-                message.suppressEmbeds(true);
-            })
+            await interaction.reply({ content: post, ephemeral: true});
         };
     },
 
@@ -41,27 +37,23 @@ module.exports = {
         const delay = timeToWait => new Promise(resolve => setTimeout(resolve, timeToWait));
 
         for (const post of contentArray) {
-            interaction.reply({ content: post, ephemeral: true}).then((message) => {
-                message.suppressEmbeds(true);
-            })
+            await interaction.reply({ content: post, ephemeral: true});
             await delay(1000);
         };
     },
 
     showEphemeralScore: async (score, numOfScores, t, interaction) => {
         outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score, true);
-
-        interaction.reply({ content: post, ephemeral: true}).then((message) => {
-            message.suppressEmbeds(true);
-        }).catch((error) => {
+        let post = t.toString();
+        interaction.reply({ content: post, ephemeral: true})
+        .catch((error) => {
             if (error) throw new Error(error);
         })
     },
 
     showEphemeralTeams: async (scores, teams, interaction) => {
-        interaction.reply({ content: outputHelper.printTeamLeaderboard(scores, teams, false), ephemeral: true}).then((message) => {
-            message.suppressEmbeds(true);
-        }).catch((error) => {
+        interaction.reply({ content: outputHelper.printTeamLeaderboard(scores, teams, false), ephemeral: true})
+        .catch((error) => {
             if (error) throw new Error(error);
         })
     },

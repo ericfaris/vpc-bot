@@ -14,32 +14,22 @@ module.exports = {
     let retVal;
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+      interaction.reply({content: retVal, ephemeral: true});
     } else {
       const username = interaction.member.user.username;
-
-      //get current week
       const currentWeek = await mongoHelper.findCurrentWeek('weeks');
-
       const score = currentWeek.scores ? currentWeek.scores.find(x => x.username === username) : null;
 
       if (score) {
         var t = new Table;
         score.rank = currentWeek.scores.findIndex(x => x.username === username) + 1;
         const numOfScores = currentWeek.scores.length;
-
         responseHelper.showEphemeralScore(score, numOfScores, t, interaction);
-        responseHelper.deleteOriginalMessage(interaction, 0);
-
-        retVal = 'showing score...';
       } else {
-        responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-        retVal = `No score found for ${username}. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+        retVal = `No score found for ${username}.`;
+        interaction.reply({content: retVal, ephemeral: true});
       }
     }
-
-    return retVal;
   },
 }
