@@ -171,7 +171,7 @@ module.exports = {
       { $push: { 'authors.$[a].versions.$[v].scores' : {
         '_id': mongoHelper.generateObjectId(),
         'user': interaction.user,
-        'username': data.u,
+        'username': data.u.replace('`',''),
         'score': data.s,
         'postUrl': interaction.message.url,
         'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}

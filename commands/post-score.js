@@ -115,7 +115,7 @@ module.exports = {
       existing.diff = scoreAsInt - previousScore;
       existing.posted = date.format(new Date(), 'MM/DD/YYYY HH:mm:ss');
     } else {
-      scores.push({ 'username': userName, 'score': scoreAsInt, 'diff': scoreAsInt, 'posted': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss') });
+      scores.push({ 'username': userName.replace('`', ''), 'score': scoreAsInt, 'diff': scoreAsInt, 'posted': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss') });
     }
 
     // sort descending
