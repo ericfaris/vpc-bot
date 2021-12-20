@@ -33,36 +33,32 @@ module.exports = (client, instance, user) => {
                     existingUser = await interaction.client.users.fetch(data?.user.id);
                   }
 
-                  if((!existingScore) || (newScore > existingScore)) {
-                    await postHighScoreCommand.saveHighScore(selectedJson, interaction).then(async () => {
-                      const user = await client.users.cache.find(user => user.username === selectedJson.u)
-                      await interaction.update({
-                        content: `**<@${user.id}>** just posted a high score for**\n` + 
-                          `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
-                          `**High Score: **${numeral(selectedJson.s).format('0,0')}\n` +
-                          `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
-                        components: []
-                      });
-                      if(existingUser && (existingUser.username !== user.username)) {
-                        let content = `**<@${user.id}>** just topped your high score for**:\n` +
+                  await postHighScoreCommand.saveHighScore(selectedJson, interaction).then(async () => {
+                    const user = await client.users.cache.find(user => user.username === selectedJson.u)
+                    await interaction.update({
+                      content: `**<@${user.id}>** just posted a high score for**\n` + 
                         `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
                         `**High Score: **${numeral(selectedJson.s).format('0,0')}\n` +
-                        `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n\n` +
-                        `Link: ${interaction?.message?.url}`;
-
-                        await existingUser.send(content);
-                      };
-                    }).catch(async (err) => {
-                      logger.error(err)
-                      await interaction.followUp({
-                        content: `${err}`, 
-                        components: [], 
-                        files: [],
-                      });
+                        `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
+                      components: []
                     });
-                  } else {
-                    throw new Error('Submitted score is NOT greater than existing high score.');
-                  }
+                    if(existingUser && (existingUser.username !== user.username)) {
+                      let content = `**<@${user.id}>** just topped your high score for**:\n` +
+                      `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
+                      `**High Score: **${numeral(selectedJson.s).format('0,0')}\n` +
+                      `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n\n` +
+                      `Link: ${interaction?.message?.url}`;
+
+                      await existingUser.send(content);
+                    };
+                  }).catch(async (err) => {
+                    logger.error(err)
+                    await interaction.followUp({
+                      content: `${err}`, 
+                      components: [], 
+                      files: [],
+                    });
+                  });
                   break;
                 } else if(tables.length === 0) {
                   throw new Error('No matches found.');
