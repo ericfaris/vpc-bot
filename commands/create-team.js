@@ -2,7 +2,6 @@ require('dotenv').config()
 const path = require('path');
 const Table = require('easy-table')
 const permissionHelper = require('../helpers/permissionHelper');
-const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
@@ -18,17 +17,15 @@ module.exports = {
   expectedArgs: '<team>',
   callback: async ({ args, channel, interaction, client, instance }) => {
     let retVal;
+    let ephemeral = false
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-    }
-
-    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
+      ephemeral = true;
+    }else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+      ephemeral = true;
     } else {
 
       const t = new Table;
@@ -61,6 +58,6 @@ module.exports = {
       retVal = 'Team created successfully. \n\n' + t.toString();
     }
 
-    return retVal;
+    interaction.reply({content: retVal, ephemeral: ephemeral});
   },
 }

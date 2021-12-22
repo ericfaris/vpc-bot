@@ -1,7 +1,6 @@
 require('dotenv').config()
 const path = require('path');
 const permissionHelper = require('../helpers/permissionHelper');
-const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
@@ -16,19 +15,15 @@ module.exports = {
   expectedArgs: '<tablename> <authorname> <versionnumber> <versionurl> <romname>',
   callback: async ({ args, client, channel, interaction, instance, user}) => {
     let retVal;
+    let ephemeral = false;
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
-      console.log(logMessage)
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      return logMessage;
-    }
-
-    if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-      return retVal;
+      retVal =  logMessage;
+      ephemeral = true;
+    } else if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
+      ephemeral = true;
     } else {
       const [tablename, authorname, versionnumber, versionurl, romname] = args;
 
@@ -54,7 +49,7 @@ module.exports = {
 
       if(!existingTable) {
         await mongoHelper.insertOne(table, 'tables');
-        return `${table.tableName} (${table.authors[0]?.authorName} ${table.authors[0]?.versions[0]?.versionNumber}) created successfully`;
+        retVal = `${table.tableName} (${table.authors[0]?.authorName} ${table.authors[0]?.versions[0]?.versionNumber}) created successfully`;
       } else {
         let existingAuthor = existingTable?.authors?.find(a => a.authorName === authorname);
         let existingVersion = existingAuthor?.versions?.find(v => v.versionNumber === versionnumber);
@@ -96,14 +91,14 @@ module.exports = {
 
             retVal = `New version created for ${tablename} (${authorname}).`;
           } else {
-            return `${tablename} (${authorname}) (${versionnumber}) already exists.`;
+            retVal = `${tablename} (${authorname}) (${versionnumber}) already exists.`;
           }
         }
 
         await mongoHelper.updateOne(filter, update, options, 'tables');
-
-        return retVal;
       }
     }
+
+    interaction.reply({content: retVal, ephemeral: ephemeral});
   },
 }

@@ -1,6 +1,5 @@
 require('dotenv').config()
 const path = require('path');
-const Table = require('easy-table')
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 

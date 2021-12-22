@@ -29,6 +29,7 @@ module.exports = (client, instance, user) => {
                   selectedJson.versionNumber = data.versionNumber;
                   let newScore = selectedJson.s;
                   let existingScore = data?.score;
+                  
                   if(data?.user?.id) {
                     existingUser = await interaction.client.users.fetch(data?.user.id);
                   }
@@ -54,32 +55,33 @@ module.exports = (client, instance, user) => {
 
                         await existingUser.send(content);
                       };
-                    }).catch(async (err) => {
-                      logger.error(err)
+                    }).catch(async (e) => {
+                      logger.error(e)
                       await interaction.followUp({
-                        content: `${err}`, 
+                        content: `${e}`, 
                         components: [], 
                         files: [],
                       });
                     });
                   } else {
-                    await postHighScoreCommand.saveHighScore(selectedJson, interaction).then(async () => {
-                      const user = await client.users.cache.find(user => user.username === selectedJson.u)
-                      await interaction.update({
-                        content: `**<@${user.id}>** just posted a score for**\n` + 
-                          `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
-                          `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
-                          `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
-                        components: []
+                    await postHighScoreCommand.saveHighScore(selectedJson, interaction)
+                      .then(async () => {
+                        const user = await client.users.cache.find(user => user.username === selectedJson.u)
+                        await interaction.update({
+                          content: `**<@${user.id}>** just posted a score for**\n` + 
+                            `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
+                            `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
+                            `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
+                          components: []
+                        });
+                      }).catch(async (e) => {
+                        logger.error(e)
+                        await interaction.followUp({
+                          content: `${e}`, 
+                          components: [], 
+                          files: [],
+                        });
                       });
-                    }).catch(async (err) => {
-                      logger.error(err)
-                      await interaction.followUp({
-                        content: `${err}`, 
-                        components: [], 
-                        files: [],
-                      });
-                    });
                   }
                   break;
                 } else if(tables.length === 0) {
@@ -99,6 +101,6 @@ module.exports = (client, instance, user) => {
           default:
             console.log(commandName);
         }		
-        }
+      }
     });
 }

@@ -13,14 +13,17 @@ module.exports = {
   callback: async ({ args, client, channel, interaction, instance, user }) => {
     const [ max ] = args;
     let retVal;
+    let retNumber;
 
     try{
       var random = new RandomOrg({ apiKey: process.env.RANDOMORG_API_KEY });
-      retVal= (await random.generateIntegers({ min: 1, max: max, n: 1 })).random.data[0];
+      retNumber = (await random.generateIntegers({ min: 1, max: max, n: 1 })).random.data[0];
     } catch(error) {
       throw error;
     }
 
-    return `**${retVal}** (1 - ${max})`;
+    retVal = `**${retNumber}** (1 - ${max})`;
+
+    interaction.reply({content: retVal, ephemeral: false});
   },
 } 

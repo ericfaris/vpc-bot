@@ -2,7 +2,6 @@ require('dotenv').config()
 const path = require('path');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
-const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
@@ -18,17 +17,15 @@ module.exports = {
   expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
+    let ephemeral = false;
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      return `The ${module.exports.commandName} slash command can only be executed by an admin. This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-    }
-
-    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`);
+      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
+      ephemeral = true;
+    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
+      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+      ephemeral = true;
     } else {
       const [weeknumber, periodstart, periodend, table, tableurl, romurl, currentseasonweeknumber, notes] = args;
 
@@ -48,14 +45,12 @@ module.exports = {
       }
 
       await mongoHelper.updateOne({ isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
-
       await mongoHelper.insertOne(week, 'weeks');
-
       await outputHelper.editWeeklyCompetitionCornerMessage(week.scores, client, week, week.teams);
 
-      retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message wasupdated successfully.`;
+      retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
     }
 
-    return retVal;
+    interaction.reply({content: retVal, ephemeral: ephemeral});
   },
 }

@@ -31,23 +31,23 @@ module.exports = {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
-    t.newRow()
+    t.newRow();
   },
 
   createTableRowSeason: (i, t, player, expandedLayout) => {
-    t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', player.username, Table.rightPadder(' '))
+    t.cell('Rank', i, Table.leftPadder(' '));
+    t.cell('User', player.username, Table.rightPadder(' '));
     t.cell('Points', player.points, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
-    })
+    });
     if (expandedLayout) {
       t.cell('Score', player.score, (val, width) => {
         var str = numeral(val).format('0,0');
         return width ? Table.padLeft(str, width) : str;
-      })
+      });
     }
-    t.newRow()
+    t.newRow();
   },
 
   createTableRowHighScore: (i, t, table, expandedLayout) => {
@@ -58,7 +58,7 @@ module.exports = {
       return width ? Table.padLeft(str, width) : str;
     })
     t.cell('Posted', date.transform(table.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
-    t.newRow()
+    t.newRow();
   },
 
   printLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
@@ -147,7 +147,7 @@ module.exports = {
   printTeamSummary: (teams, scores) => {
     var strText = '**Team Summary:**\n';
 
-    module.exports.calculateTeamTotals(teams, scores)
+    module.exports.calculateTeamTotals(teams, scores);
 
     // sort descending
     teams.sort((a, b) => (a.totalScore < b.totalScore) ? 1 : -1);
@@ -157,7 +157,7 @@ module.exports = {
     teams.forEach(function (team) {
       i++
       module.exports.createTableRowTeam(i, t, team);
-    })
+    });
 
     strText += '`' + t.toString() + '`';
 
@@ -192,7 +192,7 @@ module.exports = {
 
       strText += '**Team:** ' + team.name + '\n';
       teamMembersScores.forEach(function (score) {
-        i++
+        i++;
         module.exports.createTableRow(i, t, score, expandedLayout);
       })
 
@@ -243,7 +243,7 @@ module.exports = {
     let i = 1;
 
     if(searchTerm) {
-      strText = `**Results for '${searchTerm}'...**\n\n`;
+      strText = `**Top 5 scores for '${searchTerm}'...**\n\n`;
       showAll = false;
     } else {
       strText = '**Showing all tables...**\n\n';
@@ -288,7 +288,7 @@ module.exports = {
       endIndex = textTableAsString.search(" " + (numOfScoresToShow + scoresProcessed + 1) + " ") != -1 ? textTableAsString.search(" " + (numOfScoresToShow + scoresProcessed + 1) + " ") : textTableAsString.length;
       var lastLineBreakIndex = textTableAsString.substr(endIndex - 8, endIndex).search('\n', startIndex) + (endIndex - 8);
 
-      var post = textTableAsString.substr(0, endIndex + 1 - padding)
+      var post = textTableAsString.substr(0, endIndex + 1 - padding);
       if (scoresProcessed == 0) {
         post = post.trimEnd();
         post = post.endsWith('\n') ? post.slice(0, -1) + '`' : post;
@@ -336,21 +336,6 @@ module.exports = {
       teamMembersScores.sort((a, b) => (a.score < b.score) ? 1 : -1);
       team.totalScore = teamMembersScores.reduce((a, b) => a + (b['score'] || 0), 0);
     })
-  },
-
-  createEmbed: (title, description, color, fields) => {
-    const embed = new MessageEmbed()
-      .setColor(color)
-      .setTitle(title)
-      .setDescription(description)
-
-    fields.forEach(field => {
-      embed.addField(field.key, field.value)
-    });
-
-    embed.setFooter();
-
-    return embed;
   },
 
   editWeeklyCompetitionCornerMessage: async (scores, client, week, teams) => {
