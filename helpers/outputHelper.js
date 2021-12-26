@@ -229,7 +229,7 @@ module.exports = {
       if (numOfScoresToShow && numOfScoresToShow > 1) {
         tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
       } else {
-        tableArray = module.exports.splitPosts(scores, textTableAsString, 15);
+        tableArray = module.exports.splitPosts(scores, textTableAsString, 35);
       }
 
       return tableArray;
