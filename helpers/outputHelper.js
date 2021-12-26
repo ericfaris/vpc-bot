@@ -229,18 +229,19 @@ module.exports = {
       if (numOfScoresToShow && numOfScoresToShow > 1) {
         tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
       } else {
-        tableArray = module.exports.splitPosts(scores, textTableAsString, 35);
+        tableArray = module.exports.splitPosts(scores, textTableAsString, 15);
       }
 
       return tableArray;
     }
   },
 
-  printHighScoreTables: (searchTerm, tables, scoresToShow, expandedLayout) => {
+  printHighScoreTables: (searchTerm, tables, scoresToShow, tablesPerMessage) => {
     var strText = '';
     let tableArray = [];
     let showAll = false;
     let i = 1;
+    let x = 1;
 
     if(searchTerm) {
       strText = `**Top 5 scores for '${searchTerm}'...**\n\n`;
@@ -267,6 +268,13 @@ module.exports = {
           strText += '**NO HIGH SCORES POSTED**\n\n';
         }
       }
+
+      if(x === tablesPerMessage) {
+        tableArray.push(strText);
+        strText = '';
+        x = 0;
+      }
+      x++;
     });
 
     tableArray.push(strText);
