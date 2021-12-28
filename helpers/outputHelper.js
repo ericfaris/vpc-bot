@@ -252,6 +252,7 @@ module.exports = {
     }
 
     tables.forEach(function (table) {
+      i = 1;
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
         ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
         (table?.postUrl ? ` [high score photo](${table.postUrl})` : '') + '\n';
