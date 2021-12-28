@@ -13,8 +13,8 @@ module.exports = {
   description: 'Create new week (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  minArgs: 4,
-  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
+  minArgs: 6,
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <authorname> <versionnumber> <tableurl> <romurl> <romname> <currentseasonweeknumber> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
     let ephemeral = false;
@@ -27,7 +27,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
       ephemeral = true;
     } else {
-      const [weeknumber, periodstart, periodend, table, tableurl, romurl, currentseasonweeknumber, notes] = args;
+      const [weeknumber, periodstart, periodend, table, authorname, versionnumber, tableurl, romurl, romname, currentseasonweeknumber, notes] = args;
 
       var week =
       {
@@ -35,8 +35,11 @@ module.exports = {
         'periodStart': periodstart,
         'periodEnd': periodend,
         'table': table,
+        'authorName': authorname,
+        'versionNumber': versionnumber,
         'tableUrl': tableurl,
         'romUrl': romurl,
+        'romName': romname,
         'currentSeasonWeekNumber': currentseasonweeknumber,
         'notes': notes,
         'scores': [],

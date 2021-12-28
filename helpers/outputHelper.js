@@ -353,22 +353,27 @@ module.exports = {
 
     message.edit(module.exports.generateWeeklyBoilerPlateText(
       scores, teams, week.weekNumber, week.periodStart, week.periodEnd,
-      week.table, week.tableUrl, week.romUrl, week.notes, week.currentSeasonWeekNumber));
+      week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
+      week.notes, week.currentSeasonWeekNumber));
     message.suppressEmbeds(true);
   },
 
-  generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, table, tableUrl, romUrl, notes, currentSeasonWeekNumber) => {
+  generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, tableName, authorName, versionNumber, 
+                                  tableUrl, romUrl, romName, notes, currentSeasonWeekNumber) => {
     var bp = '\n\n';
 
     bp += '**WEEKLY LEADERBOARD**\n\n';
-    bp += '**Week:** ' + weekNumber + '\n';
-    bp += '**Current Season Week:** ' + currentSeasonWeekNumber + '\n';
-    bp += '**Dates:** ' + periodStart + " - " + periodEnd + '\n';
+    bp += `**Week:** ${weekNumber ?? 'N/A'}\n`;
+    bp += `**Current Season Week:** ${currentSeasonWeekNumber ?? 'N/A'}\n`;
+    bp += `**Dates:** ${periodStart} - ${periodEnd}\n`;
     bp += '\n';
-    bp += '**Current Table:** ' + table + "\n";
-    bp += '**Table Url:** ' + tableUrl + "\n";
-    bp += '**Rom Url:** ' + romUrl + "\n";
-    bp += '**Notes:** ' + notes + "\n\n";
+    bp += `**Table Name:** ${tableName ?? 'N/A'}\n`;
+    bp += `**Author Name:** ${authorName ?? 'N/A'}\n`;
+    bp += `**Version:** ${versionNumber ?? 'N/A'}\n`;
+    bp += `**Table Url:** ${tableUrl ?? 'N/A'}\n`;
+    bp += `**Rom Url:** ${romUrl ?? 'N/A'}\n`;
+    bp += `**Rom Name:** ${romName ?? 'N/A'}\n`;
+    bp += `**Notes:** ${notes ?? 'N/A'}\n\n`;
     bp += module.exports.printCombinedLeaderboard(scores, 30, teams, false, false)[0];
     bp += '\n';
     bp += '\n';

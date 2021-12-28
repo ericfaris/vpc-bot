@@ -13,8 +13,8 @@ module.exports = {
   description: 'Edit Current Week Details for Competition Corner (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
-  minArgs: 4,
-  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <tableurl> <romurl> <currentseasonweeknumber> <notes>',
+  minArgs: 6,
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <authorname> <versionnumber> <tableurl> <romurl> <romname> <currentseasonweeknumber> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
 
@@ -24,7 +24,7 @@ module.exports = {
     } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
     } else {
-      const [weeknumber, periodstart, periodend, table, tableurl, romurl, currentseasonweeknumber, notes] = args;
+      const [weeknumber, periodstart, periodend, table, authorname, versionnumber, tableurl, romurl, romname, currentseasonweeknumber, notes] = args;
 
       const week = await mongoHelper.findOneAndUpdate({ isArchived: false }, {
         $set: {
@@ -32,8 +32,11 @@ module.exports = {
           'periodStart': periodstart,
           'periodEnd': periodend,
           'table': table ?? '',
+          'authorName': authorname ?? '',
+          'versionNumber': versionnumber ?? '',
           'tableUrl': tableurl ?? '',
           'romUrl': romurl ?? '',
+          'romName': romname ?? '',
           'currentSeasonWeekNumber': currentseasonweeknumber ?? '',
           'notes': notes ?? ''
         }
