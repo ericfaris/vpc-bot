@@ -70,7 +70,7 @@ module.exports = {
     findOneAndUpdate: async (filter, update, options, collectionName) => {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, collectionName)
-        const doc = await collection.findOneAndUpdate(filter, update);
+        const doc = await collection.findOneAndUpdate(filter, update, options);
         client.close();
         return doc;
     },
