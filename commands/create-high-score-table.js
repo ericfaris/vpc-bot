@@ -13,16 +13,18 @@ module.exports = {
   roles: ['High Score Corner Mod'],
   minArgs: 3,
   expectedArgs: '<tablename> <authorname> <versionnumber> <versionurl> <romname>',
-  callback: async ({ args, client, channel, interaction, instance, user}) => {
+  callback: async ({ args, client, channel, interaction, instance, user, message}) => {
     let retVal;
     let ephemeral = false;
+
+    if(message) {
+      interaction = message;
+      ephemeral = true;
+    }
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
       retVal =  logMessage;
-      ephemeral = true;
-    } else if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
       ephemeral = true;
     } else {
       const [tablename, authorname, versionnumber, versionurl, romname] = args;
@@ -95,10 +97,16 @@ module.exports = {
           }
         }
 
-        await mongoHelper.updateOne(filter, update, options, 'tables');
+        if(filter && options && update) {
+          await mongoHelper.updateOne(filter, update, options, 'tables');
+        }
       }
     }
 
-    interaction.reply({content: retVal, ephemeral: ephemeral});
+    if(message) {
+      interaction.followUp({content: `**Trying to create new high score table:** ${retVal}`, ephemeral: ephemeral});
+    } else {
+      interaction.reply({content: retVal, ephemeral: ephemeral});
+    }
   },
 }

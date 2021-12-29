@@ -54,6 +54,18 @@ module.exports = {
       retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
     }
 
-    interaction.reply({content: retVal, ephemeral: ephemeral});
+    interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
+      const commandName = 'create-high-score-table';
+      let command = instance.commandHandler._commands.get(commandName);
+      try {
+        interaction.commandName = commandName;
+        await command.execute(interaction, [week.table, week.authorName, week.versionNumber, week.tableUrl, week.romName]);
+      } catch (e) {
+        if (e) {
+          console.error(e)
+        }
+      }
+    })
+
   },
 }
