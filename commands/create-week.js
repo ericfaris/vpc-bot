@@ -3,6 +3,7 @@ const path = require('path');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { CommandHelper } = require('../helpers/commandHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -18,6 +19,7 @@ module.exports = {
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
     let ephemeral = false;
+    let commandHelper = new CommandHelper();
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`);
@@ -55,16 +57,7 @@ module.exports = {
     }
 
     interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
-      const commandName = 'create-high-score-table';
-      let command = instance.commandHandler._commands.get(commandName);
-      try {
-        interaction.commandName = commandName;
-        await command.execute(interaction, [week.table, week.authorName, week.versionNumber, week.tableUrl, week.romName]);
-      } catch (e) {
-        if (e) {
-          console.error(e)
-        }
-      }
+      await commandHelper.execute(instance, interaction, 'create-high-score-table', [week.table, week.authorName, week.versionNumber, week.tableUrl, week.romName])
     })
 
   },

@@ -25,7 +25,6 @@ module.exports = {
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
       retVal =  logMessage;
-      ephemeral = true;
     } else {
       const [tablename, authorname, versionnumber, versionurl, romname] = args;
 
