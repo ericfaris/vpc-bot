@@ -8,7 +8,6 @@ var numeral = require('numeral');
 const outputHelper = require('../helpers/outputHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 const mongoHelper = require('../helpers/mongoHelper');
-const { CommandHelper } = require('../helpers/commandHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -24,7 +23,6 @@ module.exports = {
     let invalidMessage;
     let score = args[0];
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
-    let commandHelper = new CommandHelper();
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
@@ -62,9 +60,7 @@ module.exports = {
         }
       } else if (!message) {
         invalidMessage = 'The post-score slash command has been turned off.  Please using the following format to post your score:\n'
-          + '`!score 1234567 (an image should also be posted as an attachment)`\n\n'
-          + 'This message will be deleted in 60 seconds.';
-
+          + '`!score 1234567 (an image is REQUIRED as an attachment)`\n\n';
         interaction.reply({content: invalidMessage, ephemeral: true}); 
       } else {
         //parameter is GOOD
@@ -78,8 +74,8 @@ module.exports = {
           let attachment = message.attachments?.first();
           if (attachment) {
             message.reply({content: content, files: [attachment]}).then(() => {
-              //TODO: check for high score
-              client.emit('crosspostHighScore', user, scoreAsInt, attachment, currentWeek);
+              //post this same score to the #high-score-corner channel
+              client.emit('crosspostHighScore', user, scoreAsInt, attachment, currentWeek, process.env.HIGH_SCORES_CHANNEL_ID);
               message.delete();
             });
           } else {

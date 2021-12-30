@@ -4,8 +4,8 @@ var numeral = require('numeral');
 
 module.exports = (client, instance, user) => {
 
-    client.on('crosspostHighScore', async function (user, score, attachment, currentWeek) {
-      var channel = client.channels.cache.get(process.env.HIGH_SCORES_CHANNEL_ID);
+    client.on('crosspostHighScore', async function (user, score, attachment, currentWeek, channelId) {
+      var channel = client.channels.cache.get(channelId);
       
       var data = {
         tableName: currentWeek.table,
