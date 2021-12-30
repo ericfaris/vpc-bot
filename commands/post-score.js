@@ -6,9 +6,9 @@ const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
 const outputHelper = require('../helpers/outputHelper');
-const responseHelper = require('../helpers/responseHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { CommandHelper } = require('../helpers/commandHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -24,6 +24,7 @@ module.exports = {
     let invalidMessage;
     let score = args[0];
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
+    let commandHelper = new CommandHelper();
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
@@ -73,9 +74,12 @@ module.exports = {
         retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message)
 
         if (message) {
+          let content = `<@${user.id}>, ${retVal}`;
           let attachment = message.attachments?.first();
           if (attachment) {
-            message.reply({content: `<@${user.id}>, ` + retVal, files: [attachment]}).then(() => {
+            message.reply({content: content, files: [attachment]}).then(() => {
+              //TODO: check for high score
+              client.emit('crosspostHighScore', user, scoreAsInt, attachment, currentWeek);
               message.delete();
             });
           } else {

@@ -7,6 +7,7 @@ const { MessageActionRow, MessageSelectMenu } = require('discord.js');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { table } = require('console');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -130,7 +131,7 @@ module.exports = {
                 message.delete();
               });
             } else {
-              invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
+              invalidMessage = 'No photo attached. Please attach a photo with your high score. This message will be deleted in 10 seconds.'
               
               message.reply(invalidMessage).then((reply) => {
                 message.delete();
@@ -166,7 +167,7 @@ module.exports = {
   },
 
   saveHighScore: async (data, interaction) => {   
-    await mongoHelper.updateOne(
+    const newHighScore = await mongoHelper.findOneAndUpdate(
       { tableName: data.tableName },
       { $push: { 'authors.$[a].versions.$[v].scores' : {
         '_id': mongoHelper.generateObjectId(),
@@ -175,12 +176,34 @@ module.exports = {
         'score': data.s,
         'postUrl': interaction.message.url,
         'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
-      }}, 
-      { arrayFilters: [
+      }},
+      { returnDocument: 'after',
+        arrayFilters: [
           { 'a.authorName': data.authorName },
           { 'v.versionNumber': data.versionNumber }
-        ]},
+        ]
+      },
       'tables'
     );
+
+    return newHighScore.value;
   },
+
+  updateHighScore: async (data, postUrl) => {   
+    const updateHighScore = await mongoHelper.findOneAndUpdate(
+      { tableName: data.tableName },
+      { $set: { 'authors.$[a].versions.$[v].scores.$[s].postUrl' : postUrl }},
+      { returnDocument: 'after',
+        arrayFilters: [
+          { 'a.authorName': data.authorName },
+          { 'v.versionNumber': data.versionNumber },
+          { 's._id': ObjectId(data.scoreId) }
+        ]
+      },
+      'tables'
+    );
+
+    return updateHighScore.value;
+  }
+
 }
