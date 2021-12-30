@@ -75,7 +75,10 @@ module.exports = {
           if (attachment) {
             message.reply({content: content, files: [attachment]}).then(() => {
               //post this same score to the #high-score-corner channel
-              client.emit('crosspostHighScore', user, scoreAsInt, attachment, currentWeek, process.env.HIGH_SCORES_CHANNEL_ID);
+              const reHighScoreCheck = new RegExp('Rank 1 of');
+              if(attachment && reHighScoreCheck.test(content)) {
+                client.emit('crosspostHighScore', user, scoreAsInt, attachment, currentWeek, process.env.HIGH_SCORES_CHANNEL_ID);
+              }
               message.delete();
             });
           } else {
