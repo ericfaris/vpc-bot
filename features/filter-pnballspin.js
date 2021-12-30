@@ -1,4 +1,4 @@
-module.exports = (client, instance) => {
+module.exports = (client) => {
 
     client.on("messageCreate", (message) => {
         const { channel, author } = message

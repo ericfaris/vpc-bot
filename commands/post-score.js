@@ -1,7 +1,5 @@
 require('dotenv').config()
 const path = require('path');
-const moment = require('moment');
-const { MessageEmbed } = require('discord.js')
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
@@ -17,12 +15,14 @@ module.exports = {
   guildOnly: true,
   description: 'Post score for the Competition Corner',
   minArgs: 1,
-  expectedArgs: '<score>',
+  expectedArgs: '<score> <posttohighscorechannel>',
   callback: async ({ args, client, interaction, channel, instance, message, user }) => {
     let retVal;
     let invalidMessage;
     let score = args[0];
+    const postToHighScoreChannel = args.length > 1 ? args[1] : null;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
+    const reHighScoreCheck = new RegExp('Rank: [1|2|3|4|5] of');
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
@@ -37,10 +37,9 @@ module.exports = {
         })
       } else {
         retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
-        interaction.reply({content: retVal, ephemeral: true});
+        interaction.reply({ content: retVal, ephemeral: true });
       };
     } else {
-      //convert to integer
       const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
       // invalid parameter message
@@ -56,28 +55,30 @@ module.exports = {
             }, instance.delErrMsgCooldown * 1000)
           })
         } else {
-          interaction.reply({content: invalidMessage, ephemeral: true}); 
+          interaction.reply({ content: invalidMessage, ephemeral: true });
         }
       } else if (!message) {
         invalidMessage = 'The post-score slash command has been turned off.  Please using the following format to post your score:\n'
           + '`!score 1234567 (an image is REQUIRED as an attachment)`\n\n';
-        interaction.reply({content: invalidMessage, ephemeral: true}); 
+          
+        interaction.reply({ content: invalidMessage, ephemeral: true });
       } else {
         //parameter is GOOD
         const currentWeek = await mongoHelper.findCurrentWeek('weeks');
-        const periodEnd = currentWeek ? new Date(currentWeek.periodEnd) : null;
 
         retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message)
 
         if (message) {
           let content = `<@${user.id}>, ${retVal}`;
           let attachment = message.attachments?.first();
+
           if (attachment) {
-            message.reply({content: content, files: [attachment]}).then(() => {
+            message.reply({ content: content, files: [attachment] }).then(() => {
               //post this same score to the #high-score-corner channel
-              const reHighScoreCheck = new RegExp('Rank 1 of');
-              if(attachment && reHighScoreCheck.test(content)) {
-                client.emit('crosspostHighScore', user, scoreAsInt, attachment, currentWeek, process.env.HIGH_SCORES_CHANNEL_ID);
+              if (reHighScoreCheck.test(content) || postToHighScoreChannel.toLowerCase() === 'y') {
+                client.emit('postHighScore', user, scoreAsInt, attachment,
+                  currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
+                  'just posted a score for');
               }
               message.delete();
             });
@@ -88,7 +89,7 @@ module.exports = {
               setTimeout(() => {
                 reply.delete();
               }, instance.delErrMsgCooldown * 1000)
-            })    
+            })
           }
         } else {
           return retVal;
@@ -136,8 +137,8 @@ module.exports = {
     let scoreDiff = scoreAsInt - previousScore;
 
     // return text table string
-    return (message ? '' : '**@' + userName + '**,') + ' posted a new score:\n'
-      + '**' + numeral(scoreAsInt).format('0,0') + '** (' + (scoreDiff >= 0 ? '+' : '') + numeral(scoreAsInt - previousScore).format(0, 0) + ')\n'
-      + '**Rank ' + currentRank + '** (' + (changeInRank >= 0 ? '+' + changeInRank : changeInRank) + ')';
+    return (message ? '' : `**@' ${userName} + '**,`) + ' posted a new score:\n'
+      + `**Score:** ${numeral(scoreAsInt).format('0,0')} (${(scoreDiff >= 0 ? '+' : '')} ${numeral(scoreAsInt - previousScore).format(0, 0)})\n`
+      + `**Rank:** ${currentRank} (${(changeInRank >= 0 ? '+' + changeInRank : changeInRank)})`;
   },
 }
