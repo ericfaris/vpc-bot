@@ -47,9 +47,9 @@ module.exports = (client, user) => {
                       });
 
                       if(existingUser && (existingUser.username !== user.username)) {
-                        let content = `**<@${user.id}>** just topped your high score for**:\n` +
-                        `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
-                        `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
+                        let content = `**@${user?.username}** just topped your high score for**:\n` +
+                        `${selectedJson?.tableName} (${selectedJson?.authorName} ${selectedJson?.versionNumber})**\n` +
+                        `**Score: **${numeral(selectedJson?.s).format('0,0')}\n` +
                         `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n\n` +
                         `Link: ${interaction?.message?.url}`;
 
