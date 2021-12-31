@@ -73,9 +73,9 @@ module.exports = {
           let attachment = message.attachments?.first();
 
           if (attachment) {
-            message.reply({ content: content, files: [attachment] }).then(() => {
+            message.reply({ content: content, files: [attachment] }).then((reply) => {
               //post this same score to the #high-score-corner channel
-              if (reHighScoreCheck.test(content) || postToHighScoreChannel.toLowerCase() === 'y') {
+              if (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y') {
                 client.emit('postHighScore', user, scoreAsInt, attachment,
                   currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
                   'just posted a score for');
