@@ -68,7 +68,7 @@ module.exports = (client, user) => {
                       .then(async () => {
                         const user = await client.users.cache.find(user => user.username === selectedJson.u)
                         await interaction.update({
-                          content: `**<@${user.id}>** just posted a score for**\n` + 
+                          content: `**<@${user.id}>**, just posted a score for**\n` + 
                             `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
                             `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
@@ -127,7 +127,7 @@ module.exports = (client, user) => {
                                 ?.versions.find(v => v.versionNumber === data.versionNumber)
                                 ?.scores.reduce((a,b) => a.score > b.score ? a : b)?._id.toString();
 
-        await channel.send({content:  `**${postTitle}**\n` + 
+        await channel.send({content: `**${postTitle}**\n` + 
                                 `**<@${user.id}>**, ${postDescription}\n` + 
                                 `**${data.tableName} (${data.authorName} ${data.versionNumber})**\n` +
                                 `**Score: **${numeral(data.s).format('0,0')}\n` +

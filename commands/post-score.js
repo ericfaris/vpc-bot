@@ -22,7 +22,7 @@ module.exports = {
     let score = args[0];
     const postToHighScoreChannel = args.length > 1 ? args[1] : null;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
-    const reHighScoreCheck = new RegExp('Rank: [1|2|3|4|5] of');
+    const reHighScoreCheck = new RegExp('Rank:\\*\\* [1|2|3|4|5] of');
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
@@ -137,7 +137,7 @@ module.exports = {
     let scoreDiff = scoreAsInt - previousScore;
 
     // return text table string
-    return (message ? '' : `**@' ${userName} + '**,`) + ' posted a new score:\n'
+    return (message ? '' : `**@${userName}**, `) + 'posted a new score:\n'
       + `**Score:** ${numeral(scoreAsInt).format('0,0')} (${(scoreDiff >= 0 ? '+' : '')} ${numeral(scoreAsInt - previousScore).format(0, 0)})\n`
       + `**Rank:** ${currentRank} (${(changeInRank >= 0 ? '+' + changeInRank : changeInRank)})`;
   },

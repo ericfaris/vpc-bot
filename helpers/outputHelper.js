@@ -57,7 +57,9 @@ module.exports = {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
-    t.cell('Posted', date.transform(table.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
+    if(expandedLayout) {
+      t.cell('Posted', date.transform(table.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
+    }
     t.newRow();
   },
 
