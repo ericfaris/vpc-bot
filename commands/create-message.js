@@ -17,6 +17,11 @@ module.exports = {
     let retVal;
     let ephemeral = false;
 
+    const guildOnly = await instance.slashCommands.get(channel.guild.id);
+    guildOnly.forEach(element => {
+      console.log(`${element.id} ${element.name}`);
+    });
+
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`)
       retVal = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.;`
