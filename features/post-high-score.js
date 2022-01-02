@@ -135,6 +135,8 @@ module.exports = (client, user) => {
                           , files: [attachment]}).then(async (message) => {
           data.scoreId = highScoreId;
           await postHighScoreCommand.updateHighScore(data, message.url);
+
+          //show top 5 high scores of the game
         })
       });
     });

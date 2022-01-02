@@ -10,7 +10,7 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Search high score tables',
+  description: 'Search table high scores',
   minArgs: 1,
   expectedArgs: '<tablesearchterm>',
   callback: async ({ args, channel, interaction, instance }) => {

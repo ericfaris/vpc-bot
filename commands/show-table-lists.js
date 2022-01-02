@@ -11,7 +11,7 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Show high score tables list',
+  description: 'Show high score table list',
   callback: async ({ channel, interaction, instance, user }) => {
     let logger = (new Logger(user)).logger;
     let retVal;
