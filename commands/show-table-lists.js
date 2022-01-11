@@ -2,8 +2,8 @@ require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
 const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
-const mongoHelper = require('../helpers/mongoHelper');
-const { AllPipelineHelper } = require('../helpers/pipelineHelper');
+const {VPCDataService} = require('../services/vpcDataService')
+
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -15,14 +15,14 @@ module.exports = {
   callback: async ({ channel, interaction, instance, user }) => {
     let logger = (new Logger(user)).logger;
     let retVal;
-    let pipeline = (new AllPipelineHelper()).pipeline;
+    let vpcDataService = new VPCDataService();
 
       if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
         retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
         interaction.reply({content: retVal, ephemeral: true});
       } else { 
         try {
-          const tables = await mongoHelper.aggregate(pipeline, 'tables');
+          const tables = await vpcDataService.getTablesWithAuthorVersion();
           responseHelper.showEphemeralHighScoreTables(tables, null, interaction)
         } catch (e) {
           console.log(e);

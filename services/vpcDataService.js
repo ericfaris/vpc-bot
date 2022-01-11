@@ -20,6 +20,10 @@ class VPCDataService {
         return (await fetch(`${this.baseApiUrl}/tables`, this.options)).json();
     }
 
+    async getTablesWithAuthorVersion() {
+        return (await fetch(`${this.baseApiUrl}/tablesWithAuthorVersion`, this.options)).json();
+    }
+
     async getScoresByTable(tableName) {
         return (await fetch(`${this.baseApiUrl}/scoresByTable?tableName=${tableName}`, this.options)).json();
     }
