@@ -1,7 +1,7 @@
 require('dotenv').config()
 const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
-const {VPCDataService} = require('../services/vpc-data.service')
+const {VPCDataService} = require('../services/vpcDataService')
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
