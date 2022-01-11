@@ -52,7 +52,7 @@ module.exports = {
 
   createTableRowHighScore: (i, t, score, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score.user.username, Table.leftPadder(' '))
+    t.cell('User', score.user.username, Table.rightPadder(' '))
     t.cell('Score', score.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
@@ -247,7 +247,12 @@ module.exports = {
     let x = 1;
 
     if(searchTerm) {
-      strText = `**Top 5 scores for '${searchTerm}'...**\n\n`;
+      if(tables.length > 0) {
+        strText = `**Top ${scoresToShow} scores for '${searchTerm}'...**\n\n`;
+      }
+      else {
+        strText = `**NO TABLES FOUND**`;
+      }
       showAll = false;
     } else {
       strText = '**Showing all tables...**\n\n';

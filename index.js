@@ -6,7 +6,6 @@ const WOKCommands = require('wokcommands')
 const path = require('path')
 
 //const cron = require('node-cron');
-//const responseHelper = require('./helpers/responseHelper');
 let logger = (new Logger(null)).logger;
 
 logger.info('Starting bot');
