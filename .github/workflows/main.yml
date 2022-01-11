@@ -68,3 +68,4 @@ jobs:
             HIGH_SCORES_CHANNEL_NAME=${{ secrets.HIGH_SCORES_CHANNEL_NAME }}
             HIGH_SCORES_CHANNEL_ID=${{ secrets.HIGH_SCORES_CHANNEL_ID }}
             RANDOMORG_API_KEY=${{ secrets.RANDOMORG_API_KEY }}
+            VPC_DATA_SERVICE_API_URI=${{ secrets.VPC_DATA_SERVICE_API_URI }}

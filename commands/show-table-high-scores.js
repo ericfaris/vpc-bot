@@ -1,8 +1,7 @@
 require('dotenv').config()
 const path = require('path');
-const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
 const responseHelper = require('../helpers/responseHelper');
-const mongoHelper = require('../helpers/mongoHelper');
+const {VPCDataService} = require('../services/vpc-data.service')
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -15,15 +14,15 @@ module.exports = {
   expectedArgs: '<tablesearchterm>',
   callback: async ({ args, channel, interaction, instance }) => {
     let retVal;
+    let vpcDataService = new VPCDataService();
     const [tableSearchTerm] = args;
-    let pipeline = (new SearchPipelineHelper(tableSearchTerm)).pipeline;
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
       try{
-        const tables = await mongoHelper.aggregate(pipeline, 'tables');
+        const tables = await vpcDataService.getScoresByTableAndAuthorUsingFuzzyTableSearch(tableSearchTerm);
         responseHelper.showEphemeralHighScoreTables(tables, tableSearchTerm, interaction)
       } catch(e) {
         console.log(e);

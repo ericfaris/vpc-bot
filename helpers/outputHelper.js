@@ -50,15 +50,16 @@ module.exports = {
     t.newRow();
   },
 
-  createTableRowHighScore: (i, t, table, expandedLayout) => {
+  createTableRowHighScore: (i, t, score, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', table.username, Table.leftPadder(' '))
-    t.cell('Score', table.score, (val, width) => {
+    t.cell('User', score.user.username, Table.leftPadder(' '))
+    t.cell('Score', score.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
+    t.cell('v', score.versionNumber, Table.rightPadder(' '))
     if(expandedLayout) {
-      t.cell('Posted', date.transform(table.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
+      t.cell('Posted', date.transform(score.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
     }
     t.newRow();
   },
@@ -256,8 +257,8 @@ module.exports = {
     tables.forEach(function (table) {
       i = 1;
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
-        ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
-        (table?.postUrl ? ` [high score photo](${table.postUrl})` : '') + '\n';
+        ` (${table.authorName ? table.authorName + ' ' : ''})` +
+        (table?.scores.length > 0 ? ` [high score photo](${table?.scores[0].postUrl})` : '') + '\n';
 
       if(!showAll) {
         if (table.scores.length > 0) {
