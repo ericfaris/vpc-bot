@@ -261,8 +261,13 @@ module.exports = {
 
     tables.forEach(function (table) {
       i = 1;
+
+      authorsArray = table?.authorName?.split(', ');
+      firstAuthor = authorsArray.shift();
+      otherAuthors = authorsArray?.join(',  ');
+
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
-        ` (${table.authorName ? table.authorName + ' ' : ''}${table.versionNumber ?? ''})` +
+        ` (${table.authorName ? `${firstAuthor}[...](a "${otherAuthors}") ` : ''}${table.versionNumber ?? ''})` +
         (table?.scores.length > 0 ? ` [high score photo](${table?.scores[0].postUrl})` : '') + '\n';
 
       if(!showAll) {
