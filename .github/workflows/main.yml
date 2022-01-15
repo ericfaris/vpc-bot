@@ -40,14 +40,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ericfaris/competition-corner-bot
+          images: ericfaris/vpc-bot
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ericfaris/competition-corner-bot:latest
+          tags: ericfaris/vpc-bot:latest
           build-args: |
             APPLICATION_ID=${{ secrets.APPLICATION_ID }}
             BOT_TOKEN=${{ secrets.BOT_TOKEN }}
