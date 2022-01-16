@@ -98,8 +98,11 @@ module.exports = {
             scoreId = item?.scoreId;
             const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
+            let authorsArray = authorName?.split(', ');
+            let firstAuthor = authorsArray?.shift();
+
             let option = {
-              label: `${tableName} (${authorName} ${versionNumber})`,
+              label: `${tableName} (${firstAuthor}... ${versionNumber})`,
               value: `{"id":"${scoreId ?? versionId ?? authorId ?? tableId}","u":"${user.username}","s":${scoreAsInt}}`
             };
             options.push(option);

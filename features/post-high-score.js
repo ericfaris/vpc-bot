@@ -29,6 +29,9 @@ module.exports = (client, user) => {
                   selectedJson.versionNumber = data.versionNumber;
                   let newScore = selectedJson.s;
                   let existingScore = data?.score;
+
+                  let authorsArray = selectedJson?.authorName?.split(', ');
+                  let firstAuthor = authorsArray?.shift();
                   
                   if(data?.user?.id) {
                     existingUser = await interaction.client.users.fetch(data?.user.id);
@@ -40,7 +43,7 @@ module.exports = (client, user) => {
                       await interaction.update({
                         content: `**HIGH SCORE ALERT**\n` + 
                           `**<@${user.id}>** just posted a high score for**\n` + 
-                          `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
+                          `${selectedJson.tableName} ( ${firstAuthor}... ${selectedJson.versionNumber})**\n` +
                           `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
                           `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
                         components: []
@@ -48,7 +51,7 @@ module.exports = (client, user) => {
 
                       if(existingUser && (existingUser.username !== user.username)) {
                         let content = `**@${user?.username}** just topped your high score for**:\n` +
-                        `${selectedJson?.tableName} (${selectedJson?.authorName} ${selectedJson?.versionNumber})**\n` +
+                        `${selectedJson?.tableName} (${firstAuthor}... ${selectedJson?.versionNumber})**\n` +
                         `**Score: **${numeral(selectedJson?.s).format('0,0')}\n` +
                         `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n\n` +
                         `Link: ${interaction?.message?.url}`;
@@ -69,7 +72,7 @@ module.exports = (client, user) => {
                         const user = await client.users.cache.find(user => user.username === selectedJson.u)
                         await interaction.update({
                           content: `**<@${user.id}>**, just posted a score for**\n` + 
-                            `${selectedJson.tableName} (${selectedJson.authorName} ${selectedJson.versionNumber})**\n` +
+                            `${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})**\n` +
                             `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
                           components: []
@@ -127,9 +130,12 @@ module.exports = (client, user) => {
                                 ?.versions.find(v => v.versionNumber === data.versionNumber)
                                 ?.scores.reduce((a,b) => a.score > b.score ? a : b)?._id.toString();
 
+        let authorsArray = data?.authorName?.split(', ');
+        let firstAuthor = authorsArray?.shift();
+                                
         await channel.send({content: `**${postTitle}**\n` + 
                                 `**<@${user.id}>**, ${postDescription}\n` + 
-                                `**${data.tableName} (${data.authorName} ${data.versionNumber})**\n` +
+                                `**${data.tableName} (${firstAuthor}... ${data.versionNumber})**\n` +
                                 `**Score: **${numeral(data.s).format('0,0')}\n` +
                                 `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`
                           , files: [attachment]}).then(async (message) => {
