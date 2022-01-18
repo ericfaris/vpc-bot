@@ -9,25 +9,25 @@ module.exports = {
 
   createTableRow: (i, t, score, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score.username.replace('`', '\`'), Table.rightPadder(' '))
-    t.cell('Score', score.score, (val, width) => {
+    t.cell('User', score?.username.replace('`', '\`'), Table.rightPadder(' '))
+    t.cell('Score', score?.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
     if (expandedLayout) {
-      t.cell('+/- Last Score', score.diff, (val, width) => {
+      t.cell('+/- Last Score', score?.diff, (val, width) => {
         var str = numeral(val).format('0,0');
         return width ? Table.padLeft('(' + (val > 0 ? '+' : '') + str + ')', width) : '(' + (val > 0 ? '+' : '') + str + ')';
       })
-      t.cell('Posted', score.posted)
+      t.cell('Posted', score?.posted)
     }
     t.newRow()
   },
 
   createTableRowTeam: (i, t, team, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('Team', team.name, Table.rightPadder(' '))
-    t.cell('Score', team.totalScore, (val, width) => {
+    t.cell('Team', team?.name, Table.rightPadder(' '))
+    t.cell('Score', team?.totalScore, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
@@ -36,13 +36,13 @@ module.exports = {
 
   createTableRowSeason: (i, t, player, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '));
-    t.cell('User', player.username, Table.rightPadder(' '));
-    t.cell('Points', player.points, (val, width) => {
+    t.cell('User', player?.username, Table.rightPadder(' '));
+    t.cell('Points', player?.points, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     });
     if (expandedLayout) {
-      t.cell('Score', player.score, (val, width) => {
+      t.cell('Score', player?.score, (val, width) => {
         var str = numeral(val).format('0,0');
         return width ? Table.padLeft(str, width) : str;
       });
@@ -52,14 +52,14 @@ module.exports = {
 
   createTableRowHighScore: (i, t, score, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score.user.username, Table.rightPadder(' '))
-    t.cell('Score', score.score, (val, width) => {
+    t.cell('User', score?.user?.username, Table.rightPadder(' '))
+    t.cell('Score', score?.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
     })
-    t.cell('v', score.versionNumber, Table.rightPadder(' '))
+    t.cell('v', score?.versionNumber, Table.rightPadder(' '))
     if(expandedLayout) {
-      t.cell('Posted', date.transform(score.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
+      t.cell('Posted', date.transform(score?.createdAt, 'MM/DD/YYYY...', 'MM/DD/YYYY'), Table.rightPadder(' '))
     }
     t.newRow();
   },
