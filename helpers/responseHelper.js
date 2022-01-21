@@ -29,18 +29,18 @@ module.exports = {
 
     postMessages: async (contentArray, interaction, isEphemeral) => {
         for (const post of contentArray) {
-            if(interaction.channel) {
-                await interaction.channel.send(post);
-            } else if(!interaction.replied) {
+            if(interaction.hasOwnProperty('replied') && (!interaction.replied)) {
                 await interaction.reply({ content: post, ephemeral: isEphemeral})
                     .catch((error) => {
                         interaction.reply({ content: error.message, ephemeral: isEphemeral });
                     })
-            } else {
+            } else if (interaction.hasOwnProperty('replied') && (interaction.replied)) {
                 await interaction.followUp({ content: post, ephemeral: isEphemeral})
                     .catch((error) => {
                         interaction.followUp({ content: error.message, ephemeral: isEphemeral });
                     })
+            } else if (interaction.channel) {
+                await interaction.channel.send(post);
             }
         };
     },
