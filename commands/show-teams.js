@@ -19,7 +19,7 @@ module.exports = {
       const currentWeek = await mongoHelper.findCurrentWeek('weeks');
 
       if (currentWeek.teams && currentWeek.teams.length > 0) {
-        responseHelper.showEphemeralTeams(currentWeek.scores, currentWeek.teams, interaction);
+        responseHelper.showTeams(currentWeek.scores, currentWeek.teams, interaction, true);
       } else {
         retVal = 'No teams were found.';
         interaction.reply({content: retVal, ephemeral: true});

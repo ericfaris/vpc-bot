@@ -4,7 +4,6 @@ const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
 const {VPCDataService} = require('../services/vpcDataService')
 
-
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
@@ -23,7 +22,7 @@ module.exports = {
       } else { 
         try {
           const tables = await vpcDataService.getTablesWithAuthorVersion();
-          responseHelper.showEphemeralHighScoreTables(tables, null, interaction)
+          responseHelper.showHighScoreTables(tables, null, interaction, true)
         } catch (e) {
           console.log(e);
           logger.error(e);

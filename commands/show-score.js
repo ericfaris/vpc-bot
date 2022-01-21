@@ -25,7 +25,7 @@ module.exports = {
         var t = new Table;
         score.rank = currentWeek.scores.findIndex(x => x.username === username) + 1;
         const numOfScores = currentWeek.scores.length;
-        responseHelper.showEphemeralScore(score, numOfScores, t, interaction);
+        responseHelper.showScore(score, numOfScores, t, interaction, true);
       } else {
         retVal = `No score found for ${username}.`;
         interaction.reply({content: retVal, ephemeral: true});

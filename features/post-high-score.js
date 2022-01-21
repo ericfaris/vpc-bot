@@ -2,10 +2,11 @@ const Logger = require('../helpers/loggingHelper');
 const { SearchScorePipelineHelper } = require('../helpers/pipelineHelper');
 const date = require('date-and-time');
 const postHighScoreCommand = require('../commands/post-high-score');
+const showTableHighScoresCommand = require('../commands/show-table-high-scores');
 var numeral = require('numeral');
 const mongoHelper = require('../helpers/mongoHelper');
 
-module.exports = (client, user) => {
+module.exports = (client, user, instance, channel, message) => {
     let logger = (new Logger(user)).logger;
 
     client.on('interactionCreate', async interaction => {
@@ -49,6 +50,8 @@ module.exports = (client, user) => {
                         components: []
                       });
 
+                      await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
+
                       if(existingUser && (existingUser.username !== user.username)) {
                         let content = `**@${user?.username}** just topped your high score for**:\n` +
                         `${selectedJson?.tableName} (${firstAuthor}... ${selectedJson?.versionNumber})**\n` +
@@ -77,6 +80,7 @@ module.exports = (client, user) => {
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
                           components: []
                         });
+                        await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
                       }).catch(async (e) => {
                         logger.error(e)
                         await interaction.followUp({
@@ -141,8 +145,7 @@ module.exports = (client, user) => {
                           , files: [attachment]}).then(async (message) => {
           data.scoreId = highScoreId;
           await postHighScoreCommand.updateHighScore(data, message.url);
-
-          //show top 5 high scores of the game
+          await showTableHighScoresCommand.callback( {args: [data.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
         })
       });
     });

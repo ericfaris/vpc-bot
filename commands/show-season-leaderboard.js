@@ -25,7 +25,7 @@ module.exports = {
         periodEnd: { $lte: currentSeason.seasonEnd }
       }, 'weeks');
 
-      responseHelper.showEphemeralSeasonLeaderboard(weeks, interaction)
+      responseHelper.showSeasonLeaderboard(weeks, interaction, true)
     }
   },
 }

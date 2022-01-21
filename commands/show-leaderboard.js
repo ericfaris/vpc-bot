@@ -19,7 +19,7 @@ module.exports = {
       const currentWeek = await mongoHelper.findCurrentWeek('weeks');
 
       try{
-        await responseHelper.showEphemeralLeaderboard(currentWeek.scores, currentWeek.teams, interaction)
+        await responseHelper.showLeaderboard(currentWeek.scores, currentWeek.teams, interaction, true)
       } catch(e) {
         console.log(e);
       }

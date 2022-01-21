@@ -15,7 +15,7 @@ module.exports = {
   callback: async ({ args, channel, interaction, instance }) => {
     let retVal;
     let vpcDataService = new VPCDataService();
-    const [tableSearchTerm] = args;
+    const [tableSearchTerm, isEphemeral] = args;
 
     if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
@@ -23,7 +23,8 @@ module.exports = {
     } else {
       try{
         const tables = await vpcDataService.getScoresByTableAndAuthorUsingFuzzyTableSearch(tableSearchTerm);
-        responseHelper.showEphemeralHighScoreTables(tables, tableSearchTerm, interaction)
+        interaction.channel = channel;
+        responseHelper.showHighScoreTables(tables, tableSearchTerm, interaction, isEphemeral ?? true)
       } catch(e) {
         console.log(e);
       }
