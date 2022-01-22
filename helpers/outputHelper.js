@@ -267,8 +267,7 @@ module.exports = {
       otherAuthors = authorsArray?.join(',  ');
 
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
-        ` (${table.authorName ? `${firstAuthor}... ` : ''}${table.versionNumber ?? ''})` +
-        (table?.scores.length > 0 ? ` [high score photo](${table?.scores[0].postUrl})` : '') + '\n';
+        ` (${table.authorName ? `${firstAuthor}... ` : ''}${table.versionNumber ?? ''})\n`;
 
       if(!showAll) {
         if (table.scores.length > 0) {
