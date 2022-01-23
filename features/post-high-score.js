@@ -50,8 +50,10 @@ module.exports = (client, user, instance, channel, message) => {
                         components: []
                       });
 
+                      logger.info(`Trying to show high scores for ${selectedJson.tableName}`)
                       await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
 
+                      logger.info('Checking to send a DM to user who had high score.')
                       if(existingUser && (existingUser.username !== user.username)) {
                         let content = `**@${user?.username}** just topped your high score for**:\n` +
                         `${selectedJson?.tableName} (${firstAuthor}... ${selectedJson?.versionNumber})**\n` +
@@ -59,6 +61,7 @@ module.exports = (client, user, instance, channel, message) => {
                         `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n\n` +
                         `Link: ${interaction?.message?.url}`;
 
+                        logger.info('Sending DM to previous High Score holder.')
                         await existingUser.send(content);
                       };
                     }).catch(async (e) => {
