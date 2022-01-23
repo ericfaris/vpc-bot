@@ -13,7 +13,7 @@ module.exports = {
   description: 'Search table high scores',
   minArgs: 1,
   expectedArgs: '<tablesearchterm>',
-  callback: async ({ args, channel, interaction, instance, message }) => {
+  callback: async ({ args, channel, interaction, instance, message, user }) => {
     let retVal;
     let logger = (new Logger(user)).logger;
     let vpcDataService = new VPCDataService();
