@@ -83,7 +83,7 @@ module.exports = (client, user, instance, channel, message) => {
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
                           components: []
                         });
-                        await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
+                        await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
                       }).catch(async (e) => {
                         logger.error(e)
                         await interaction.followUp({
