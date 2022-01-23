@@ -20,7 +20,8 @@ module.exports = {
     const [tableSearchTerm, isEphemeral] = args;
 
     logger.info('Checking if in Hign Score Channel');
-    if ((channel?.name ?? message?.channel) !== process.env.HIGH_SCORES_CHANNEL_NAME) {
+    logger.info(`channelName: ${channel?.name ?? message?.channel?.name}`);
+    if ((channel?.name ?? message?.channel?.name) !== process.env.HIGH_SCORES_CHANNEL_NAME) {
       logger.info('Not in High Score Channel');
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
       interaction.reply({content: retVal, ephemeral: true});
