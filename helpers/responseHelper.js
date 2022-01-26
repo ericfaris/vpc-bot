@@ -23,13 +23,15 @@ module.exports = {
     },
 
     showHighScoreTables: async (tables, searchTerm, interaction, isEphemeral) => {
-        var contentArray = outputHelper.printHighScoreTables(searchTerm, tables, 5, 5)
+        var contentArray = outputHelper.printHighScoreTables(searchTerm, tables, 10, 5, isEphemeral)
         module.exports.postMessages(contentArray, interaction, isEphemeral);
     },
 
     postMessages: async (contentArray, interaction, isEphemeral) => {
         for (const post of contentArray) {
-            if(interaction.hasOwnProperty('replied') && (!interaction.replied)) {
+            if (!isEphemeral && interaction.channel) {
+                await interaction.channel.send(post);
+            }else if(interaction.hasOwnProperty('replied') && (!interaction.replied)) {
                 await interaction.reply({ content: post, ephemeral: isEphemeral})
                     .catch((error) => {
                         interaction.reply({ content: error.message, ephemeral: isEphemeral });
@@ -39,8 +41,6 @@ module.exports = {
                     .catch((error) => {
                         interaction.followUp({ content: error.message, ephemeral: isEphemeral });
                     })
-            } else if (interaction.channel) {
-                await interaction.channel.send(post);
             }
         };
     },

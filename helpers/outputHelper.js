@@ -239,7 +239,7 @@ module.exports = {
     }
   },
 
-  printHighScoreTables: (searchTerm, tables, scoresToShow, tablesPerMessage) => {
+  printHighScoreTables: (searchTerm, tables, scoresToShow, tablesPerMessage, isEphemeral) => {
     var strText = '';
     let tableArray = [];
     let showAll = false;
@@ -247,10 +247,7 @@ module.exports = {
     let x = 1;
 
     if(searchTerm) {
-      if(tables.length > 0) {
-        strText = `**Top ${scoresToShow} scores for '${searchTerm}'...**\n\n`;
-      }
-      else {
+      if(tables.length === 0) {
         strText = `**NO TABLES FOUND**`;
       }
       showAll = false;
