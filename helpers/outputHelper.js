@@ -383,10 +383,10 @@ module.exports = {
     bp += `**Rom Url:** ${romUrl ?? 'N/A'}\n`;
     bp += `**Rom Name:** ${romName ?? 'N/A'}\n`;
     bp += `**Notes:** ${notes ?? 'N/A'}\n\n`;
-    bp += module.exports.printCombinedLeaderboard(scores, 30, teams, false, false)[0];
+    bp += module.exports.printCombinedLeaderboard(scores, 20, teams, false, false)[0];
     bp += '\n';
     bp += '\n';
-    bp += '** \* Only the Top 30 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n';
+    bp += '** \* Only the Top 20 scores will displayed due to Discord character limitations.  Please use the "/show-leaderboard" command for full results.**\n';
     bp += '\n';
     bp += '**All Current & Historical Results:**\n';
     bp += 'https://www.iscored.info/?mode=public&user=ED209 \n';
