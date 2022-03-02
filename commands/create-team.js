@@ -34,17 +34,17 @@ module.exports = {
       const teamName = team.substring(0, team.indexOf(":"));
       const members = team.substring(team.indexOf(":") + 1).split(",");
 
-      const existingTeam = await mongoHelper.findOne({ isArchived: false, 'teams.name': teamName }, 'weeks');
+      const existingTeam = await mongoHelper.findOne({ channelName: channel.name, isArchived: false, 'teams.name': teamName }, 'weeks');
 
       // update or add teams
       if (existingTeam) {
         existingTeam.members = team.members;
-        await mongoHelper.updateOne({ isArchived: false, 'teams.name': teamName }, { $push: { 'teams': existingTeam } }, null, 'weeks');
+        await mongoHelper.updateOne({ channelName: channel.name, isArchived: false, 'teams.name': teamName }, { $push: { 'teams': existingTeam } }, null, 'weeks');
       } else {
         const newTeam = new Object();
         newTeam.name = teamName;
         newTeam.members = members;
-        await mongoHelper.updateOne({ isArchived: false }, { $push: { 'teams': newTeam } }, null, 'weeks');
+        await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $push: { 'teams': newTeam } }, null, 'weeks');
       }
 
       // create text table

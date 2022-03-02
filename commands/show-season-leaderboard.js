@@ -18,8 +18,9 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentSeason = await mongoHelper.findOne({ isArchived: false }, 'seasons');
+      const currentSeason = await mongoHelper.findOne({ channelName: channel.name, isArchived: false }, 'seasons');
       const weeks = await mongoHelper.find({
+        channelName: channel.name,
         isArchived: true,
         periodStart: { $gte: currentSeason.seasonStart },
         periodEnd: { $lte: currentSeason.seasonEnd }

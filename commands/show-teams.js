@@ -16,7 +16,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
 
       if (currentWeek.teams && currentWeek.teams.length > 0) {
         responseHelper.showTeams(currentWeek.scores, currentWeek.teams, interaction, true);

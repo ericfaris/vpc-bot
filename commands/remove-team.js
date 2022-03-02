@@ -25,7 +25,7 @@ module.exports = {
       const [teamName] = args;
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
 
       const index = currentWeek.teams.findIndex(x => x.name === teamName);
 
@@ -34,7 +34,7 @@ module.exports = {
       }
 
       //save teams to db
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { teams: currentWeek.teams } }, null, 'weeks');
+      await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { teams: currentWeek.teams } }, null, 'weeks');
 
       // return text table string
       retVal = 'Team removed successfully.';

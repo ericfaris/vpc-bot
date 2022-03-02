@@ -21,13 +21,14 @@ module.exports = {
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
+      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
     } else {
       const [weeknumber, periodstart, periodend, table, authorname, versionnumber, tableurl, romurl, romname, currentseasonweeknumber, notes] = args;
 
-      const week = await mongoHelper.findOneAndUpdate({ isArchived: false }, {
+      const week = await mongoHelper.findOneAndUpdate({ channelName: channel.name, isArchived: false }, {
         $set: {
+          'channelName': channel.name,
           'weekNumber': weeknumber,
           'periodStart': periodstart,
           'periodEnd': periodend,
@@ -42,10 +43,13 @@ module.exports = {
         }
       }, { returnDocument: 'after' }, 'weeks');
 
-      //post to competition channel pinned message
-      await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
+      if (channel.COMPETITION_CHANNEL_NAME) {
+        await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
+        retVal = process.env.COMPETITION_CHANNEL_NAME + ' message updated successfully.';
+      } else {
+        retVal = `Week updated for the ${channel.name} channel.`;
+      }
 
-      retVal = process.env.COMPETITION_CHANNEL_NAME + ' message updated successfully.';
     }
 
     interaction.reply({content: retVal, ephemeral: true});
