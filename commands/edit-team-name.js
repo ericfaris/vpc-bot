@@ -26,7 +26,7 @@ module.exports = {
       const [currentTeamName, newTeamName] = args;
 
       // update or add teams
-      await mongoHelper.findOneAndUpdate({ isArchived: false, 'teams.name': currentTeamName },
+      await mongoHelper.findOneAndUpdate({ channelName: channel.name, isArchived: false, 'teams.name': currentTeamName },
         {
           $set: { 'teams.$.name': newTeamName }
         }, null, 'weeks');
