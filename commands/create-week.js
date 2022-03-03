@@ -52,7 +52,7 @@ module.exports = {
 
       await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
       await mongoHelper.insertOne(week, 'weeks');
-      if (channel.name === channel.COMPETITION_CHANNEL_NAME) {
+      if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
         await outputHelper.editWeeklyCompetitionCornerMessage(week.scores, client, week, week.teams);
         retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
       } else {

@@ -43,7 +43,7 @@ module.exports = {
         }
       }, { returnDocument: 'after' }, 'weeks');
 
-      if (channel.name === channel.COMPETITION_CHANNEL_NAME) {
+      if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
         await outputHelper.editWeeklyCompetitionCornerMessage(week.value.scores, client, week.value, week.value.teams);
         retVal = process.env.COMPETITION_CHANNEL_NAME + ' message updated successfully.';
       } else {

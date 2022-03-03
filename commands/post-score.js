@@ -74,7 +74,7 @@ module.exports = {
 
           if (attachment) {
             message.reply({ content: content, files: [attachment] }).then((reply) => {
-              if (channel.name === channel.COMPETITION_CHANNEL_NAME) {
+              if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
                 //post this same score to the #high-score-corner channel
                 if (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y') {
                   client.emit('postHighScore', user, scoreAsInt, attachment,
@@ -133,7 +133,7 @@ module.exports = {
     //save scores to db
     await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { scores: scores } }, null, 'weeks');
 
-    if (channel.name === channel.COMPETITION_CHANNEL_NAME) {
+    if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
       //post to competition channel pinned message
       await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);
     }
