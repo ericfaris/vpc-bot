@@ -15,7 +15,7 @@ module.exports = {
   roles: ['Competition Corner Mod'],
   minArgs: 2,
   expectedArgs: '<username> <score>',
-  callback: async ({ args, channel, client, interaction, instance }) => {
+  callback: async ({ args, channel, client, interaction, message, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
@@ -26,7 +26,7 @@ module.exports = {
     } else {
       const [username, score] = args;
       const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
-      retVal = await postScore.saveScore(username, score, currentWeek, client, interaction, channel);
+      retVal = await postScore.saveScore(username, score, currentWeek, client, interaction, message, channel);
     }
 
     interaction.reply({content: retVal, ephemeral: true});
