@@ -2,7 +2,6 @@ require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
 const path = require('path');
 const permissionHelper = require('../helpers/permissionHelper');
-const responseHelper = require('../helpers/responseHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -26,8 +25,8 @@ module.exports = {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`)
       retVal = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.;`
       ephemeral = true;
-    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
+      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       ephemeral = true;
     } else {
       try{
