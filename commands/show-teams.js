@@ -12,11 +12,11 @@ module.exports = {
   callback: async ({ interaction, channel, instance }) => {
     let retVal;
 
-    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+    if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
+      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
 
       if (currentWeek.teams && currentWeek.teams.length > 0) {
         responseHelper.showTeams(currentWeek.scores, currentWeek.teams, interaction, true);

@@ -40,6 +40,7 @@ module.exports = {
         'seasons');
 
       const weeks = await mongoHelper.find({
+        channelName: channel.name,
         isArchived: true,
         periodStart: { $gte: updatedSeason.seasonStart },
         periodEnd: { $lte: updatedSeason.seasonEnd }

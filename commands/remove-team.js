@@ -19,13 +19,13 @@ module.exports = {
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       retVal =  `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
+      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
     } else {
       const [teamName] = args;
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek('weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
 
       const index = currentWeek.teams.findIndex(x => x.name === teamName);
 
@@ -34,7 +34,7 @@ module.exports = {
       }
 
       //save teams to db
-      await mongoHelper.updateOne({ isArchived: false }, { $set: { teams: currentWeek.teams } }, null, 'weeks');
+      await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { teams: currentWeek.teams } }, null, 'weeks');
 
       // return text table string
       retVal = 'Team removed successfully.';

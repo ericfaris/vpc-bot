@@ -24,8 +24,8 @@ module.exports = {
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
     const reHighScoreCheck = new RegExp('Rank:\\*\\* [1|2|3|4|5] of');
 
-    if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`
+    if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
+      invalidMessage = `The ${module.exports.commandName} slash command cannot be used in this channel.`
         + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
 
       if (message) {
@@ -36,7 +36,7 @@ module.exports = {
           }, instance.delErrMsgCooldown * 1000)
         })
       } else {
-        retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+        retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
         interaction.reply({ content: retVal, ephemeral: true });
       };
     } else {
@@ -64,9 +64,9 @@ module.exports = {
         interaction.reply({ content: invalidMessage, ephemeral: true });
       } else {
         //parameter is GOOD
-        const currentWeek = await mongoHelper.findCurrentWeek('weeks');
+        const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
 
-        retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message)
+        retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message, channel)
 
         if (message) {
           let content = `<@${user.id}>, ${retVal}`;
@@ -74,13 +74,15 @@ module.exports = {
 
           if (attachment) {
             message.reply({ content: content, files: [attachment] }).then((reply) => {
-              //post this same score to the #high-score-corner channel
-              if (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y') {
-                client.emit('postHighScore', user, scoreAsInt, attachment,
-                  currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
-                  'just posted a score for');
+              if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
+                //post this same score to the #high-score-corner channel
+                if (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y') {
+                  client.emit('postHighScore', user, scoreAsInt, attachment,
+                    currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
+                    'just posted a score for');
+                }
+                message.delete();
               }
-              message.delete();
             });
           } else {
             invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
@@ -98,7 +100,7 @@ module.exports = {
     }
   },
 
-  saveScore: async (username, score, currentWeek, client, interaction, message) => {
+  saveScore: async (username, score, currentWeek, client, interaction, message, channel) => {
     const userName = username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 
@@ -129,10 +131,12 @@ module.exports = {
     const currentRank = scoreHelper.getCurrentRankText(userName, scores);
 
     //save scores to db
-    await mongoHelper.updateOne({ isArchived: false }, { $set: { scores: scores } }, null, 'weeks');
+    await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { scores: scores } }, null, 'weeks');
 
-    //post to competition channel pinned message
-    await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);
+    if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
+      //post to competition channel pinned message
+      await outputHelper.editWeeklyCompetitionCornerMessage(scores, client, currentWeek, currentWeek.teams);
+    }
 
     let scoreDiff = scoreAsInt - previousScore;
 
