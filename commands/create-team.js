@@ -23,8 +23,8 @@ module.exports = {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
       ephemeral = true;
-    }else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
+    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
+      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       ephemeral = true;
     } else {
 
