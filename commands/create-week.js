@@ -12,7 +12,6 @@ module.exports = {
   guildOnly: true,
   hidden: true,
   description: 'Create new week (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
   roles: ['Competition Corner Mod'],
   minArgs: 6,
   expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <authorname> <versionnumber> <tableurl> <romurl> <romname> <currentseasonweeknumber> <notes>',
