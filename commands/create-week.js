@@ -13,8 +13,8 @@ module.exports = {
   hidden: true,
   description: 'Create new week (MANAGE_GUILD)',
   roles: ['Competition Corner Mod'],
-  minArgs: 6,
-  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <authorname> <versionnumber> <tableurl> <romurl> <romname> <currentseasonweeknumber> <notes>',
+  minArgs: 7,
+  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <authorname> <versionnumber> <vpsid> <tableurl> <romurl> <romname> <currentseasonweeknumber> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
     let ephemeral = false;
@@ -28,7 +28,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       ephemeral = true;
     } else {
-      const [weeknumber, periodstart, periodend, table, authorname, versionnumber, tableurl, romurl, romname, currentseasonweeknumber, notes] = args;
+      const [weeknumber, periodstart, periodend, table, authorname, versionnumber, vpsid, tableurl, romurl, romname, currentseasonweeknumber, notes] = args;
 
       var week =
       {
@@ -39,6 +39,7 @@ module.exports = {
         'table': table,
         'authorName': authorname,
         'versionNumber': versionnumber,
+        'vpsId': vpsid,
         'tableUrl': tableurl,
         'romUrl': romurl,
         'romName': romname,
@@ -60,7 +61,7 @@ module.exports = {
     }
 
     interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
-      await commandHelper.execute(instance, interaction, 'create-high-score-table', [week.table, week.authorName, week.versionNumber, week.tableUrl, week.romName])
+      await commandHelper.execute(instance, interaction, 'create-high-score-table', [week.table, week.authorName, week.versionNumber, week.vpsId, week.tableUrl, week.romName])
     })
   },
 }

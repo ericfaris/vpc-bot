@@ -11,8 +11,8 @@ module.exports = {
   hidden: true,
   description: 'Create new high score table (High Scores Mod)',
   roles: ['High Score Corner Mod'],
-  minArgs: 3,
-  expectedArgs: '<tablename> <authorname> <versionnumber> <versionurl> <romname>',
+  minArgs: 4,
+  expectedArgs: '<tablename> <authorname> <versionnumber> <vpsid> <versionurl> <romname>',
   callback: async ({ args, client, channel, interaction, instance, user, message}) => {
     let retVal;
     let ephemeral = false;
@@ -26,7 +26,7 @@ module.exports = {
       const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
       retVal =  logMessage;
     } else {
-      const [tablename, authorname, versionnumber, versionurl, romname] = args;
+      const [tablename, authorname, versionnumber, vpsid, versionurl, romname] = args;
 
       var table = {
         '_id': mongoHelper.generateObjectId(),
@@ -41,7 +41,8 @@ module.exports = {
                 'romName': romname ?? '',
                 'scores': []
               }
-            ]
+            ],
+            'vpsId': vpsid
           }
         ]
       }
@@ -70,7 +71,8 @@ module.exports = {
                     'versionUrl': versionurl ?? '',
                     'romName': romname ?? '',
                     'scores': []
-                  }]
+                  }],
+                'vpsId': vpsid
               }
           }};      
 
