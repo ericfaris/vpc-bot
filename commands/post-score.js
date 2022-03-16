@@ -75,12 +75,9 @@ module.exports = {
           if (attachment) {
             message.reply({ content: content, files: [attachment] }).then((reply) => {
               if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
-                //post this same score to the #high-score-corner channel
-                if (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y') {
-                  client.emit('postHighScore', user, scoreAsInt, attachment,
-                    currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
-                    'just posted a score for');
-                }
+                client.emit('postHighScore', user, scoreAsInt, attachment,
+                  currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
+                  'just posted a score for');
                 message.delete();
               }
             });
