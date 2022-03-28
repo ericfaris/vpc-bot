@@ -7,7 +7,7 @@ class VPCDataService {
     options;
 
     constructor(){
-        this.baseApiUrl = process.env.VPC_DATA_SERVICE_API_URI || "http://vpcbot.golandry.net:6080/api/v1";
+        this.baseApiUrl = process.env.VPC_DATA_SERVICE_API_URI;
         this.options = { 
             headers : {
                 'Authorization': 'Bearer ODYwMzEwODgxNTc3NDY3OTA0.YN5Y8Q.0P5EwvlXHG6YOtNfkWKt_xOFTtc',
