@@ -54,12 +54,12 @@ module.exports = {
         currentSeasonWeekNumber = parseInt(currentWeek.currentSeasonWeekNumber) + 1;
         periodStart = date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
         periodEnd = date.format(date.addDays(date.parse(currentWeek.periodEnd, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
-        table = `${vpsGame?.name} (${vpsGame.year} ${vpsGame.manufacturer})`;
+        table = `${vpsGame?.name} (${vpsGame?.year} ${vpsGame?.manufacturer})`;
         authorName = vpsGame.table?.authors?.join(", ") ?? '';
         versionNumber = vpsGame.table?.version ?? '';
         tableUrl = vpsGame.table?.urls[0]?.url ?? '';
-        romUrl = vpsGame.romFiles[0]?.urls[0]?.url ?? '';
-        romName = vpsGame.romFiles[0]?.version ?? '';
+        romUrl = vpsGame?.romFiles[0]?.urls[0]?.url ?? '';
+        romName = vpsGame?.romFiles[0]?.version ?? '';
 
         var week = {
           'channelName': channel.name,

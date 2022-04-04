@@ -43,10 +43,10 @@ module.exports = {
       if (vpsGame.table) {
 
         tableName = `${vpsGame?.name} (${vpsGame?.year} ${vpsGame?.manufacturer})`;
-        authorName = vpsGame.table?.authors?.join(", ") ?? '';
-        versionNumber = vpsGame.table?.version ?? '';
-        versionUrl = vpsGame.table?.urls[0]?.url ?? '';
-        romName = vpsGame.romFiles[0]?.version ?? '';
+        authorName = vpsGame?.table?.authors?.join(", ") ?? '';
+        versionNumber = vpsGame?.table?.version ?? '';
+        versionUrl = vpsGame?.table?.urls ? vpsGame?.table?.urls[0]?.url ?? '' : '';
+        romName = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.version ?? '' : '';
 
         var table = {
           '_id': mongoHelper.generateObjectId(),
