@@ -46,6 +46,11 @@ class VPCDataService {
     async getWeeks() {
         return (await fetch(`${this.baseApiUrl}/weeks`, this.options)).json();
     }
+
+    async getCurrentWeek(channelName) {
+        return (await fetch(`${this.baseApiUrl}/currentWeek?channelName=${channelName}`, this.options)).json();
+    }
+
 }
 
 module.exports.VPCDataService = VPCDataService;
