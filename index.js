@@ -26,6 +26,7 @@ logger.info(`BOT_OWNER: ${process.env.BOT_OWNER}`);
 logger.info(`HIGH_SCORES_CHANNEL_NAME: ${process.env.HIGH_SCORES_CHANNEL_NAME}`);
 logger.info(`HIGH_SCORES_CHANNEL_ID: ${process.env.HIGH_SCORES_CHANNEL_ID}`);
 logger.info(`VPC_DATA_SERVICE_API_URI: ${process.env.VPC_DATA_SERVICE_API_URI}`);
+logger.info(`VPS_DATA_SERVICE_API_URI: ${process.env.VPS_DATA_SERVICE_API_URI}`);
 
 const client = new DiscordJS.Client({
   intents: [
