@@ -22,7 +22,7 @@ module.exports = {
     let score = args[0];
     const postToHighScoreChannel = args.length > 1 ? args[1] : null;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
-    const reHighScoreCheck = new RegExp('Rank:\\*\\* [1|2|3|4|5] of');
+    const reHighScoreCheck = new RegExp('Rank:\\*\\* [1|2|3|4|5|6|7|8|9|10] of');
 
     if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
       invalidMessage = `The ${module.exports.commandName} slash command cannot be used in this channel.`
@@ -77,7 +77,7 @@ module.exports = {
               if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
                 client.emit('postHighScore', user, scoreAsInt, attachment,
                   currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
-                  'just posted a score for');
+                  'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
                 message.delete();
               }
             });

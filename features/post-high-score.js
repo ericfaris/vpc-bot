@@ -114,7 +114,7 @@ module.exports = (client, user, instance, channel, message) => {
       }
     });
 
-    client.on('postHighScore', async function (user, score, attachment, currentWeek, channelId, postTitle, postDescription) {
+    client.on('postHighScore', async function (user, score, attachment, currentWeek, channelId, postTitle, postDescription, doPost) {
       var channel = client.channels.cache.get(channelId);
       
       var data = {
@@ -139,17 +139,19 @@ module.exports = (client, user, instance, channel, message) => {
 
         let authorsArray = data?.authorName?.split(', ');
         let firstAuthor = authorsArray?.shift();
-                                
-        await channel.send({content: `**${postTitle}**\n` + 
-                                `**<@${user.id}>**, ${postDescription}\n` + 
-                                `**${data.tableName} (${firstAuthor}... ${data.versionNumber})**\n` +
-                                `**Score: **${numeral(data.s).format('0,0')}\n` +
-                                `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`
-                          , files: [attachment]}).then(async (message) => {
-          data.scoreId = highScoreId;
-          await postHighScoreCommand.updateHighScore(data, message.url);
-          await showTableHighScoresCommand.callback( {args: [data.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
-        })
+                   
+        if(doPost) {
+          await channel.send({content: `**${postTitle}**\n` + 
+                                  `**<@${user.id}>**, ${postDescription}\n` + 
+                                  `**${data.tableName} (${firstAuthor}... ${data.versionNumber})**\n` +
+                                  `**Score: **${numeral(data.s).format('0,0')}\n` +
+                                  `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`
+                            , files: [attachment]}).then(async (message) => {
+            data.scoreId = highScoreId;
+            await postHighScoreCommand.updateHighScore(data, message.url);
+            await showTableHighScoresCommand.callback( {args: [data.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
+          });
+        }
       });
     });
 }
