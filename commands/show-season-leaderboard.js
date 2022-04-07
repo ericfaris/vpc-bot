@@ -9,8 +9,6 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   description: 'Show season leaderboard for the Competition Corner',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
   callback: async ({ channel, interaction, instance }) => {
     let retVal;
 
