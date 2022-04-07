@@ -55,13 +55,13 @@ module.exports = {
         periodStart = date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
         periodEnd = date.format(date.addDays(date.parse(currentWeek.periodEnd, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
         table = `${vpsGame?.name} (${vpsGame?.year} ${vpsGame?.manufacturer})`;
-        authorName = vpsGame.table?.authors?.join(", ") ?? '';
-        versionNumber = vpsGame.table?.version ?? '';
+        authorName = vpsGame.table?.authors?.join(', ') ?? '';
+        versionNumber = vpsGame?.table?.version ?? '';
         tableUrl = vpsGame.table?.urls[0]?.url ?? '';
-        romUrl = vpsGame?.romFiles[0]?.urls[0]?.url ?? '';
-        romName = vpsGame?.romFiles[0]?.version ?? '';
+        romUrl = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.urls[0]?.url ?? '' : '';
+        romName = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.version ?? '' : '';
 
-        var week = {
+        var newWeek = {
           'channelName': channel.name,
           'weekNumber': weekNumber,
           'periodStart': periodStart,
@@ -81,17 +81,26 @@ module.exports = {
         }
 
         await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
-        await mongoHelper.insertOne(week, 'weeks');
+        await mongoHelper.insertOne(newWeek, 'weeks');
+
+        const season = await mongoHelper.findCurrentSeason(channel.name);
+        const weeksInSeason = await mongoHelper.find({
+          channelName: channel.name,
+          isArchived: true,
+          periodStart: { $gte: season.seasonStart },
+          periodEnd: { $lte: season.seasonEnd }
+        }, 'weeks');
 
         if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
-          await outputHelper.editWeeklyCompetitionCornerMessage(week.scores, client, week, week.teams);
+          await outputHelper.editWeeklyCompetitionCornerMessage(newWeek.scores, client, newWeek, newWeek.teams);
+          await outputHelper.editSeasonCompetitionCornerMessage(season, weeksInSeason, client)
           retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
         } else {
           retVal = `New week created for the ${channel.name} channel.`;
         }
-
+  
         interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
-          await commandHelper.execute(instance, interaction, 'create-high-score-table', [week.table, week.authorName, week.versionNumber, week.vpsId, week.tableUrl, week.romName])
+          await commandHelper.execute(instance, interaction, 'create-high-score-table', [newWeek.table, newWeek.authorName, newWeek.versionNumber, newWeek.vpsId, newWeek.tableUrl, newWeek.romName])
         })
       } else {
         retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
