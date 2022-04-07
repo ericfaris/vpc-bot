@@ -75,9 +75,17 @@ module.exports = {
         return doc;
     },
 
-    findCurrentWeek: async (channelName, collectionName) => {
+    findCurrentWeek: async (channelName) => {
         const client = await module.exports.connect();
-        const collection = await module.exports.getCollection(client, collectionName)
+        const collection = await module.exports.getCollection(client, 'weeks')
+        const doc = await collection.findOne({ 'channelName': channelName, isArchived: false });
+        client.close();
+        return doc;
+    },
+
+    findCurrentSeason: async (channelName) => {
+        const client = await module.exports.connect();
+        const collection = await module.exports.getCollection(client, 'seasons')
         const doc = await collection.findOne({ 'channelName': channelName, isArchived: false });
         client.close();
         return doc;

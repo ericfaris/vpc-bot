@@ -26,7 +26,7 @@ module.exports = {
       let rank = args[0];
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
 
       //remove score based on rank/index
       var retArray = currentWeek.scores.splice(rank - 1, 1);

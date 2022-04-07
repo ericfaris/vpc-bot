@@ -25,7 +25,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
     } else {
       const [username, score] = args;
-      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
       retVal = await postScore.saveScore(username, score, currentWeek, client, interaction, message, channel);
     }
 

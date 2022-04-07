@@ -64,7 +64,7 @@ module.exports = {
         interaction.reply({ content: invalidMessage, ephemeral: true });
       } else {
         //parameter is GOOD
-        const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
+        const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
 
         retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message, channel)
 

@@ -25,7 +25,7 @@ module.exports = {
       const [teamName] = args;
 
       //get current week
-      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
 
       const index = currentWeek.teams.findIndex(x => x.name === teamName);
 

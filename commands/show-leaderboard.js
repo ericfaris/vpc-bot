@@ -16,7 +16,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
 
       try{
         await responseHelper.showLeaderboard(currentWeek.scores, currentWeek.teams, interaction, true)

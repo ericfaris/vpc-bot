@@ -18,7 +18,7 @@ module.exports = {
       interaction.reply({content: retVal, ephemeral: true});
     } else {
       const username = interaction.member.user.username;
-      const currentWeek = await mongoHelper.findCurrentWeek(channel.name, 'weeks');
+      const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
       const score = currentWeek.scores ? currentWeek.scores.find(x => x.username === username) : null;
 
       if (score) {
