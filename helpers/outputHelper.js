@@ -362,7 +362,7 @@ module.exports = {
 
     message.edit(module.exports.generateWeeklyBoilerPlateText(
       scores, teams, week.weekNumber, week.periodStart, week.periodEnd,
-      week.vpiId, week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
+      week.vpsId, week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
       week.notes, week.currentSeasonWeekNumber));
     message.suppressEmbeds(true);
   },
