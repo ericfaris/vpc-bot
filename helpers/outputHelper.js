@@ -362,12 +362,12 @@ module.exports = {
 
     message.edit(module.exports.generateWeeklyBoilerPlateText(
       scores, teams, week.weekNumber, week.periodStart, week.periodEnd,
-      week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
+      week.vpiId, week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
       week.notes, week.currentSeasonWeekNumber));
     message.suppressEmbeds(true);
   },
 
-  generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, tableName, authorName, versionNumber, 
+  generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, vpsId, tableName, authorName, versionNumber, 
                                   tableUrl, romUrl, romName, notes, currentSeasonWeekNumber) => {
     var bp = '\n\n';
 
@@ -376,6 +376,7 @@ module.exports = {
     bp += `**Current Season Week:** ${currentSeasonWeekNumber ?? 'N/A'}\n`;
     bp += `**Dates:** ${periodStart} - ${periodEnd}\n`;
     bp += '\n';
+    bp += `**VPS Id:** ${vpsId ?? 'N/A'}\n`;
     bp += `**Table Name:** ${tableName ?? 'N/A'}\n`;
     bp += `**Author Name:** ${authorName ?? 'N/A'}\n`;
     bp += `**Version:** ${versionNumber ?? 'N/A'}\n`;
