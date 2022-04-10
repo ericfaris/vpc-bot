@@ -48,6 +48,7 @@ module.exports = {
       const vpsGame = await vpsDataService.getVpsGame(vpsid);
 
       if (vpsGame.table) {
+        const currentSeason = await mongoHelper.findCurrentSeason(channel.name);
         const currentWeek = await vpcDataService.getCurrentWeek(channel.name);
 
         weekNumber = parseInt(currentWeek.weekNumber) + 1;
@@ -73,6 +74,7 @@ module.exports = {
           'tableUrl': tableUrl,
           'romUrl': romUrl,
           'romName': romName,
+          'season': currentSeason?.seasonNumber ? parseInt(currentSeason?.seasonNumber) : null,
           'currentSeasonWeekNumber': currentSeasonWeekNumber,
           'notes': notes,
           'scores': [],
@@ -83,17 +85,20 @@ module.exports = {
         await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
         await mongoHelper.insertOne(newWeek, 'weeks');
 
-        const season = await mongoHelper.findCurrentSeason(channel.name);
-        const weeksInSeason = await mongoHelper.find({
-          channelName: channel.name,
-          isArchived: true,
-          periodStart: { $gte: season.seasonStart },
-          periodEnd: { $lte: season.seasonEnd }
-        }, 'weeks');
-
         if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
           await outputHelper.editWeeklyCompetitionCornerMessage(newWeek.scores, client, newWeek, newWeek.teams);
-          await outputHelper.editSeasonCompetitionCornerMessage(season, weeksInSeason, client)
+
+          if(currentSeason) {
+            const weeksInSeason = await mongoHelper.find({
+              channelName: channel.name,
+              isArchived: true,
+              periodStart: { $gte: currentSeason.seasonStart },
+              periodEnd: { $lte: currentSeason.seasonEnd }
+            }, 'weeks');
+
+            await outputHelper.editSeasonCompetitionCornerMessage(currentSeason, weeksInSeason, client)
+          }
+
           retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
         } else {
           retVal = `New week created for the ${channel.name} channel.`;
