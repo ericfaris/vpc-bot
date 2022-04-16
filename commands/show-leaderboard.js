@@ -9,20 +9,20 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   description: 'Show leaderboard for the channel.',
-  callback: async ({ channel, interaction, instance }) => {
+  callback: async ({ channel, interaction }) => {
     let retVal;
 
     if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
-
-      try{
-        await responseHelper.showLeaderboard(currentWeek.scores, currentWeek.teams, interaction, true)
-      } catch(e) {
-        console.log(e);
-      }
+      module.exports.getLeaderboard(interaction, channel);
     }
   },
+
+  getLeaderboard : async (interaction, channel) => {
+    const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
+    await responseHelper.showLeaderboard(currentWeek.scores, currentWeek.teams, interaction, true);
+  },
+
 }
