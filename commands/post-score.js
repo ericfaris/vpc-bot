@@ -3,6 +3,7 @@ const path = require('path');
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
+const { MessageActionRow, MessageButton } = require('discord.js');
 const outputHelper = require('../helpers/outputHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 const mongoHelper = require('../helpers/mongoHelper');
@@ -73,7 +74,14 @@ module.exports = {
           let attachment = message.attachments?.first();
 
           if (attachment) {
-            message.reply({ content: content, files: [attachment] }).then((reply) => {
+            const row = new MessageActionRow()
+              .addComponents(
+                new MessageButton()
+                  .setCustomId('showLeaderboard')
+                  .setLabel('Show Leaderboard')
+                  .setStyle('PRIMARY'),
+              );
+            message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
               if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
                 client.emit('postHighScore', user, scoreAsInt, attachment,
                   currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
