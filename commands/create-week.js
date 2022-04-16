@@ -1,9 +1,12 @@
 require('dotenv').config()
 const path = require('path');
+const date = require('date-and-time');
 const outputHelper = require('../helpers/outputHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { CommandHelper } = require('../helpers/commandHelper');
+const { VPCDataService } = require('../services/vpcDataService')
+const { VPSDataService } = require('../services/vpsDataService');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -11,14 +14,16 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Create new week (MANAGE_GUILD)',
+  description: 'Create new week by VPS ID (MANAGE_GUILD)',
   roles: ['Competition Corner Mod'],
-  minArgs: 7,
-  expectedArgs: '<weeknumber> <periodstart> <periodend> <table> <authorname> <versionnumber> <vpsid> <tableurl> <romurl> <romname> <currentseasonweeknumber> <notes>',
+  minArgs: 1,
+  expectedArgs: '<vpsid> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
     let ephemeral = false;
     let commandHelper = new CommandHelper();
+    let vpcDataService = new VPCDataService();
+    let vpsDataService = new VPSDataService();
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`);
@@ -28,40 +33,83 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       ephemeral = true;
     } else {
-      const [weeknumber, periodstart, periodend, table, authorname, versionnumber, vpsid, tableurl, romurl, romname, currentseasonweeknumber, notes] = args;
+      const [vpsid, notes] = args;
+      let weekNumber;
+      let periodStart;
+      let periodEnd;
+      let table;
+      let authorName;
+      let versionNumber;
+      let tableUrl;
+      let romUrl;
+      let romName;
+      let currentSeasonWeekNumber;
 
-      var week =
-      {
-        'channelName': channel.name,
-        'weekNumber': weeknumber,
-        'periodStart': periodstart,
-        'periodEnd': periodend,
-        'table': table,
-        'authorName': authorname,
-        'versionNumber': versionnumber,
-        'vpsId': vpsid,
-        'tableUrl': tableurl,
-        'romUrl': romurl,
-        'romName': romname,
-        'currentSeasonWeekNumber': currentseasonweeknumber,
-        'notes': notes,
-        'scores': [],
-        'teams': [],
-        'isArchived': false
-      }
+      const vpsGame = await vpsDataService.getVpsGame(vpsid);
 
-      await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
-      await mongoHelper.insertOne(week, 'weeks');
-      if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
-        await outputHelper.editWeeklyCompetitionCornerMessage(week.scores, client, week, week.teams);
-        retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
+      if (vpsGame.table) {
+        const currentSeason = await mongoHelper.findCurrentSeason(channel.name);
+        const currentWeek = await vpcDataService.getCurrentWeek(channel.name);
+
+        weekNumber = parseInt(currentWeek.weekNumber) + 1;
+        currentSeasonWeekNumber = parseInt(currentWeek.currentSeasonWeekNumber) + 1;
+        periodStart = date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
+        periodEnd = date.format(date.addDays(date.parse(currentWeek.periodEnd, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
+        table = `${vpsGame?.name} (${vpsGame?.year} ${vpsGame?.manufacturer})`;
+        authorName = vpsGame.table?.authors?.join(', ') ?? '';
+        versionNumber = vpsGame?.table?.version ?? '';
+        tableUrl = vpsGame.table?.urls[0]?.url ?? '';
+        romUrl = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.urls[0]?.url ?? '' : '';
+        romName = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.version ?? '' : '';
+
+        var newWeek = {
+          'channelName': channel.name,
+          'weekNumber': weekNumber,
+          'periodStart': periodStart,
+          'periodEnd': periodEnd,
+          'table': table,
+          'authorName': authorName,
+          'versionNumber': versionNumber,
+          'vpsId': vpsid,
+          'tableUrl': tableUrl,
+          'romUrl': romUrl,
+          'romName': romName,
+          'season': currentSeason?.seasonNumber ? parseInt(currentSeason?.seasonNumber) : null,
+          'currentSeasonWeekNumber': currentSeasonWeekNumber,
+          'notes': notes,
+          'scores': [],
+          'teams': [],
+          'isArchived': false
+        }
+
+        await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
+        await mongoHelper.insertOne(newWeek, 'weeks');
+
+        if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
+          await outputHelper.editWeeklyCompetitionCornerMessage(newWeek.scores, client, newWeek, newWeek.teams);
+
+          if(currentSeason) {
+            const weeksInSeason = await mongoHelper.find({
+              channelName: channel.name,
+              isArchived: true,
+              periodStart: { $gte: currentSeason.seasonStart },
+              periodEnd: { $lte: currentSeason.seasonEnd }
+            }, 'weeks');
+
+            await outputHelper.editSeasonCompetitionCornerMessage(currentSeason, weeksInSeason, client)
+          }
+
+          retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
+        } else {
+          retVal = `New week created for the ${channel.name} channel.`;
+        }
+  
+        interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
+          await commandHelper.execute(instance, interaction, 'create-high-score-table', [newWeek.table, newWeek.authorName, newWeek.versionNumber, newWeek.vpsId, newWeek.tableUrl, newWeek.romName])
+        })
       } else {
-        retVal = `New week created for the ${channel.name} channel.`;
+        retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
       }
     }
-
-    interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
-      await commandHelper.execute(instance, interaction, 'create-high-score-table', [week.table, week.authorName, week.versionNumber, week.vpsId, week.tableUrl, week.romName])
-    })
   },
 }
