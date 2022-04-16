@@ -9,22 +9,27 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   description: 'Show season leaderboard for the Competition Corner',
-  callback: async ({ channel, interaction, instance }) => {
+  callback: async ({ channel, interaction }) => {
     let retVal;
 
     if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
       retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentSeason = await mongoHelper.findOne({ channelName: channel.name, isArchived: false }, 'seasons');
-      const weeks = await mongoHelper.find({
-        channelName: channel.name,
-        isArchived: true,
-        periodStart: { $gte: currentSeason.seasonStart },
-        periodEnd: { $lte: currentSeason.seasonEnd }
-      }, 'weeks');
-
-      responseHelper.showSeasonLeaderboard(weeks, interaction, true)
+      module.exports.getSeasonLeaderboard(channel, interaction);
     }
   },
+
+  getSeasonLeaderboard : async (channel, interaction) => {
+    const currentSeason = await mongoHelper.findOne({ channelName: channel.name, isArchived: false }, 'seasons');
+    const weeks = await mongoHelper.find({
+      channelName: channel.name,
+      isArchived: true,
+      periodStart: { $gte: currentSeason.seasonStart },
+      periodEnd: { $lte: currentSeason.seasonEnd }
+    }, 'weeks');
+
+    return responseHelper.showSeasonLeaderboard(weeks, interaction, true)
+  }
+
 }
