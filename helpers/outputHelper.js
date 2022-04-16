@@ -1,8 +1,6 @@
 require('dotenv').config()
 var Table = require('easy-table')
 var numeral = require('numeral');
-const { MessageEmbed } = require('discord.js');
-const { string } = require('easy-table');
 const date = require('date-and-time');
 
 module.exports = {
@@ -64,8 +62,8 @@ module.exports = {
     t.newRow();
   },
 
-  printLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
-    var strText = '**Leaderboard:**\n';
+  printWeeklyLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
+    var strText = '**Weekly Leaderboard:**\n';
 
     var i = 0;
     var t = new Table;
@@ -227,7 +225,7 @@ module.exports = {
         }
       }
 
-      textTableAsString += module.exports.printLeaderboard(scores, numOfScoresToShow, expandedLayout);
+      textTableAsString += module.exports.printWeeklyLeaderboard(scores, numOfScoresToShow, expandedLayout);
 
       if (numOfScoresToShow && numOfScoresToShow > 1) {
         tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
