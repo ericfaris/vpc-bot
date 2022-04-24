@@ -28,6 +28,7 @@ module.exports = (client, user, instance, channel, message) => {
                   selectedJson.tableName = data.tableName;
                   selectedJson.authorName = data.authorName;
                   selectedJson.versionNumber = data.versionNumber;
+                  selectedJson.vpsId = data.vpsId;
                   let newScore = selectedJson.s;
                   let existingScore = data?.score;
 
