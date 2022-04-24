@@ -82,12 +82,10 @@ module.exports = {
                   .setStyle('PRIMARY'),
               );
             message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
-              if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
-                client.emit('postHighScore', user, scoreAsInt, attachment,
-                  currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
-                  'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
-                message.delete();
-              }
+              client.emit('postHighScore', user, scoreAsInt, attachment,
+                currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
+                'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
+              message.delete();
             });
           } else {
             invalidMessage = 'No photo attached.  Please attach a photo with your high score.  This message will be deleted in 10 seconds.'
