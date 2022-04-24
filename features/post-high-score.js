@@ -121,6 +121,7 @@ module.exports = (client, user, instance, channel, message) => {
         tableName: currentWeek.table,
         authorName: currentWeek.authorName,
         versionNumber: currentWeek.versionNumber,
+        vpsId: currentWeek.vpsId,
         u: user.username,
         s: score
       };
@@ -133,7 +134,7 @@ module.exports = (client, user, instance, channel, message) => {
       };
 
       postHighScoreCommand.saveHighScore(data, interaction).then(async (newHighScore) => {
-        const highScoreId = newHighScore?.authors.find(a => a.authorName === data.authorName)
+        const highScoreId = newHighScore?.authors.find(a => a.vpsId === data.vpsId)
                                 ?.versions.find(v => v.versionNumber === data.versionNumber)
                                 ?.scores.reduce((a,b) => a.score > b.score ? a : b)?._id.toString();
 

@@ -71,7 +71,7 @@ module.exports = {
           await mongoHelper.insertOne(table, 'tables');
           retVal = `${table.tableName} (${table.authors[0]?.authorName} ${table.authors[0]?.versions[0]?.versionNumber}) created successfully`;
         } else {
-          let existingAuthor = existingTable?.authors?.find(a => a.authorName === authorName);
+          let existingAuthor = existingTable?.authors?.find(a => a.vpsId === vpsid);
           let existingVersion = existingAuthor?.versions?.find(v => v.versionNumber === versionNumber);
 
           let filter;
@@ -79,7 +79,7 @@ module.exports = {
           let options;
 
           if(!existingAuthor) {
-            filter = { tableName: tablename};
+            filter = { tableName: existingTable.tableName};
             options = null;
             update = { $push: { 'authors' :           
                 { '_id': mongoHelper.generateObjectId(),
@@ -94,12 +94,12 @@ module.exports = {
                 }
             }};      
 
-            retVal = `New author and version created for ${tablename}.`;
+            retVal = `New author and version created for ${existingTable.tableName}.`;
           } else {
             if(!existingVersion) {
-              filter = { tableName: tablename };
+              filter = { tableName: existingTable.tableName };
               options = { arrayFilters: [
-                { 'a.authorName': authorName }
+                { 'a.vpsId': vpsid }
               ]};
               update = { $push: { 'authors.$[a].versions' :
                 { '_id': mongoHelper.generateObjectId(),
@@ -110,9 +110,9 @@ module.exports = {
                 }
               }};
 
-              retVal = `New version created for ${tableName} (${authorName}).`;
+              retVal = `New version created for ${existingTable.tableName} (${existingAuthor.authorName}).`;
             } else {
-              retVal = `${tableName} (${authorName}) (${versionNumber}) already exists.`;
+              retVal = `${existingTable.tableName} (${existingAuthor.authorName}) (${versionNumber}) already exists.`;
             }
           }
 

@@ -182,7 +182,7 @@ module.exports = {
       }},
       { returnDocument: 'after',
         arrayFilters: [
-          { 'a.authorName': data.authorName },
+          { 'a.vpsId': data.vpsId },
           { 'v.versionNumber': data.versionNumber }
         ]
       },
@@ -198,7 +198,7 @@ module.exports = {
       { $set: { 'authors.$[a].versions.$[v].scores.$[s].postUrl' : postUrl }},
       { returnDocument: 'after',
         arrayFilters: [
-          { 'a.authorName': data.authorName },
+          { 'a.vpsId': data.vpsId },
           { 'v.versionNumber': data.versionNumber },
           { 's._id': ObjectId(data.scoreId) }
         ]

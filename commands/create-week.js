@@ -105,7 +105,7 @@ module.exports = {
         }
   
         interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
-          await commandHelper.execute(instance, interaction, 'create-high-score-table', [newWeek.table, newWeek.authorName, newWeek.versionNumber, newWeek.vpsId, newWeek.tableUrl, newWeek.romName])
+          await commandHelper.execute(instance, interaction, 'create-high-score-table', [newWeek.vpsId])
         })
       } else {
         retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
@@ -113,3 +113,4 @@ module.exports = {
     }
   },
 }
+ 
