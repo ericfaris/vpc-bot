@@ -40,7 +40,7 @@ module.exports = {
 
       if (vpsGame.table) {
 
-        tableName = `${vpsGame?.name} (${vpsGame?.year} ${vpsGame?.manufacturer})`;
+        tableName = `${vpsGame?.name} (${vpsGame?.manufacturer} ${vpsGame?.year})`;
         authorName = vpsGame?.table?.authors?.join(", ") ?? '';
         versionNumber = vpsGame?.table?.version ?? '';
         versionUrl = vpsGame?.table?.urls ? vpsGame?.table?.urls[0]?.url ?? '' : '';
