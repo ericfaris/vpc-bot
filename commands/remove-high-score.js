@@ -12,7 +12,7 @@ module.exports = {
   description: 'Remove high score by rank from a high score table (MANAGE_GUILD)',
   permissions: ['MANAGE_GUILD'],
   roles: ['High Score Corner Mod'],
-  minArgs: 1,
+  minArgs: 3,
   expectedArgs: '<vpsid> <username> <score>',
   callback: async ({ args, channel, interaction, client, instance }) => {
     let retVal;
