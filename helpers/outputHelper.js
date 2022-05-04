@@ -258,7 +258,7 @@ module.exports = {
       i = 1;
 
       authorsArray = table?.authorName?.split(', ');
-      firstAuthor = authorsArray.shift();
+      firstAuthor = authorsArray?.shift();
       otherAuthors = authorsArray?.join(',  ');
 
       strText += (table?.tableUrl ? `[**${table.tableName}**](${table.tableUrl ?? ''})` : `**${table.tableName}**`) + 
