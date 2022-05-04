@@ -32,12 +32,12 @@ module.exports = {
       update = {$pull : {'authors.$[].versions.$[].scores' : {username: username, score: parseInt(score)}}}     
 
       //save scores to db
-      let retVal = await mongoHelper.findOneAndUpdate(filter, update, options, 'tables');
+      let response = await mongoHelper.findOneAndUpdate(filter, update, options, 'tables');
 
-      if (retVal.value) {
+      if (response.value) {
         retVal = 'Score removed successfully.';
       } else {
-        retVal = 'No score removed. Rank of ' + rank + ' not found.';
+        retVal = 'No score removed. Score not found.';
       }
     }
 
