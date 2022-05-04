@@ -13,28 +13,28 @@ module.exports = {
   permissions: ['MANAGE_GUILD'],
   roles: ['High Score Corner Mod'],
   minArgs: 1,
-  expectedArgs: '<vpsid> <rank>',
+  expectedArgs: '<vpsid> <username> <score>',
   callback: async ({ args, channel, interaction, client, instance }) => {
     let retVal;
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
       retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
     } else {
-      const [vpsId, rank] = args;
+      const [vpsId, username, score] = args;
 
-      //get current week
-      const currentWeek = await mongoHelper.aggregate();
+      let filter;
+      let update;
+      let options;
 
-      //remove score based on rank/index
-      var retArray = currentWeek.scores.splice(rank - 1, 1);
+      filter = {authors: {$elemMatch: {vpsId: vpsId}}};
+      options = {new: true};
+      update = {$pull : {'authors.$[].versions.$[].scores' : {username: username, score: parseInt(score)}}}     
 
       //save scores to db
-      await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { scores: currentWeek.scores } }, null, 'weeks');
+      let retVal = await mongoHelper.findOneAndUpdate(filter, update, options, 'tables');
 
-      if (retArray.length > 0) {
+      if (retVal.value) {
         retVal = 'Score removed successfully.';
       } else {
         retVal = 'No score removed. Rank of ' + rank + ' not found.';
