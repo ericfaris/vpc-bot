@@ -5,13 +5,15 @@ const date = require('date-and-time');
 
 module.exports = {
 
-  createTableRow: (i, t, score, expandedLayout) => {
+  createTableRow: (i, t, score, expandedLayout, showScores) => {
     t.cell('Rank', i, Table.leftPadder(' '))
     t.cell('User', score?.username.replace('`', '\`'), Table.rightPadder(' '))
-    t.cell('Score', score?.score, (val, width) => {
-      var str = numeral(val).format('0,0');
-      return width ? Table.padLeft(str, width) : str;
-    })
+    if (showScores) {
+      t.cell('Score', score?.score, (val, width) => {
+        var str = numeral(val).format('0,0');
+        return width ? Table.padLeft(str, width) : str;
+      })
+    }
     if (expandedLayout) {
       t.cell('+/- Last Score', score?.diff, (val, width) => {
         var str = numeral(val).format('0,0');
@@ -62,7 +64,7 @@ module.exports = {
     t.newRow();
   },
 
-  printWeeklyLeaderboard: (scores, numOfScoresToShow, expandedLayout) => {
+  printWeeklyLeaderboard: (scores, numOfScoresToShow, expandedLayout, showScores) => {
     var strText = '**Weekly Leaderboard:**\n';
 
     var i = 0;
@@ -75,7 +77,7 @@ module.exports = {
     scores.forEach(function (score) {
       i++
       if (i < numOfScoresToShow + 1) {
-        module.exports.createTableRow(i, t, score, expandedLayout);
+        module.exports.createTableRow(i, t, score, expandedLayout, showScores);
       }
     })
 
@@ -194,7 +196,7 @@ module.exports = {
       strText += '**Team:** ' + team.name + '\n';
       teamMembersScores.forEach(function (score) {
         i++;
-        module.exports.createTableRow(i, t, score, expandedLayout);
+        module.exports.createTableRow(i, t, score, expandedLayout, true);
       })
 
       t.total('Score', {
@@ -225,7 +227,7 @@ module.exports = {
         }
       }
 
-      textTableAsString += module.exports.printWeeklyLeaderboard(scores, numOfScoresToShow, expandedLayout);
+      textTableAsString += module.exports.printWeeklyLeaderboard(scores, numOfScoresToShow, expandedLayout, true);
 
       if (numOfScoresToShow && numOfScoresToShow > 1) {
         tableArray = module.exports.splitPosts(scores, textTableAsString, numOfScoresToShow);
