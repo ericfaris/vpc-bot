@@ -27,6 +27,8 @@ logger.info(`HIGH_SCORES_CHANNEL_NAME: ${process.env.HIGH_SCORES_CHANNEL_NAME}`)
 logger.info(`HIGH_SCORES_CHANNEL_ID: ${process.env.HIGH_SCORES_CHANNEL_ID}`);
 logger.info(`VPC_DATA_SERVICE_API_URI: ${process.env.VPC_DATA_SERVICE_API_URI}`);
 logger.info(`VPS_DATA_SERVICE_API_URI: ${process.env.VPS_DATA_SERVICE_API_URI}`);
+logger.info(`BRAGGING_RIGHTS_CHANNEL_NAME: ${process.env.BRAGGING_RIGHTS_CHANNEL_NAME}`);
+logger.info(`BRAGGING_RIGHTS_CHANNEL_ID: ${process.env.BRAGGING_RIGHTS_CHANNEL_ID}`);
 
 const client = new DiscordJS.Client({
   intents: [
