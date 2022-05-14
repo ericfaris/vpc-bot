@@ -51,8 +51,10 @@ module.exports = {
         const currentSeason = await mongoHelper.findCurrentSeason(channel.name);
         const currentWeek = await vpcDataService.getCurrentWeek(channel.name);
 
-        client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
-
+        if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
+          client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
+        }
+      
         weekNumber = parseInt(currentWeek.weekNumber) + 1;
         currentSeasonWeekNumber = parseInt(currentWeek.currentSeasonWeekNumber) + 1;
         periodStart = date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
