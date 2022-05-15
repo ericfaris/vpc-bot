@@ -17,7 +17,7 @@ module.exports = {
   description: 'Create new week by VPS ID (MANAGE_GUILD)',
   roles: ['Competition Corner Mod'],
   minArgs: 1,
-  expectedArgs: '<vpsid> <notes>',
+  expectedArgs: '<vpsid> <startdateoverride> <enddateoverride> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
     let ephemeral = false;
@@ -33,7 +33,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       ephemeral = true;
     } else {
-      const [vpsid, notes] = args;
+      const [vpsid, startdateoverride, enddateoverride, notes] = args;
       let weekNumber;
       let periodStart;
       let periodEnd;
@@ -57,8 +57,8 @@ module.exports = {
       
         weekNumber = parseInt(currentWeek.weekNumber) + 1;
         currentSeasonWeekNumber = parseInt(currentWeek.currentSeasonWeekNumber) + 1;
-        periodStart = date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
-        periodEnd = date.format(date.addDays(date.parse(currentWeek.periodEnd, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
+        periodStart = startdateoverride ?? date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
+        periodEnd = enddateoverride ?? date.format(date.addDays(date.parse(currentWeek.periodEnd, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
         table = `${vpsGame?.name} (${vpsGame?.manufacturer} ${vpsGame?.year})`;
         authorName = vpsGame.table?.authors?.join(', ') ?? '';
         versionNumber = vpsGame?.table?.version ?? '';
