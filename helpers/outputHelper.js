@@ -363,12 +363,12 @@ module.exports = {
     message.edit(module.exports.generateWeeklyBoilerPlateText(
       scores, teams, week.weekNumber, week.periodStart, week.periodEnd,
       week.vpsId, week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
-      week.notes, week.currentSeasonWeekNumber));
+      week.notes, week.currentSeasonWeekNumber, week.b2sUrl));
     message.suppressEmbeds(true);
   },
 
   generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, vpsId, tableName, authorName, versionNumber, 
-                                  tableUrl, romUrl, romName, notes, currentSeasonWeekNumber) => {
+                                  tableUrl, romUrl, romName, notes, currentSeasonWeekNumber, b2sUrl) => {
     var bp = '\n\n';
 
     bp += '**WEEKLY LEADERBOARD**\n\n';
@@ -383,6 +383,7 @@ module.exports = {
     bp += `**Table Url:** ${tableUrl ?? 'N/A'}\n`;
     bp += `**Rom Url:** ${romUrl ?? 'N/A'}\n`;
     bp += `**Rom Name:** ${romName ?? 'N/A'}\n`;
+    bp += `**B2S Url:** ${b2sUrl ?? 'N/A'}\n`;
     bp += `**Notes:** ${notes ?? 'N/A'}\n\n`;
     bp += module.exports.printCombinedLeaderboard(scores, 20, teams, false, false)[0];
     bp += '\n';

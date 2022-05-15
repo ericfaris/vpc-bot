@@ -17,7 +17,7 @@ module.exports = {
   description: 'Create new week by VPS ID (MANAGE_GUILD)',
   roles: ['Competition Corner Mod'],
   minArgs: 1,
-  expectedArgs: '<vpsid> <startdateoverride> <enddateoverride> <notes>',
+  expectedArgs: '<vpsid> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
     let ephemeral = false;
@@ -33,7 +33,7 @@ module.exports = {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       ephemeral = true;
     } else {
-      const [vpsid, startdateoverride, enddateoverride, notes] = args;
+      const [vpsid, startdateoverride, enddateoverride, b2sidoverride, notes] = args;
       let weekNumber;
       let periodStart;
       let periodEnd;
@@ -65,6 +65,7 @@ module.exports = {
         tableUrl = vpsGame.table?.urls[0]?.url ?? '';
         romUrl = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.urls[0]?.url ?? '' : '';
         romName = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.version ?? '' : '';
+        b2sUrl = b2sidoverride ? vpsGame?.b2sFiles.find(b => b.id === b2sidoverride)?.urls[0]?.url : (vpsGame?.b2sFiles[0]?.urls[0]?.url) ?? '';
 
         var newWeek = {
           'channelName': channel.name,
