@@ -65,7 +65,7 @@ module.exports = {
         tableUrl = vpsGame.table?.urls[0]?.url ?? '';
         romUrl = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.urls[0]?.url ?? '' : '';
         romName = vpsGame?.romFiles ? vpsGame?.romFiles[0]?.version ?? '' : '';
-        b2sUrl = b2sidoverride ? vpsGame?.b2sFiles.find(b => b.id === b2sidoverride)?.urls[0]?.url : (vpsGame?.b2sFiles[0]?.urls[0]?.url) ?? '';
+        b2sUrl = b2sidoverride ? vpsGame?.b2sFiles.find(b => b.id === b2sidoverride)?.urls[0]?.url : (vpsGame?.b2sFiles[0]?.urls[0]?.url ?? '') ;
 
         var newWeek = {
           'channelName': channel.name,
@@ -79,6 +79,7 @@ module.exports = {
           'tableUrl': tableUrl,
           'romUrl': romUrl,
           'romName': romName,
+          'b2sUrl': b2sUrl,
           'season': currentSeason?.seasonNumber ? parseInt(currentSeason?.seasonNumber) : null,
           'currentSeasonWeekNumber': currentSeasonWeekNumber,
           'notes': notes,
