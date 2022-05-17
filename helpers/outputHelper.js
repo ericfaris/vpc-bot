@@ -96,10 +96,36 @@ module.exports = {
     }
 
     strText = '**Season Leaderboard:**\n';
-    leaderboard = []
     var i = numOfScoresToShow ? 0 : 1;
     var t = new Table;
 
+    leaderboard = module.exports.getSeasonLeaderboard(weeks);
+
+    if (numOfScoresToShow) {
+      while (i <= numOfScoresToShow) {
+        module.exports.createTableRowSeason(i + 1, t, leaderboard[i], expandedLayout);
+        i++;
+      };
+    } else {
+      leaderboard.forEach(function (player) {
+        module.exports.createTableRowSeason(i, t, player, expandedLayout);
+        i++;
+      })
+    }
+
+    strText += '`' + t.toString() + '`';
+
+    if (numOfScoresToShow && numOfScoresToShow > 1) {
+      tableArray = module.exports.splitPosts(leaderboard, strText, numOfScoresToShow);
+    } else {
+      tableArray = module.exports.splitPosts(leaderboard, strText, 30);
+    }
+
+    return tableArray;
+  },
+
+  getSeasonLeaderboard: (weeks) => {
+    leaderboard = [];
     weeks.forEach(function (week) {
       if (week.scores) {
         scores = week.scores;
@@ -124,27 +150,7 @@ module.exports = {
       }
     });
 
-    if (numOfScoresToShow) {
-      while (i <= numOfScoresToShow) {
-        module.exports.createTableRowSeason(i + 1, t, leaderboard[i], expandedLayout);
-        i++;
-      };
-    } else {
-      leaderboard.forEach(function (player) {
-        module.exports.createTableRowSeason(i, t, player, expandedLayout);
-        i++;
-      })
-    }
-
-    strText += '`' + t.toString() + '`';
-
-    if (numOfScoresToShow && numOfScoresToShow > 1) {
-      tableArray = module.exports.splitPosts(leaderboard, strText, numOfScoresToShow);
-    } else {
-      tableArray = module.exports.splitPosts(leaderboard, strText, 30);
-    }
-
-    return tableArray;
+    return leaderboard;
   },
 
   printTeamSummary: (teams, scores) => {
