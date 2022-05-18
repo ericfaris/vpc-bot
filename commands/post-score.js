@@ -24,6 +24,8 @@ module.exports = {
     const postToHighScoreChannel = args.length > 1 ? args[1] : null;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
     const reHighScoreCheck = new RegExp('Rank:\\*\\* [1|2|3|4|5|6|7|8|9|10] of');
+    const showPlayoffButton = await mongoHelper.findCurrentPlayoff(channel.name) ?? false;
+
 
     if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
       invalidMessage = `The ${module.exports.commandName} slash command cannot be used in this channel.`
@@ -81,6 +83,14 @@ module.exports = {
                   .setLabel('Show Leaderboard')
                   .setStyle('PRIMARY'),
               );
+            if(showPlayoffButton){
+              row.addComponents(
+                new MessageButton()
+                  .setCustomId('showPlayoffs')
+                  .setLabel('Show Playoffs')
+                  .setStyle('PRIMARY')
+              )
+            }
             message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
               client.emit('postHighScore', user, scoreAsInt, attachment,
                 currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
