@@ -91,6 +91,22 @@ module.exports = {
         return doc;
     },
 
+    findCurrentPlayoff: async (channelName) => {
+        const client = await module.exports.connect();
+        const collection = await module.exports.getCollection(client, 'playoffs')
+        const doc = await collection.findOne({ 'channelName': channelName, isArchived: false });
+        client.close();
+        return doc;
+    },
+
+    findCurrentPlayoffRound: async (channelName) => {
+        const client = await module.exports.connect();
+        const collection = await module.exports.getCollection(client, 'rounds')
+        const doc = await collection.findOne({ 'channelName': channelName, isArchived: false });
+        client.close();
+        return doc;
+    },
+
     updateOne: async (filter, update, options, collectionName) => {
         const client = await module.exports.connect();
         const collection = await module.exports.getCollection(client, collectionName)

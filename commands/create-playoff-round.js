@@ -38,6 +38,7 @@ module.exports = {
       await mongoHelper.updateOne({ seasonNumber: parseInt(currentSeason.seasonNumber), isArchived: false }, { $set: { isArchived: true } }, null, 'rounds');
 
       let round = {
+        'channelName' : channel.name,
         'seasonNumber' : parseInt(currentSeason.seasonNumber),
         'roundName' : roundName,
         'games' : games.split(',').map(x => parseInt(x)),

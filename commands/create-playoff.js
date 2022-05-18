@@ -38,6 +38,7 @@ module.exports = {
       leaderboard = (await module.exports.getCurrentSeasonLeaderboard(channel)).slice(0,16);
 
       let playoff = {
+        'channelName' : channel.name,
         'seasonNumber' : parseInt(currentSeason.seasonNumber),
         'seeds' : leaderboard
       }

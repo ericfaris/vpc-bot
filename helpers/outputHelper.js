@@ -64,6 +64,24 @@ module.exports = {
     t.newRow();
   },
 
+  createTableRowPlayoffMatchup: (t, game) => {
+    t.cell('Seed', game.away?.seed, Table.leftPadder(' '));
+    t.cell('User', game.away?.username, Table.rightPadder(' '));
+    t.cell('Score', game.away?.score, (val, width) => {
+      var str = numeral(val).format('0,0');
+      return width ? Table.padLeft(str, width) : str;
+    });
+    t.newRow();
+    t.cell('Seed', game.home?.seed, Table.leftPadder(' '));
+    t.cell('User', game.home?.username, Table.rightPadder(' '));
+    t.cell('Score', game.home?.score, (val, width) => {
+      var str = numeral(val).format('0,0');
+      return width ? Table.padLeft(str, width) : str;
+    });
+    t.newRow();
+    t.newRow();
+  },
+
   printWeeklyLeaderboard: (scores, numOfScoresToShow, expandedLayout, showScores) => {
     var strText = '**Weekly Leaderboard:**\n';
 
@@ -294,6 +312,24 @@ module.exports = {
     });
 
     tableArray.push(strText);
+    return tableArray;
+  },
+
+  printPlayoffRoundMatchups: (games) => {
+    let tableArray = [];
+    var strText = '**Current Playoff Round Results:**\n';
+
+    var i = 0;
+    var t = new Table;
+
+    games.forEach(function (games) {
+      module.exports.createTableRowPlayoffMatchup(t, games);
+    })
+
+    strText += '`' + t.toString() + '`';
+
+    tableArray.push(strText);
+
     return tableArray;
   },
 

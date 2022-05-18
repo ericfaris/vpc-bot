@@ -27,6 +27,11 @@ module.exports = {
         module.exports.postMessages(contentArray, interaction, isEphemeral);
     },
 
+    showPlayoffMatchups: async (games, interaction, isEphemeral) => {
+        var contentArray = outputHelper.printPlayoffRoundMatchups(games);
+        module.exports.postMessages(contentArray, interaction, isEphemeral);
+    },
+
     postMessages: async (contentArray, interaction, isEphemeral) => {
         for (const post of contentArray) {
             if (!isEphemeral && interaction.channel) {
