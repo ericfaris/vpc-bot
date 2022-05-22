@@ -53,6 +53,7 @@ module.exports = {
 
         if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
           client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
+          client.emit('advancePlayoffRound', channel, currentWeek);
         }
       
         weekNumber = parseInt(currentWeek.weekNumber) + 1;
@@ -105,7 +106,7 @@ module.exports = {
             await outputHelper.editSeasonCompetitionCornerMessage(currentSeason, weeksInSeason, client)
           }
 
-          retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} message was updated successfully.`;
+          retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} pinned message was updated successfully.`;
         } else {
           retVal = `New week created for the ${channel.name} channel.`;
         }
