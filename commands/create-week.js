@@ -25,6 +25,8 @@ module.exports = {
     let vpcDataService = new VPCDataService();
     let vpsDataService = new VPSDataService();
 
+    await interaction.deferReply();
+
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`);
       retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
@@ -106,7 +108,6 @@ module.exports = {
           retVal = `New week created for the ${channel.name} channel.`;
         }
   
-        await interaction.reply({content: retVal, ephemeral: ephemeral});
         await commandHelper.execute(instance, interaction, message, 'create-high-score-table', [newWeek.vpsId]);
 
         if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
@@ -114,6 +115,7 @@ module.exports = {
           client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
         }  
 
+        interaction.editReply({content: retVal, ephemeral: ephemeral});
       } else {
         retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
       }

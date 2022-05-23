@@ -12,18 +12,22 @@ module.exports = {
   description: 'Show playoffs for the channel.',
   callback: async ({ channel, interaction}) => {
     let retVal;
-    let playoffHelper = new PlayoffHelper();
 
     if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
       retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
       interaction.reply({content: retVal, ephemeral: true});
     } else {
-      const currentPlayoff = await mongoHelper.findCurrentPlayoff(channel.name);
-      const currentPlayoffRound = await mongoHelper.findCurrentPlayoffRound(channel.name);
-      const currentWeek = await  mongoHelper.findCurrentWeek(channel.name);
-
-      const games = playoffHelper.getCurrentPlayoffMatchups(currentWeek, currentPlayoff, currentPlayoffRound);
-      return await responseHelper.showPlayoffMatchups(games, interaction, true);
+      return module.exports.getPlayoffRoundMatchups(interaction, channel);
     }
   },
+
+  getPlayoffRoundMatchups : async (interaction, channel) => {
+    let playoffHelper = new PlayoffHelper();
+    const currentPlayoff = await mongoHelper.findCurrentPlayoff(channel.name);
+    const currentPlayoffRound = await mongoHelper.findCurrentPlayoffRound(channel.name);
+    const currentWeek = await  mongoHelper.findCurrentWeek(channel.name);
+
+    const games = playoffHelper.getCurrentPlayoffMatchups(currentWeek, currentPlayoff, currentPlayoffRound);
+    return await responseHelper.showPlayoffMatchups(games, interaction, true);
+  }
 }
