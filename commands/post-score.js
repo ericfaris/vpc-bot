@@ -69,10 +69,10 @@ module.exports = {
         //parameter is GOOD
         const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
 
-        retVal = await module.exports.saveScore(null, score, currentWeek, client, interaction, message, channel)
+        retVal = await module.exports.saveScore(user, score, currentWeek, client, interaction, message, channel)
 
         if (message) {
-          let content = `<@${user.id}>, ${retVal}`;
+          let content = retVal;
           let attachment = message.attachments?.first();
 
           if (attachment) {
@@ -93,7 +93,7 @@ module.exports = {
             }
             message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
               client.emit('postHighScore', user, scoreAsInt, attachment,
-                currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `COPIED FROM <#${process.env.COMPETITION_CHANNEL_ID}>`,
+                currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `copied from <#${process.env.COMPETITION_CHANNEL_ID}>`,
                 'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
               message.delete();
             });
@@ -113,8 +113,8 @@ module.exports = {
     }
   },
 
-  saveScore: async (username, score, currentWeek, client, interaction, message, channel) => {
-    const userName = username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
+  saveScore: async (user, score, currentWeek, client, interaction, message, channel) => {
+    const userName = user.username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
 
     //convert to integer
@@ -154,7 +154,9 @@ module.exports = {
     let scoreDiff = scoreAsInt - previousScore;
 
     // return text table string
-    return (message ? '' : `**@${userName}**, `) + 'posted a new score:\n'
+    return '**NEW WEEKLY SCORE POSTED:**\n'
+      + `**User:** <@${user.id}>\n`
+      + `**Table:** ${currentWeek.table}\n`
       + `**Score:** ${numeral(scoreAsInt).format('0,0')} (${(scoreDiff >= 0 ? '+' : '')} ${numeral(scoreAsInt - previousScore).format(0, 0)})\n`
       + `**Rank:** ${currentRank} (${(changeInRank >= 0 ? '+' + changeInRank : changeInRank)})`;
   },

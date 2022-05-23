@@ -115,7 +115,7 @@ module.exports = (client, user, instance, channel, message) => {
       }
     });
 
-    client.on('postHighScore', async function (user, score, attachment, currentWeek, channelId, postTitle, postDescription, doPost) {
+    client.on('postHighScore', async function (user, score, attachment, currentWeek, channelId, postSubscript, postDescription, doPost) {
       var channel = client.channels.cache.get(channelId);
       
       var data = {
@@ -143,11 +143,12 @@ module.exports = (client, user, instance, channel, message) => {
         let firstAuthor = authorsArray?.shift();
                    
         if(doPost) {
-          await channel.send({content: `**${postTitle}**\n` + 
-                                  `**<@${user.id}>**, ${postDescription}\n` + 
-                                  `**${data.tableName} (${firstAuthor}... ${data.versionNumber})**\n` +
+          await channel.send({content: '**NEW HIGH SCORE POSTED:**\n' + 
+                                  `**User**: <@${user.id}>\n` + 
+                                  `**Table:** ${data.tableName}\n` +
                                   `**Score: **${numeral(data.s).format('0,0')}\n` +
-                                  `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`
+                                  `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n` +
+                                  `*${postSubscript}*`
                             , files: [attachment]}).then(async (message) => {
             data.scoreId = highScoreId;
             await postHighScoreCommand.updateHighScore(data, message.url);
