@@ -5,7 +5,7 @@ class PlayoffHelper {
     getCurrentPlayoffMatchups(week, playoff, round) {
       let games = [];
 
-      for(let i = 0; i < playoff.seeds.length; i=i+2) {
+      for(let i = 0; i < round.games.length; i=i+2) {
         let awaySeed = parseInt(round.games[i]);
         let awayUsername = playoff.seeds[awaySeed-1]?.username;
         let awayScore = week.scores.find(x => x.username === awayUsername)?.score ?? null;
@@ -15,7 +15,7 @@ class PlayoffHelper {
   
         let game = {
           away: {
-            seed: awaySeed, 
+            seed: awaySeed,
             username: awayUsername, 
             score: awayScore
           },

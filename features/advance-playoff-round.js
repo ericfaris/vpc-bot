@@ -1,7 +1,7 @@
 const mongoHelper = require('../helpers/mongoHelper');
 const { PlayoffHelper } = require('../helpers/playoffHelper');
 
-module.exports = (client) => {
+module.exports = (client, channel) => {
   client.on('advancePlayoffRound', async function (channel, currentWeek) {
     const playoffHelper = new PlayoffHelper();
 
@@ -39,6 +39,6 @@ module.exports = (client) => {
 
     await mongoHelper.insertOne(round, 'rounds');
 
-    return `Advancing Playoffs to ${roundName}`;
+    await channel.send({content: `Advanced playoff round.`});
   });
 }

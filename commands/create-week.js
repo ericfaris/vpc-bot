@@ -18,7 +18,7 @@ module.exports = {
   roles: ['Competition Corner Mod'],
   minArgs: 1,
   expectedArgs: '<vpsid> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
-  callback: async ({ args, client, channel, interaction, instance }) => {
+  callback: async ({ args, client, channel, interaction, instance, message}) => {
     let retVal;
     let ephemeral = false;
     let commandHelper = new CommandHelper();
@@ -50,11 +50,6 @@ module.exports = {
       if (vpsGame.table) {
         const currentSeason = await mongoHelper.findCurrentSeason(channel.name);
         const currentWeek = await vpcDataService.getCurrentWeek(channel.name);
-
-        if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
-          client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
-          client.emit('advancePlayoffRound', channel, currentWeek);
-        }
       
         weekNumber = parseInt(currentWeek.weekNumber) + 1;
         currentSeasonWeekNumber = parseInt(currentWeek.currentSeasonWeekNumber) + 1;
@@ -111,9 +106,14 @@ module.exports = {
           retVal = `New week created for the ${channel.name} channel.`;
         }
   
-        interaction.reply({content: retVal, ephemeral: ephemeral, fetchReply: true}).then(async message => {
-          await commandHelper.execute(instance, interaction, 'create-high-score-table', [newWeek.vpsId])
-        })
+        await interaction.reply({content: retVal, ephemeral: ephemeral});
+        await commandHelper.execute(instance, interaction, message, 'create-high-score-table', [newWeek.vpsId]);
+
+        if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
+          client.emit('advancePlayoffRound', channel, currentWeek);
+          client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
+        }  
+
       } else {
         retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
       }

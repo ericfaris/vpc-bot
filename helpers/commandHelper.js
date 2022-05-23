@@ -2,7 +2,7 @@ class CommandHelper {
 
     constructor(){};
 
-    async execute(instance, interaction, commandName, args) {
+    async execute(instance, interaction, message, commandName, args) {
         let command = instance.commandHandler._commands.get(commandName);
         try {
             interaction.commandName = commandName;

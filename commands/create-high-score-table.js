@@ -24,7 +24,7 @@ module.exports = {
       ephemeral = true;
     }
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
+    if (!message && !(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
       const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
       retVal =  logMessage;
     } else {
@@ -122,7 +122,7 @@ module.exports = {
         }
 
       if(message) {
-        interaction.followUp({content: `**Trying to create new high score table:** ${retVal}`, ephemeral: ephemeral});
+        await channel.send({content: `**Trying to create new high score table:** ${retVal}`, ephemeral: ephemeral});
       } else {
         interaction.reply({content: retVal, ephemeral: ephemeral});
       }
