@@ -297,7 +297,7 @@ module.exports = {
             module.exports.createTableRowHighScore(i, t, score, false);
             i++;
           })
-          strText += '`' + t.toString() + '`' + '\n';
+          strText += '`' + t.toString() + '`' + '\n \n ';
         } else {
           strText += '**NO HIGH SCORES POSTED**\n\n';
         }
@@ -326,7 +326,7 @@ module.exports = {
       module.exports.createTableRowPlayoffMatchup(t, games);
     })
 
-    strText += '`' + t.toString() + '`';
+    strText += '`' + t.toString() + '`\n\n';
 
     tableArray.push(strText);
 

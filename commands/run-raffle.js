@@ -37,8 +37,7 @@ module.exports = {
 
     raffleList += '\n\n';
     raffleList += 'and the winner is......\n';
-    raffleList += `**(${retNumber}) ` + currentWeek.scores[retNumber].username + '**\n\n';
-    raffleList += 'Please see @MajorFrenchy for your prize...'
+    raffleList += `**(${retNumber+1}) ` + currentWeek.scores[retNumber].username + '**\n\n';
 
     return raffleList;
   },

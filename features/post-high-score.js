@@ -43,11 +43,12 @@ module.exports = (client, user, instance, channel, message) => {
                     await postHighScoreCommand.saveHighScore(selectedJson, interaction).then(async () => {
                       const user = await client.users.cache.find(user => user.username === selectedJson.u)
                       await interaction.update({
-                        content: `**HIGH SCORE ALERT**\n` + 
-                          `**<@${user.id}>** just posted a high score for**\n` + 
-                          `${selectedJson.tableName} ( ${firstAuthor}... ${selectedJson.versionNumber})**\n` +
-                          `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
-                          `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
+                        content: 
+                          `**NEW TOP HIGH SCORE POSTED:**\n` + 
+                          `**User**: <@${user.id}>\n` + 
+                          `**Table:** ${selectedJson.tableName} ( ${firstAuthor}... ${selectedJson.versionNumber})**\n` +
+                          `**Score: **${numeral(data.s).format('0,0')}\n` +
+                          `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                         components: []
                       });
 
@@ -78,10 +79,12 @@ module.exports = (client, user, instance, channel, message) => {
                       .then(async () => {
                         const user = await client.users.cache.find(user => user.username === selectedJson.u)
                         await interaction.update({
-                          content: `**<@${user.id}>**, just posted a score for**\n` + 
-                            `${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})**\n` +
-                            `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
-                            `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`, 
+                          content: 
+                            `**NEW HIGH SCORE POSTED:**\n` + 
+                            `**User**: <@${user.id}>\n` + 
+                            `**Table:** ${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})\n` +
+                            `**Score: **${numeral(data.s).format('0,0')}\n` +
+                            `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                           components: []
                         });
                         await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
@@ -143,7 +146,8 @@ module.exports = (client, user, instance, channel, message) => {
         let firstAuthor = authorsArray?.shift();
                    
         if(doPost) {
-          await channel.send({content: '**NEW HIGH SCORE POSTED:**\n' + 
+          await channel.send({content: 
+                                  `**NEW HIGH SCORE POSTED:**\n` + 
                                   `**User**: <@${user.id}>\n` + 
                                   `**Table:** ${data.tableName}\n` +
                                   `**Score: **${numeral(data.s).format('0,0')}\n` +
