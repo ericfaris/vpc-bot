@@ -47,7 +47,7 @@ module.exports = (client, user, instance, channel, message) => {
                           `**NEW TOP HIGH SCORE POSTED:**\n` + 
                           `**User**: <@${user.id}>\n` + 
                           `**Table:** ${selectedJson.tableName} ( ${firstAuthor}... ${selectedJson.versionNumber})**\n` +
-                          `**Score: **${numeral(data.s).format('0,0')}\n` +
+                          `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
                           `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                         components: []
                       });
@@ -83,7 +83,7 @@ module.exports = (client, user, instance, channel, message) => {
                             `**NEW HIGH SCORE POSTED:**\n` + 
                             `**User**: <@${user.id}>\n` + 
                             `**Table:** ${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})\n` +
-                            `**Score: **${numeral(data.s).format('0,0')}\n` +
+                            `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                           components: []
                         });
