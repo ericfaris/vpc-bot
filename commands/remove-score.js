@@ -2,6 +2,7 @@ require('dotenv').config()
 const path = require('path');
 const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const removeHighScoreCOmmand = require('../commands/remove-high-score');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -14,7 +15,7 @@ module.exports = {
   roles: ['Competition Corner Mod'],
   minArgs: 1,
   expectedArgs: '<rank>',
-  callback: async ({ args, channel, interaction, client, instance }) => {
+  callback: async ({ args, channel, interaction, client, instance, user, message}) => {
     let retVal;
 
     if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
@@ -27,12 +28,19 @@ module.exports = {
 
       //get current week
       const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
+  
+      //retrieve score for rank
+      var username = currentWeek.scores[rank-1].username;
+      var score = currentWeek.scores[rank-1].score;
 
       //remove score based on rank/index
       var retArray = currentWeek.scores.splice(rank - 1, 1);
 
       //save scores to db
       await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { scores: currentWeek.scores } }, null, 'weeks');
+      
+      //removing associated high score
+      await removeHighScoreCOmmand.callback( {args: [currentWeek.vpsId, username, score], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
 
       if (retArray.length > 0) {
         retVal = 'Score removed successfully.';
