@@ -1,5 +1,5 @@
 const Logger = require('../helpers/loggingHelper');
-const { SearchScorePipelineHelper } = require('../helpers/pipelineHelper');
+const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
 const date = require('date-and-time');
 const postHighScoreCommand = require('../commands/post-high-score');
 const showTableHighScoresCommand = require('../commands/show-table-high-scores');
@@ -137,28 +137,32 @@ module.exports = (client, user, instance, channel, message) => {
         }
       };
 
-      postHighScoreCommand.saveHighScore(data, interaction).then(async (newHighScore) => {
-        const highScoreId = newHighScore?.authors.find(a => a.vpsId === data.vpsId)
-                                ?.versions.find(v => v.versionNumber === data.versionNumber)
-                                ?.scores.reduce((a,b) => a.score > b.score ? a : b)?._id.toString();
+      const highScoreExists = await postHighScoreCommand.highScoreExists(data);
 
-        let authorsArray = data?.authorName?.split(', ');
-        let firstAuthor = authorsArray?.shift();
-                   
-        if(doPost) {
-          await channel.send({content: 
-                                  `**NEW HIGH SCORE POSTED:**\n` + 
-                                  `**User**: <@${user.id}>\n` + 
-                                  `**Table:** ${data.tableName}\n` +
-                                  `**Score: **${numeral(data.s).format('0,0')}\n` +
-                                  `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n` +
-                                  `*${postSubscript}*`
-                            , files: [attachment]}).then(async (message) => {
-            data.scoreId = highScoreId;
-            await postHighScoreCommand.updateHighScore(data, message.url);
-            await showTableHighScoresCommand.callback( {args: [data.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
-          });
-        }
-      });
+      if(!highScoreExists) {
+        postHighScoreCommand.saveHighScore(data, interaction).then(async (newHighScore) => {
+          const highScoreId = newHighScore?.authors.find(a => a.vpsId === data.vpsId)
+                                  ?.versions.find(v => v.versionNumber === data.versionNumber)
+                                  ?.scores.reduce((a,b) => a.score > b.score ? a : b)?._id.toString();
+
+          let authorsArray = data?.authorName?.split(', ');
+          let firstAuthor = authorsArray?.shift();
+                    
+          if(doPost) {
+            await channel.send({content: 
+                                    `**NEW HIGH SCORE POSTED:**\n` + 
+                                    `**User**: <@${user.id}>\n` + 
+                                    `**Table:** ${data.tableName}\n` +
+                                    `**Score: **${numeral(data.s).format('0,0')}\n` +
+                                    `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n` +
+                                    `*${postSubscript}*`
+                              , files: [attachment]}).then(async (message) => {
+              data.scoreId = highScoreId;
+              await postHighScoreCommand.updateHighScore(data, message.url);
+              await showTableHighScoresCommand.callback( {args: [data.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
+            });
+          }
+        });
+      }
     });
 }

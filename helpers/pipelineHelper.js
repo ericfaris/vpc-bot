@@ -81,6 +81,42 @@ class SearchScorePipelineHelper {
   }
 }
 
+class SearchScoreByVpsIdUsernameScorePipelineHelper {
+  constructor(data) {
+    this.pipeline = [
+      { $unwind: "$authors" },
+      { $unwind: { "path": "$authors.versions", "preserveNullAndEmptyArrays": true } },
+      { $unwind: { "path": "$authors.versions.scores", "preserveNullAndEmptyArrays": true } },
+      { $project: {
+        tableId: '$_id',
+        tableName: '$tableName',
+        authorId: '$authors._id',
+        authorName: "$authors.authorName",
+        vpsId: "$authors.vpsId",
+        versionId: '$authors.versions._id',
+        versionNumber: '$authors.versions.versionNumber',
+        tableUrl: '$authors.versions.versionUrl',
+        scoreId: '$authors.versions.scores._id',
+        user: '$authors.versions.scores.user',
+        userName: '$authors.versions.scores.username',
+        score: '$authors.versions.scores.score',
+        posted: '$authors.versions.scores.createdAt',
+        postUrl: '$authors.versions.scores.postUrl',
+        _id: 0
+      }},
+      { $match: {
+        "$expr": {
+          "$and": [
+            { "$eq": ["$vpsId", data.vpsId] },
+            { "$eq": ["$userName", data.u] },
+            { "$eq": ["$score", data.s] }
+          ]
+        },
+      }}
+    ];
+  }
+}
+
 class AllPipelineHelper {
   constructor() {
       this.pipeline = [
@@ -103,4 +139,4 @@ class AllPipelineHelper {
   }
 }
 
-module.exports = { SearchPipelineHelper, SearchScorePipelineHelper, AllPipelineHelper  }
+module.exports = { SearchPipelineHelper, SearchScorePipelineHelper, SearchScoreByVpsIdUsernameScorePipelineHelper, AllPipelineHelper  }

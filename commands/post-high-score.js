@@ -1,6 +1,7 @@
 require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
 const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
+const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
 const path = require('path');
 const date = require('date-and-time');
 const { MessageActionRow, MessageSelectMenu } = require('discord.js');
@@ -167,6 +168,13 @@ module.exports = {
         }
       }
     }
+  },
+
+  highScoreExists: async (data) => {
+    let pipeline = (new SearchScoreByVpsIdUsernameScorePipelineHelper(data)).pipeline;
+    const tables = await mongoHelper.aggregate(pipeline, 'tables');
+
+    return tables.length > 0 ? true : false
   },
 
   saveHighScore: async (data, interaction) => {   
