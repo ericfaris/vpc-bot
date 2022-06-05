@@ -1,5 +1,5 @@
 const Logger = require('../helpers/loggingHelper');
-const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
+const { SearchScorePipelineHelper } = require('../helpers/pipelineHelper');
 const date = require('date-and-time');
 const postHighScoreCommand = require('../commands/post-high-score');
 const showTableHighScoresCommand = require('../commands/show-table-high-scores');
