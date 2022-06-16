@@ -93,7 +93,7 @@ module.exports = {
             }
             message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
               client.emit('postHighScore', user, scoreAsInt, attachment,
-                currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `copied from <#${process.env.COMPETITION_CHANNEL_ID}>`,
+                currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `copied from <#${channel.id}>`,
                 'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
               message.delete();
             });

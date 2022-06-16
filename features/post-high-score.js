@@ -47,6 +47,7 @@ module.exports = (client, user, instance, channel, message) => {
                           `**NEW TOP HIGH SCORE POSTED:**\n` + 
                           `**User**: <@${user.id}>\n` + 
                           `**Table:** ${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})\n` +
+                          `**VPS Id:** ${selectedJson.vpsId}\n` +
                           `**Score:** ${numeral(selectedJson.s).format('0,0')}\n` +
                           `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                         components: []
@@ -83,7 +84,8 @@ module.exports = (client, user, instance, channel, message) => {
                             `**NEW HIGH SCORE POSTED:**\n` + 
                             `**User**: <@${user.id}>\n` + 
                             `**Table:** ${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})\n` +
-                            `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
+                            `**VPS Id:** ${selectedJson.vpsId}\n` +
+                            `**Score:** ${numeral(selectedJson.s).format('0,0')}\n` +
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                           components: []
                         });
@@ -153,7 +155,8 @@ module.exports = (client, user, instance, channel, message) => {
                                     `**NEW HIGH SCORE POSTED:**\n` + 
                                     `**User**: <@${user.id}>\n` + 
                                     `**Table:** ${data.tableName}\n` +
-                                    `**Score: **${numeral(data.s).format('0,0')}\n` +
+                                    `**VPS Id:** ${data.vpsId}\n` +
+                                    `**Score:** ${numeral(data.s).format('0,0')}\n` +
                                     `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n` +
                                     `*${postSubscript}*`
                               , files: [attachment]}).then(async (message) => {
