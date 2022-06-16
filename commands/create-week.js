@@ -47,7 +47,7 @@ module.exports = {
       let romUrl;
       let romName;
       let currentSeasonWeekNumber;
-      var ronRequired = (romrequired === 'true');
+      var romRequired = (romrequired === 'true');
 
       const vpsGame = await vpsDataService.getVpsGame(vpsid);
 
@@ -69,7 +69,7 @@ module.exports = {
         romName === '' ? errors.push('romName not found on VPS.  Please update VPS with at least 1 romName.') : '';
         b2sUrl = b2sidoverride ? vpsGame?.b2sFiles.find(b => b.id === b2sidoverride)?.urls[0]?.url : (vpsGame?.b2sFiles[0]?.urls[0]?.url ?? '') ;
 
-        if(errors.length === 0 || !ronRequired) {
+        if(errors.length === 0 || !romRequired) {
           var newWeek = {
             'channelName': channel.name,
             'weekNumber': weekNumber,
