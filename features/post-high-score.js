@@ -46,8 +46,8 @@ module.exports = (client, user, instance, channel, message) => {
                         content: 
                           `**NEW TOP HIGH SCORE POSTED:**\n` + 
                           `**User**: <@${user.id}>\n` + 
-                          `**Table:** ${selectedJson.tableName} ( ${firstAuthor}... ${selectedJson.versionNumber})**\n` +
-                          `**Score: **${numeral(selectedJson.s).format('0,0')}\n` +
+                          `**Table:** ${selectedJson.tableName} (${firstAuthor}... ${selectedJson.versionNumber})\n` +
+                          `**Score:** ${numeral(selectedJson.s).format('0,0')}\n` +
                           `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                         components: []
                       });
