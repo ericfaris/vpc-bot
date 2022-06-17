@@ -116,16 +116,17 @@ module.exports = {
             }
           }
 
-          if(filter && options && update) {
+          if(filter && update) {
             await mongoHelper.updateOne(filter, update, options, 'tables');
           }
         }
 
-      if(message) {
-        await channel.send({content: `**Trying to create new high score table:** ${retVal}`, ephemeral: ephemeral});
-      } else {
-        interaction.reply({content: retVal, ephemeral: ephemeral});
-      }
+        if(message) {
+          await channel.send({content: `**Trying to create new high score table:** ${retVal}`, ephemeral: ephemeral});
+        } else {
+          interaction.reply({content: retVal, ephemeral: ephemeral});
+        }
+        
       } else {
         retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
       }
