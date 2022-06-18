@@ -30,7 +30,8 @@ module.exports = {
     } else {
       const [vpsid] = args;
 
-      let tableName 
+      let tableName;
+      let comment;
       let authorName;
       let versionNumber;
       let versionUrl;
@@ -41,6 +42,7 @@ module.exports = {
       if (vpsGame.table) {
 
         tableName = `${vpsGame?.name} (${vpsGame?.manufacturer} ${vpsGame?.year})`;
+        comment = vpsGame?.table?.comment;
         authorName = vpsGame?.table?.authors?.join(", ") ?? '';
         versionNumber = vpsGame?.table?.version ?? '';
         versionUrl = vpsGame?.table?.urls ? vpsGame?.table?.urls[0]?.url ?? '' : '';
@@ -60,7 +62,8 @@ module.exports = {
                   'scores': []
                 }
               ],
-              'vpsId': vpsid
+              'vpsId': vpsid,
+              'comment': comment
             }
           ]
         }
@@ -90,7 +93,8 @@ module.exports = {
                       'romName': romName ?? '',
                       'scores': []
                     }],
-                  'vpsId': vpsid
+                  'vpsId': vpsid,
+                  'comment': comment
                 }
             }};      
 
