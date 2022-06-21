@@ -80,23 +80,14 @@ module.exports = {
         if (tables.length > 0) {
           const options = [];
 
-          let tableId;
-          let tableName;
-          let authorId;
-          let authorName;
-          let versionId;
-          let versionNumber;
-          let scoreId;
+          let vpsId;
 
           tables.forEach(item => {
             
-            tableId = item?.tableId;
             tableName = item?.tableName;
-            authorId = item?.authorId;
             authorName = item?.authorName;
-            versionId = item?.versionId;
             versionNumber = item?.versionNumber;
-            scoreId = item?.scoreId;
+            vpsId = item.vpsId;
             const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
             let authorsArray = authorName?.split(', ');
@@ -104,7 +95,7 @@ module.exports = {
 
             let option = {
               label: `${tableName} (${firstAuthor}... ${versionNumber})`,
-              value: `{"id":"${scoreId ?? versionId ?? authorId ?? tableId}","u":"${user.username}","s":${scoreAsInt}}`
+              value: `{"vpsId":"${vpsId}","v":"${versionNumber}","u":"${user.username}","s":${scoreAsInt}}`
             };
             options.push(option);
           });

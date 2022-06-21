@@ -18,7 +18,7 @@ module.exports = (client, user, instance, channel, message) => {
         switch(commandName) {
           case 'post-high-score':
               let selectedJson = JSON.parse(interaction.values[0]);
-              let pipeline = (new SearchScorePipelineHelper(selectedJson.id)).pipeline;
+              let pipeline = (new SearchScorePipelineHelper(selectedJson.vpsId, selectedJson.v)).pipeline;
               const tables = await mongoHelper.aggregate(pipeline, 'tables');
               let existingUser;
 

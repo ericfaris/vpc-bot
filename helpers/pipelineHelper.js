@@ -11,6 +11,7 @@ class SearchPipelineHelper {
               tableName: '$tableName',
               authorId: { $toString: "$authors._id" },
               authorName: "$authors.authorName",
+              vpsId: "$authors.vpsId",
               versionId: { $toString: "$authors.versions._id" },
               versionNumber: '$authors.versions.versionNumber',
               tableUrl: '$authors.versions.versionUrl',
@@ -24,59 +25,30 @@ class SearchPipelineHelper {
 }
 
 class SearchScorePipelineHelper {
-  constructor(id) {
+  constructor(vpsId, versionNumber) {
     this.pipeline = [
       { $unwind: "$authors" },
       { $unwind: { "path": "$authors.versions", "preserveNullAndEmptyArrays": true } },
       { $unwind: { "path": "$authors.versions.scores", "preserveNullAndEmptyArrays": true } },
       { $project: {
-        tableId: '$_id',
         tableName: '$tableName',
-        authorId: '$authors._id',
         authorName: "$authors.authorName",
         vpsId: "$authors.vpsId",
-        versionId: '$authors.versions._id',
         versionNumber: '$authors.versions.versionNumber',
-        tableUrl: '$authors.versions.versionUrl',
-        scoreId: '$authors.versions.scores._id',
-        user: '$authors.versions.scores.user',
-        userName: '$authors.versions.scores.username',
-        score: '$authors.versions.scores.score',
-        posted: '$authors.versions.scores.createdAt',
-        postUrl: '$authors.versions.scores.postUrl',
         _id: 0
       }},
       { $sort: {tableName: 1, authorName: -1, versionNumber: -1, score: -1} },
       { $group: {
         _id: {
-          tableId: { $toString: "$_id" },
           tableName: '$tableName',
-          authorId: { $toString: "$authors._id" },
-          authorName: "$authors.authorName",
-          vpsId: "$authors.vpsId",
-          versionId: { $toString: "$authors.versions._id" },
-          versionNumber: '$authors.versions.versionNumber',
-          tableUrl: '$authors.versions.versionUrl',
-          scoreId: { $toString: "$authors.versions.scores._id" },
-          user: '$authors.versions.scores.user',
-          userName: '$authors.versions.scores.username',
-          score: '$authors.versions.scores.score',
-          posted: '$authors.versions.scores.createdAt',
-          postUrl: '$authors.versions.scores.postUrl',
-          },
-        group: {$first:'$$ROOT'}
+          authorName: "$authorName",
+          vpsId: "$vpsId",
+          versionNumber: '$versionNumber'
+        }
       }},
-      { $replaceRoot:{newRoot:"$group"} },
+      { $replaceRoot:{newRoot:"$_id"} },
       { $sort: {tableName: 1, authorName: -1, versionNumber: -1} },
-      { $match: {
-        "$expr": {
-          "$or": [
-            { "$eq": ["$scoreId", ObjectId(id)] },
-            { "$eq": ["$versionId", ObjectId(id)] },
-            { "$eq": ["$authorId", ObjectId(id)] }
-          ]
-        },
-      }}
+      { $match: { "vpsId" : vpsId , "versionNumber" : versionNumber} }
     ];
   }
 }
