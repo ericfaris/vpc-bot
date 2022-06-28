@@ -17,7 +17,7 @@ module.exports = {
   description: 'Create new week by VPS ID (MANAGE_GUILD)',
   roles: ['Competition Corner Mod'],
   minArgs: 2,
-  expectedArgs: '<vpsid> <romrequired> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
+  expectedArgs: '<vpsid> <romrequired> <mode> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
   callback: async ({ args, client, channel, interaction, instance, message}) => {
     let retVal;
     let ephemeral = false;
@@ -47,7 +47,8 @@ module.exports = {
       let romUrl;
       let romName;
       let currentSeasonWeekNumber;
-      var romRequired = (romrequired === 'true');
+      let romRequired = (romrequired === 'true');
+      let mode = mode ?? 'default';
 
       const vpsGame = await vpsDataService.getVpsGame(vpsid);
 
@@ -79,6 +80,7 @@ module.exports = {
             'authorName': authorName,
             'versionNumber': versionNumber,
             'vpsId': vpsid,
+            'mode': mode,
             'tableUrl': tableUrl,
             'romUrl': romUrl === '' ? 'N/A' : romUrl ?? '',
             'romName': romName === '' ? 'N/A' : romName ?? '',

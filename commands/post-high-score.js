@@ -176,6 +176,7 @@ module.exports = {
         'user': interaction.user,
         'username': data.u.replace('`',''),
         'score': data.s,
+        'mode': data.mode,
         'postUrl': interaction.message.url,
         'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
       }},

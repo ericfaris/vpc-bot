@@ -128,6 +128,7 @@ module.exports = (client, user, instance, channel, message) => {
         authorName: currentWeek.authorName,
         versionNumber: currentWeek.versionNumber,
         vpsId: currentWeek.vpsId,
+        mode: currentWeek.mode,
         u: user.username,
         s: score
       };
@@ -155,6 +156,7 @@ module.exports = (client, user, instance, channel, message) => {
                                     `**NEW HIGH SCORE POSTED:**\n` + 
                                     `**User**: <@${user.id}>\n` + 
                                     `**Table:** ${data.tableName}\n` +
+                                    ((data.mode ?? 'default') != 'default' ? `**Mode:** ${data.mode}\n` : '') +
                                     `**VPS Id:** ${data.vpsId}\n` +
                                     `**Score:** ${numeral(data.s).format('0,0')}\n` +
                                     `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n` +

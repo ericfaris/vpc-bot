@@ -405,12 +405,12 @@ module.exports = {
     message.edit(module.exports.generateWeeklyBoilerPlateText(
       scores, teams, week.weekNumber, week.periodStart, week.periodEnd,
       week.vpsId, week.table, week.authorName, week.versionNumber,week.tableUrl, week.romUrl, week.romName, 
-      week.notes, week.currentSeasonWeekNumber, week.b2sUrl));
+      week.notes, week.currentSeasonWeekNumber, week.b2sUrl, week.mode));
     message.suppressEmbeds(true);
   },
 
   generateWeeklyBoilerPlateText: (scores, teams, weekNumber, periodStart, periodEnd, vpsId, tableName, authorName, versionNumber, 
-                                  tableUrl, romUrl, romName, notes, currentSeasonWeekNumber, b2sUrl) => {
+                                  tableUrl, romUrl, romName, notes, currentSeasonWeekNumber, b2sUrl, mode) => {
     var bp = '\n\n';
 
     bp += '**WEEKLY LEADERBOARD**\n\n';
@@ -422,6 +422,7 @@ module.exports = {
     bp += `**Table Name:** ${tableName ?? 'N/A'}\n`;
     bp += `**Author Name:** ${authorName ?? 'N/A'}\n`;
     bp += `**Version:** ${versionNumber ?? 'N/A'}\n`;
+    bp += (mode != 'default' ? `**Mode:** ${mode ?? 'N/A'}\n` : '');
     bp += `**Table Url:** ${tableUrl ?? 'N/A'}\n`;
     bp += `**Rom Url:** ${romUrl ?? 'N/A'}\n`;
     bp += `**Rom Name:** ${romName ?? 'N/A'}\n`;

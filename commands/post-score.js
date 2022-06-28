@@ -116,6 +116,7 @@ module.exports = {
   saveScore: async (user, score, currentWeek, client, interaction, message, channel) => {
     const userName = user.username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     let previousScore = 0;
+    let mode = currentWeek.mode ?? 'default';
 
     //convert to integer
     const scoreAsInt = parseInt(score.replace(/,/g, ''));
@@ -132,9 +133,11 @@ module.exports = {
       previousScore = existing.score;
       existing.score = scoreAsInt;
       existing.diff = scoreAsInt - previousScore;
+      existing.mode = mode;
       existing.posted = date.format(new Date(), 'MM/DD/YYYY HH:mm:ss');
     } else {
-      scores.push({ 'username': userName.replace('`', ''), 'score': scoreAsInt, 'diff': scoreAsInt, 'posted': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss') });
+      scores.push({ 'username': userName.replace('`', ''), 'score': scoreAsInt, 'diff': scoreAsInt, 
+        'mode': mode, 'posted': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss') });
     }
 
     // sort descending
@@ -157,6 +160,7 @@ module.exports = {
     return '**NEW WEEKLY SCORE POSTED:**\n'
       + `**User:** <@${user.id}>\n`
       + `**Table:** ${currentWeek.table}\n`
+      + (mode != 'default' ? `**Mode:** ${mode}\n` : '')
       + `**Score:** ${numeral(scoreAsInt).format('0,0')} (${(scoreDiff >= 0 ? '+' : '')} ${numeral(scoreAsInt - previousScore).format(0, 0)})\n`
       + `**Rank:** ${currentRank} (${(changeInRank >= 0 ? '+' + changeInRank : changeInRank)})`;
   },
