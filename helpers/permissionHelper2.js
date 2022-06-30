@@ -16,13 +16,13 @@ class PermissionHelper2 {
         return (!hasRole ? `${interaction.member.user.username} DOES NOT have the correct role to run ${commandName}.` : null);
     }
 
-    async isContestChannel(channels, interaction, commandName) {
+    async isValidChannel(channels, interaction, commandName) {
         let logger = (new Logger(interaction.member.user)).logger;
-        const isContestChannel = channels.split(',').includes(interaction.channel.name);
+        const isValidChannel = channels.split(',').includes(interaction.channel.name);
         logger.info(`channelName: ${interaction.channel.name}`);
-        logger.info(`isContestChannel: ${isContestChannel}}`);
+        logger.info(`isValidChannel: ${isValidChannel}}`);
 
-        return (!isContestChannel ? `The ${commandName} slash command cannot be used in this channel. This is NOT a designated contest channel.` : null);
+        return (!isValidChannel ? `The ${commandName} slash command cannot be used in this channel. This is NOT a designated contest channel.` : null);
     }
 
 }

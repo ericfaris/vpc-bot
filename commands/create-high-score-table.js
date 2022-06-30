@@ -1,8 +1,10 @@
 require('dotenv').config()
 const path = require('path');
+const Logger = require('../helpers/loggingHelper');
 const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { VPSDataService } = require('../services/vpsDataService');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -10,24 +12,28 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Create new high score table (High Scores Mod)',
-  roles: ['High Score Corner Mod'],
+  description: 'Creates new high score table.',
+  roles: [process.env.BOT_HIGH_SCORE_ADMIN_ROLE_NAME],
+  channels: [],
   minArgs: 1,
   expectedArgs: '<vpsid>',
   callback: async ({ args, client, channel, interaction, instance, user, message}) => {
+    let logger = (new Logger(user)).logger;
+    let permissionHelper2 = new PermissionHelper2();
+    let vpsDataService = new VPSDataService();
     let retVal;
     let ephemeral = false;
-    let vpsDataService = new VPSDataService();
 
     if(message) {
       interaction = message;
       ephemeral = true;
     }
 
-    if (!message && !(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      const logMessage = `${interaction.member.user.username} DOES NOT have the correct role to run ${module.exports.commandName}.`;
-      retVal =  logMessage;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try {
       const [vpsid] = args;
 
       let tableName;
@@ -132,8 +138,11 @@ module.exports = {
         }
         
       } else {
-        retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
+        retVal = `No VPS Tables were found.  Please double check your VPS Id.`;
       }
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: ephemeral});
     }
   },
 }
