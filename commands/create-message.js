@@ -11,7 +11,7 @@ module.exports = {
   roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
   channels: [process.env.CONTEST_CHANNELS],
   hidden: true,
-  description: 'Creates new placeholder message authored bot user.',
+  description: 'Creates new placeholder message authored by the bot.',
   callback: async ({ client, channel, interaction, instance, user }) => {
     let logger = (new Logger(user)).logger;
     let permissionHelper2 = new PermissionHelper2();

@@ -50,18 +50,5 @@ module.exports = {
       interaction.reply({content: error.message, ephemeral: ephemeral});
     }
   },
-
-  getCurrentSeasonLeaderboard : async (channel) => {
-    const currentSeason = await mongoHelper.findOne({ channelName: channel.name, isArchived: false }, 'seasons');
-    const weeks = await mongoHelper.find({
-      channelName: channel.name,
-      isArchived: true,
-      periodStart: { $gte: currentSeason.seasonStart },
-      periodEnd: { $lte: currentSeason.seasonEnd }
-    }, 'weeks');
-
-    return outputHelper.getSeasonLeaderboard(weeks);
-  }
-
 }
  
