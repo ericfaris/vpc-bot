@@ -2,8 +2,8 @@ require('dotenv').config()
 const path = require('path');
 const date = require('date-and-time');
 const outputHelper = require('../helpers/outputHelper');
-const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 const { CommandHelper } = require('../helpers/commandHelper');
 const { VPCDataService } = require('../services/vpcDataService')
 const { VPSDataService } = require('../services/vpsDataService');
@@ -14,27 +14,30 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Create new week by VPS ID (MANAGE_GUILD)',
-  roles: ['Competition Corner Mod'],
+  description: 'Create new week by VPS Id.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: [process.env.CONTEST_CHANNELS],
   minArgs: 2,
   expectedArgs: '<vpsid> <romrequired> <mode> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
   callback: async ({ args, client, channel, interaction, instance, message}) => {
     let retVal;
     let ephemeral = false;
+    let permissionHelper2 = new PermissionHelper2();
     let commandHelper = new CommandHelper();
     let vpcDataService = new VPCDataService();
     let vpsDataService = new VPSDataService();
 
     await interaction.deferReply();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`);
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-      ephemeral = true;
-    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
-      ephemeral = true;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+
+    try{
       const [vpsid, romrequired, startdateoverride, enddateoverride, b2sidoverride, notes] = args;
       let errors = [];
       let weekNumber;
@@ -96,6 +99,7 @@ module.exports = {
           await mongoHelper.updateOne({ channelName: channel.name, isArchived: false }, { $set: { isArchived: true } }, null, 'weeks');
           await mongoHelper.insertOne(newWeek, 'weeks');
 
+          //only updating the weekly message for competition-corner
           if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
             await outputHelper.editWeeklyCompetitionCornerMessage(newWeek.scores, client, newWeek, newWeek.teams);
 
@@ -110,7 +114,7 @@ module.exports = {
               await outputHelper.editSeasonCompetitionCornerMessage(currentSeason, weeksInSeason, client)
             }
 
-            retVal = `New week created and the ${process.env.COMPETITION_CHANNEL_NAME} pinned message was updated successfully.`;
+            retVal = `New week created and the ${channel.name} pinned message was updated successfully.`;
           } else {
             retVal = `New week created for the ${channel.name} channel.`;
           }
@@ -127,8 +131,11 @@ module.exports = {
           interaction.editReply({content: `***Error creating new week. New week HAS NOT been created***: \n\n${errors.join('\n')}`, ephemeral: ephemeral});
         }
       } else {
-        retVal = `No VPS Tables were found.  Please double check your VPS ID.`;
+        interaction.editReply({content: `No VPS Tables were found.  Please double check your VPS ID.`, ephemeral: ephemeral});
       }
+    } catch(error) {
+      logger.error(error.message);
+      interaction.editReply({content: error.message, ephemeral: true});
     }
   },
 }

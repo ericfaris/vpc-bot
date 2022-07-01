@@ -30,7 +30,7 @@ module.exports = {
       interaction.reply({content: retVal, ephemeral: false});
     } catch(error) {
       logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: ephemeral});
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 }

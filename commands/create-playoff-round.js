@@ -20,7 +20,6 @@ module.exports = {
     const [roundName, games] = args;
     let permissionHelper2 = new PermissionHelper2();
     let retVal;
-    let ephemeral = false;
 
     // Check if the User has a valid Role
     retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
@@ -47,7 +46,7 @@ module.exports = {
       return "New playoff round created successfully."
     } catch(error) {
       logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: ephemeral});
+      interaction.reply({content: error.message, ephemeral: false});
     }
   },
 }

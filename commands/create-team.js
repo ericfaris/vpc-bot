@@ -1,7 +1,7 @@
 require('dotenv').config()
 const path = require('path');
 const Table = require('easy-table')
-const permissionHelper = require('../helpers/permissionHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 const mongoHelper = require('../helpers/mongoHelper');
 
 module.exports = {
@@ -10,23 +10,24 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Create teams for Competition Corner (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
+  description: 'Create teams for contest.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: [process.env.CONTEST_CHANNELS],
   minArgs: 1,
   expectedArgs: '<team>',
   callback: async ({ args, channel, interaction, client, instance }) => {
+    let permissionHelper2 = new PermissionHelper2();
     let retVal;
-    let ephemeral = false
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-      ephemeral = true;
-    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
-      ephemeral = true;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try{
 
       const t = new Table;
       const [team] = args || {};
@@ -56,8 +57,11 @@ module.exports = {
 
       // return text table string
       retVal = 'Team created successfully. \n\n' + t.toString();
+      interaction.reply({content: retVal, ephemeral: true});
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
 
-    interaction.reply({content: retVal, ephemeral: ephemeral});
   },
 }
