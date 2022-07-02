@@ -51,6 +51,9 @@ jobs:
           build-args: |
             APPLICATION_ID=${{ secrets.APPLICATION_ID }}
             BOT_TOKEN=${{ secrets.BOT_TOKEN }}
+            BOT_USER=${{ secrets.BOT_USER }}
+            BOT_CONTEST_ADMIN_ROLE_NAME=${{ secrets.BOT_CONTEST_ADMIN_ROLE_NAME }}
+            BOT_HIGH_SCORE_ADMIN_ROLE_NAME=${{ secrets.BOT_HIGH_SCORE_ADMIN_ROLE_NAME }}
             COMMANDS_DIR=${{ secrets.COMMANDS_DIR }}
             FEATURES_DIR=${{ secrets.FEATURES_DIR }}
             COMPETITION_CHANNEL_ID=${{ secrets.COMPETITION_CHANNEL_ID }}
@@ -69,8 +72,8 @@ jobs:
             HIGH_SCORES_CHANNEL_ID=${{ secrets.HIGH_SCORES_CHANNEL_ID }}
             RANDOMORG_API_KEY=${{ secrets.RANDOMORG_API_KEY }}
             VPC_DATA_SERVICE_API_URI=${{ secrets.VPC_DATA_SERVICE_API_URI }}
-            CHANNELS_WITH_SCORES=${{ secrets.CHANNELS_WITH_SCORES }}
             VPS_DATA_SERVICE_API_URI=${{ secrets.VPS_DATA_SERVICE_API_URI }}
             BRAGGING_RIGHTS_CHANNEL_NAME=${{ secrets.BRAGGING_RIGHTS_CHANNEL_NAME }}
             BRAGGING_RIGHTS_CHANNEL_ID=${{ secrets.BRAGGING_RIGHTS_CHANNEL_ID }}
-
+            CHANNELS_WITH_SCORES=${{ secrets.CHANNELS_WITH_SCORES }}
+            CONTEST_CHANNELS=${{ secrets.CONTEST_CHANNELS }}
