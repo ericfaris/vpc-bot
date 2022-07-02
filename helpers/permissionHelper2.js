@@ -18,7 +18,7 @@ class PermissionHelper2 {
 
     async isValidChannel(channels, interaction, commandName) {
         let logger = (new Logger(interaction.member.user)).logger;
-        const isValidChannel = channels.split(',').includes(interaction.channel.name);
+        const isValidChannel = channels.includes(interaction.channel.name);
         logger.info(`channelName: ${interaction.channel.name}`);
         logger.info(`isValidChannel: ${isValidChannel}}`);
 

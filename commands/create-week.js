@@ -3,6 +3,7 @@ const path = require('path');
 const date = require('date-and-time');
 const outputHelper = require('../helpers/outputHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { ArgHelper } = require('../helpers/argHelper');
 const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 const { CommandHelper } = require('../helpers/commandHelper');
 const { VPCDataService } = require('../services/vpcDataService')
@@ -16,16 +17,17 @@ module.exports = {
   hidden: true,
   description: 'Create new week by VPS Id.',
   roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
-  channels: [process.env.CONTEST_CHANNELS],
+  channels: process.env.CONTEST_CHANNELS,
   minArgs: 2,
   expectedArgs: '<vpsid> <romrequired> <mode> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
   callback: async ({ args, client, channel, interaction, instance, message}) => {
     let retVal;
     let ephemeral = false;
-    let permissionHelper2 = new PermissionHelper2();
-    let commandHelper = new CommandHelper();
-    let vpcDataService = new VPCDataService();
-    let vpsDataService = new VPSDataService();
+    const argHelper = new ArgHelper();
+    const permissionHelper2 = new PermissionHelper2();
+    const commandHelper = new CommandHelper();
+    const vpcDataService = new VPCDataService();
+    const vpsDataService = new VPSDataService();
 
     await interaction.deferReply();
 
@@ -38,7 +40,13 @@ module.exports = {
     if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
 
     try{
-      const [vpsid, romrequired, startdateoverride, enddateoverride, b2sidoverride, notes] = args;
+      const vpsid = argHelper.getArg(interaction.options.data, 'string', 'vpsid');
+      const romrequired = argHelper.getArg(interaction.options.data, 'bool', 'romrequired') ?? true;  
+      const mode = argHelper.getArg(interaction.options.data, 'string', 'mode') ?? 'default';  
+      const startdateoverride = argHelper.getArg(interaction.options.data, 'string', 'startdateoverride');
+      const enddateoverride = argHelper.getArg(interaction.options.data, 'string', 'enddateoverride');
+      const b2sidoverride = argHelper.getArg(interaction.options.data, 'string', 'b2sidoverride');
+      const notes = argHelper.getArg(interaction.options.data, 'string', 'notes');
       let errors = [];
       let weekNumber;
       let periodStart;
@@ -50,8 +58,6 @@ module.exports = {
       let romUrl;
       let romName;
       let currentSeasonWeekNumber;
-      let romRequired = (romrequired === 'true');
-      let mode = mode ?? 'default';
 
       const vpsGame = await vpsDataService.getVpsGame(vpsid);
 
@@ -73,7 +79,7 @@ module.exports = {
         romName === '' ? errors.push('romName not found on VPS.  Please update VPS with at least 1 romName.') : '';
         b2sUrl = b2sidoverride ? vpsGame?.b2sFiles.find(b => b.id === b2sidoverride)?.urls[0]?.url : (vpsGame.b2sFiles && vpsGame.b2sFiles.length > 0 && vpsGame.b2sFiles[0].urls.length > 0 && vpsGame?.b2sFiles[0]?.urls[0]?.url != '' ? vpsGame?.b2sFiles[0]?.urls[0]?.url : '');
 
-        if(errors.length === 0 || !romRequired) {
+        if(errors.length === 0 || !romrequired) {
           var newWeek = {
             'channelName': channel.name,
             'weekNumber': weekNumber,

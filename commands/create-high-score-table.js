@@ -1,8 +1,8 @@
 require('dotenv').config()
 const path = require('path');
 const Logger = require('../helpers/loggingHelper');
-const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { ArgHelper } = require('../helpers/argHelper');
 const { VPSDataService } = require('../services/vpsDataService');
 const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
@@ -18,9 +18,10 @@ module.exports = {
   minArgs: 1,
   expectedArgs: '<vpsid>',
   callback: async ({ args, client, channel, interaction, instance, user, message}) => {
-    let logger = (new Logger(user)).logger;
-    let permissionHelper2 = new PermissionHelper2();
-    let vpsDataService = new VPSDataService();
+    const logger = (new Logger(user)).logger;
+    const argHelper = new ArgHelper();
+    const permissionHelper2 = new PermissionHelper2();
+    const vpsDataService = new VPSDataService();
     let retVal;
     let ephemeral = false;
 
@@ -34,8 +35,7 @@ module.exports = {
     if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     try {
-      const [vpsid] = args;
-
+      const vpsid = argHelper.getArg(interaction.options.data, 'string', 'vpsid');
       let tableName;
       let comment;
       let authorName;

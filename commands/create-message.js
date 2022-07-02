@@ -9,12 +9,12 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
-  channels: [process.env.CONTEST_CHANNELS],
+  channels: process.env.CONTEST_CHANNELS,
   hidden: true,
   description: 'Creates new placeholder message authored by the bot.',
   callback: async ({ client, channel, interaction, instance, user }) => {
-    let logger = (new Logger(user)).logger;
-    let permissionHelper2 = new PermissionHelper2();
+    const logger = (new Logger(user)).logger;
+    const permissionHelper2 = new PermissionHelper2();
     let retVal;
 
     // Check if the User has a valid Role

@@ -12,7 +12,7 @@ module.exports = {
   hidden: true,
   description: 'Create teams for contest.',
   roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
-  channels: [process.env.CONTEST_CHANNELS],
+  channels: process.env.CONTEST_CHANNELS,
   minArgs: 1,
   expectedArgs: '<team>',
   callback: async ({ args, channel, interaction, client, instance }) => {
