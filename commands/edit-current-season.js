@@ -1,8 +1,10 @@
 require('dotenv').config()
 const path = require('path');
+const dot = require('mongo-dot-notation')
 const mongoHelper = require('../helpers/mongoHelper');
 const outputHelper = require('../helpers/outputHelper');
-const permissionHelper = require('../helpers/permissionHelper');
+const { ArgHelper } = require('../helpers/argHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -10,47 +12,56 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Edit current season details and re-post the season leaderboard pinned message (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
-  minArgs: 4,
+  description: 'Edit the current season.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: [process.env.COMPETITION_CHANNEL_NAME],
+  minArgs: 1,
   expectedArgs: '<seasonnumber> <seasonname> <seasonstart> <seasonend>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
+    const argHelper = new ArgHelper();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
-    } else {
-      const [seasonnumber, seasonname, seasonstart, seasonend] = args;
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
-      const updatedSeason = {
-        'seasonNumber': seasonnumber,
-        'seasonName': seasonname,
-        'seasonStart': seasonstart,
-        'seasonEnd': seasonend,
-      }
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+    
+    try {
+      const seasonNumber = argHelper.getArg(interaction.options.data, 'string', 'seasonnumber');
+      const seasonName = argHelper.getArg(interaction.options.data, 'string', 'seasonname');
+      const seasonStart = argHelper.getArg(interaction.options.data, 'string', 'seasonstart');
+      const seasonEnd = argHelper.getArg(interaction.options.data, 'string', 'seasonend');
+      const updatedSeason = {};
+      
+      seasonNumber ? updatedSeason.seasonNumber = seasonNumber : null;
+      seasonName ? updatedSeason.seasonName = seasonName : null;
+      seasonStart ? updatedSeason.seasonStart = seasonStart : null;
+      seasonEnd ? updatedSeason.seasonEnd = seasonEnd : null;
 
-      await mongoHelper.findOneAndUpdate({ isArchived: false }, {
-        $set: updatedSeason
-      },
-        null,
+      const set = dot.flatten(updatedSeason);
+      const updatedDoc = await mongoHelper.findOneAndUpdate({ isArchived: false },
+        set,
+        { returnDocument: 'after' },
         'seasons');
 
       const weeks = await mongoHelper.find({
         channelName: channel.name,
         isArchived: true,
-        periodStart: { $gte: updatedSeason.seasonStart },
-        periodEnd: { $lte: updatedSeason.seasonEnd }
+        periodStart: { $gte: updatedDoc.value.seasonStart },
+        periodEnd: { $lte: updatedDoc.value.seasonEnd }
       }, 'weeks');
 
-      await outputHelper.editSeasonCompetitionCornerMessage(updatedSeason, weeks, client);
+      await outputHelper.editSeasonCompetitionCornerMessage(updatedDoc.value, weeks, client);
 
       retVal = "Season has been updated."
+      interaction.reply({content: retVal, ephemeral: true});
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
-
-    interaction.reply({content: retVal, ephemeral: true});
   },
 }
