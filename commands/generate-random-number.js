@@ -18,12 +18,11 @@ module.exports = {
     try{
       var random = new RandomOrg({ apiKey: process.env.RANDOMORG_API_KEY });
       retNumber = (await random.generateIntegers({ min: 1, max: max, n: 1 })).random.data[0];
+      retVal = `**${retNumber}** (1 - ${max})`;
+      interaction.reply({content: retVal, ephemeral: false});
     } catch(error) {
-      throw error;
+      logger.error(error.message);
+      interaction.editReply({content: error.message, ephemeral: true});
     }
-
-    retVal = `**${retNumber}** (1 - ${max})`;
-
-    interaction.reply({content: retVal, ephemeral: false});
   },
 } 

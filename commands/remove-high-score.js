@@ -1,7 +1,7 @@
 require('dotenv').config()
 const path = require('path');
-const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -10,17 +10,23 @@ module.exports = {
   guildOnly: true,
   hidden: true,
   description: 'Remove high score by rank from a high score table (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['High Score Corner Mod'],
+  roles: [process.env.BOT_HIGH_SCORE_ADMIN_ROLE_NAME],
+  channels: [process.env.HIGH_SCORES_CHANNEL_NAME],
   minArgs: 3,
   expectedArgs: '<vpsid> <username> <score>',
   callback: async ({ args, channel, interaction, client, instance }) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+
+    try{
       const [vpsId, username, score] = args;
 
       let filter;
@@ -39,8 +45,10 @@ module.exports = {
       } else {
         retVal = 'No score removed. Score not found.';
       }
+      interaction.reply({content: retVal, ephemeral: true});
+    } catch(error) {
+      logger.error(error.message);
+      interaction.editReply({content: error.message, ephemeral: true});
     }
-
-    interaction.reply({content: retVal, ephemeral: true});
   },
 }

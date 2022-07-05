@@ -1,8 +1,8 @@
 require('dotenv').config()
 const path = require('path');
 var postScore = require('./post-score');
-const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -10,25 +10,32 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Edit score for Competition Corner (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
+  description: 'Edit current contest score.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: process.env.CONTEST_CHANNELS,
   minArgs: 2,
   expectedArgs: '<username> <score>',
   callback: async ({ args, channel, client, interaction, message, instance }) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+
+    try{
       const [username, score] = args;
       const currentWeek = await mongoHelper.findCurrentWeek(channel.name);
-      retVal = await postScore.saveScore(username, score, currentWeek, client, interaction, message, channel);
+      const user = client.users.cache.find(user => user.username == username) || {username: username};
+      retVal = await postScore.saveScore(user, score, currentWeek, client, interaction, message, channel);
+      interaction.reply({content: retVal, ephemeral: true});
+    } catch(error) {
+      logger.error(error.message);
+      interaction.editReply({content: error.message, ephemeral: true});
     }
-
-    interaction.reply({content: retVal, ephemeral: true});
   },
 }
