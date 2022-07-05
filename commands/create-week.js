@@ -66,7 +66,7 @@ module.exports = {
         const currentWeek = await vpcDataService.getCurrentWeek(channel.name);
               
         weekNumber = parseInt(currentWeek.weekNumber) + 1;
-        currentSeasonWeekNumber = parseInt(currentWeek.currentSeasonWeekNumber) + 1;
+        currentSeasonWeekNumber = currentWeek.currentSeasonWeekNumber ? (parseInt(currentWeek.currentSeasonWeekNumber) + 1) : null;
         periodStart = startdateoverride ?? date.format(date.addDays(date.parse(currentWeek.periodStart, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
         periodEnd = enddateoverride ?? date.format(date.addDays(date.parse(currentWeek.periodEnd, 'YYYY-MM-DD'), 7), 'YYYY-MM-DD');
         table = `${vpsGame?.name} (${vpsGame?.manufacturer} ${vpsGame?.year})`;
