@@ -22,7 +22,7 @@ class PermissionHelper2 {
         logger.info(`channelName: ${interaction.channel.name}`);
         logger.info(`isValidChannel: ${isValidChannel}}`);
 
-        return (!isValidChannel ? `The ${commandName} slash command cannot be used in this channel. This is NOT a designated contest channel.` : null);
+        return (!isValidChannel ? `The ${commandName} slash command cannot be used in this channel.` : null);
     }
 
 }

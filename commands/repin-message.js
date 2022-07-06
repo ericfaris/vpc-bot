@@ -1,6 +1,6 @@
 require('dotenv').config()
 const path = require('path');
-const permissionHelper = require('../helpers/permissionHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -8,25 +8,31 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Repin the competition corner message (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
+  description: 'Repin the competition corner message.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: [process.env.COMPETITION_CHANNEL_NAME],
   callback: async ({ client, channel, interaction, instance }) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try{
       const message = await channel.messages.fetch(process.env.COMPETITION_WEEKLY_POST_ID);
       message.unpin()
       message.pin();
 
       retVal = "Message has been re-pinned."
+      interaction.reply({content: retVal, ephemeral: true});
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
-    
-    interaction.reply({content: retVal, ephemeral: true});
   },
 }

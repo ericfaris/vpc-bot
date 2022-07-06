@@ -1,7 +1,7 @@
 require('dotenv').config()
 const path = require('path');
-const permissionHelper = require('../helpers/permissionHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -9,19 +9,24 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Remove team from Competition Corner (MANAGE_GUILD)',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
+  description: 'Remove team from current contest.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: process.env.CONTEST_CHANNELS,
   minArgs: 1,
   expectedArgs: '<team>',
   callback: async ({ args, channel, interaction, client, instance }) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      retVal =  `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
-    } else {
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try{
       const [teamName] = args;
 
       //get current week
@@ -38,8 +43,10 @@ module.exports = {
 
       // return text table string
       retVal = 'Team removed successfully.';
+      interaction.reply({content: retVal, ephemeral: true});
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
-
-    interaction.reply({content: retVal, ephemeral: true});
   },
 }

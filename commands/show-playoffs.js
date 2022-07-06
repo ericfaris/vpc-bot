@@ -3,6 +3,7 @@ const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { PlayoffHelper } = require('../helpers/playoffHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -10,14 +11,26 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   description: 'Show playoffs for the channel.',
+  channels: [process.env.COMPETITION_CHANNEL_NAME],
   callback: async ({ channel, interaction}) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
 
-    if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
-      interaction.reply({content: retVal, ephemeral: true});
-    } else {
-      return module.exports.getPlayoffRoundMatchups(interaction, channel);
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try{
+      const currentPlayoff = await mongoHelper.findCurrentPlayoff(channel.name);
+
+      if(currentPlayoff) {
+        return module.exports.getPlayoffRoundMatchups(interaction, channel);
+      } else {
+        interaction.reply({content: 'No playoffs found.', ephemeral: false});
+      }
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 

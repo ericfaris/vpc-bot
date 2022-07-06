@@ -20,11 +20,11 @@ module.exports = {
 
     // Check if the User has a valid Role
     retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
-    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     // Check if the Channel is valid
     retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
-    if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     try{
       const [currentTeamName, newTeamName] = args;
@@ -40,7 +40,7 @@ module.exports = {
       interaction.reply({content: retVal, ephemeral: true});
     } catch(error) {
       logger.error(error.message);
-      interaction.editReply({content: error.message, ephemeral: true});
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 }

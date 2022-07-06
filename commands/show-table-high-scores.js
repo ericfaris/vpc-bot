@@ -2,6 +2,7 @@ require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
 const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 const {VPCDataService} = require('../services/vpcDataService')
 
 module.exports = {
@@ -10,33 +11,28 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Search table high scores',
+  description: 'Search table high scores.',
+  channels: [process.env.HIGH_SCORES_CHANNEL_NAME],
   minArgs: 1,
   expectedArgs: '<tablesearchterm>',
   callback: async ({ args, channel, interaction, instance, message, user }) => {
     let retVal;
-    let logger = (new Logger(user)).logger;
-    let vpcDataService = new VPCDataService();
+    const logger = (new Logger(user)).logger;
+    const vpcDataService = new VPCDataService();
+    const permissionHelper2 = new PermissionHelper2();
     const [tableSearchTerm, isEphemeral] = args;
 
-    logger.info('Checking if in Hign Score Channel');
-    logger.info(`channelName: ${channel?.name ?? message?.channel?.name}`);
-    if ((channel?.name ?? message?.channel?.name) !== process.env.HIGH_SCORES_CHANNEL_NAME) {
-      logger.info('Not in High Score Channel');
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`;
-      interaction.reply({content: retVal, ephemeral: true});
-    } else {
-      try{
-        logger.info('Getting data from VPC Data Service.');
-        const tables = await vpcDataService.getScoresByTableAndAuthorUsingFuzzyTableSearch(tableSearchTerm);
-        logger.info('Fetched data from VPC Data Service.');
-        logger.info(`tables: ${tables}`);
-        interaction.channel = channel;
-    
-        responseHelper.showHighScoreTables(tables, tableSearchTerm, interaction, isEphemeral ?? true)
-      } catch(e) {
-        console.log(e);
-      }
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try{
+      const tables = await vpcDataService.getScoresByTableAndAuthorUsingFuzzyTableSearch(tableSearchTerm);
+      interaction.channel = channel; 
+      responseHelper.showHighScoreTables(tables, tableSearchTerm, interaction, isEphemeral ?? true)
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 }

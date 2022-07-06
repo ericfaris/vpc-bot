@@ -22,7 +22,7 @@ module.exports = {
       interaction.reply({content: retVal, ephemeral: false});
     } catch(error) {
       logger.error(error.message);
-      interaction.editReply({content: error.message, ephemeral: true});
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 } 

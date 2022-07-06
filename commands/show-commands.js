@@ -12,9 +12,9 @@ module.exports = {
   hidden: true,
   description: 'Shows all available commands.',
   callback: async ({ client, channel, interaction, instance, user }) => {
+    let result;
     let logger = (new Logger(user)).logger;
     let permissionHelper2 = new PermissionHelper2();
-    let result;
 
     result = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
     if (result) {interaction.reply({content: result, ephemeral: true}); return;}

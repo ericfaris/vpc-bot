@@ -2,7 +2,7 @@ require('dotenv').config()
 const path = require('path');
 const mongoHelper = require('../helpers/mongoHelper');
 const outputHelper = require('../helpers/outputHelper');
-const permissionHelper = require('../helpers/permissionHelper');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 const RandomOrg = require('random-org');
 
 module.exports = {
@@ -11,19 +11,27 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Show leaderboard for the channel.',
-  permissions: ['MANAGE_GUILD'],
-  roles: ['Competition Corner Mod'],
+  description: 'Run raffle for the current contest.',
+  roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
+  channels: [process.env.COMPETITION_CHANNEL_NAME],
   callback: async ({ channel, interaction, client }) => {
     let retVal;
+    const permissionHelper2 = new PermissionHelper2();
 
-    if (!(await permissionHelper.hasRole(client, interaction, module.exports.roles))) {
-      console.log(`${interaction.member.user.username} DOES NOT have the correct role or permission to run ${module.exports.commandName}.`)
-      retVal = `The ${module.exports.commandName} slash command can only be executed by an admin.`;
-    } else if (channel.name !== process.env.COMPETITION_CHANNEL_NAME) {
-      retVal = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.COMPETITION_CHANNEL_ID}> channel.`;
-    } else {
-      return module.exports.runRaffleForCurrentWeek(interaction, channel);
+    // Check if the User has a valid Role
+    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+
+    try{
+      retVal = module.exports.runRaffleForCurrentWeek(interaction, channel);
+      return retVal;
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 
@@ -41,5 +49,4 @@ module.exports = {
 
     return raffleList;
   },
-
 }
