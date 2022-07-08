@@ -3,10 +3,11 @@ const path = require('path');
 const date = require('date-and-time');
 var Table = require('easy-table');
 var numeral = require('numeral');
-const { MessageActionRow, MessageButton } = require('discord.js');
 const outputHelper = require('../helpers/outputHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const { MessageActionRow, MessageButton } = require('discord.js');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -14,7 +15,8 @@ module.exports = {
   aliases: ['score'],
   testOnly: true,
   guildOnly: true,
-  description: 'Post score for the Competition Corner',
+  description: 'Post score for a contest channel.',
+  channels: process.env.CONTEST_CHANNELS,
   minArgs: 1,
   expectedArgs: '<score> <posttohighscorechannel>',
   callback: async ({ args, client, interaction, channel, instance, message, user }) => {
@@ -25,24 +27,13 @@ module.exports = {
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
     const reHighScoreCheck = new RegExp('Rank:\\*\\* [1|2|3|4|5|6|7|8|9|10] of');
     const showPlayoffButton = await mongoHelper.findCurrentPlayoff(channel.name) ?? false;
+    const permissionHelper2 = new PermissionHelper2();
 
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, message ?? interaction, module.exports.commandName);
+    if (retVal) {message ? message.reply({content: retVal, ephemeral: true}) : interaction.reply({content: retVal, ephemeral: true}); return;}
 
-    if (!process.env.CHANNELS_WITH_SCORES.split(',').includes(channel.name)) {
-      invalidMessage = `The ${module.exports.commandName} slash command cannot be used in this channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
-
-      if (message) {
-        message.reply(invalidMessage).then((reply) => {
-          message.delete();
-          setTimeout(() => {
-            reply.delete();
-          }, instance.delErrMsgCooldown * 1000)
-        })
-      } else {
-        retVal = `The ${module.exports.commandName} slash command cannot be used in this channel.`;
-        interaction.reply({ content: retVal, ephemeral: true });
-      };
-    } else {
+    try {
       const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
       // invalid parameter message
@@ -110,6 +101,9 @@ module.exports = {
           return retVal;
         }
       }
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 

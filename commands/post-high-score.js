@@ -1,14 +1,15 @@
 require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
-const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
-const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
 const path = require('path');
 const date = require('date-and-time');
-const { MessageActionRow, MessageSelectMenu } = require('discord.js');
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { table } = require('console');
 const { ObjectId } = require('mongodb');
+const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
+const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
+const { MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { PermissionHelper2 } = require('../helpers/permissionHelper2');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -16,37 +17,26 @@ module.exports = {
   aliases: ['high'],
   testOnly: true,
   guildOnly: true,
-  description: 'Post a high score (MANAGE_GUILD)',
+  description: 'Post a high score.',
+  channels: [process.env.HIGH_SCORES_CHANNEL_NAME],
   minArgs: 2,
   expectedArgs: '<score> <tablesearchterm>',
   callback: async ({ args, client, channel, interaction, instance, message, user }) => {
     let logger = (new Logger(user)).logger;
-    logger.info('in callback');
     let retVal;
     let invalidMessage;
-    let commandName = path.basename(__filename).split('.')[0];
     const [score, tableSearchTerm] = args;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
-    let pipeline = (new SearchPipelineHelper(tableSearchTerm)).pipeline;
+    const pipeline = (new SearchPipelineHelper(tableSearchTerm)).pipeline;
+    const permissionHelper2 = new PermissionHelper2();
 
     logger.info(`score: ${score}, tableSearchTerm: ${tableSearchTerm}`);
 
-    if (channel.name !== process.env.HIGH_SCORES_CHANNEL_NAME) {
-      invalidMessage = `The ${module.exports.commandName} slash command can only be used in the <#${process.env.HIGH_SCORES_CHANNEL_ID}> channel.`
-        + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+    // Check if the Channel is valid
+    retVal = await permissionHelper2.isValidChannel(module.exports.channels, message ?? interaction, module.exports.commandName);
+    if (retVal) {message ? message.reply({content: retVal, ephemeral: true}) : interaction.reply({content: retVal, ephemeral: true}); return;}
 
-      if (message) {
-        message.reply(invalidMessage).then((reply) => {
-          message.delete();
-          setTimeout(() => {
-            reply.delete();
-          }, instance.delErrMsgCooldown * 1000)
-        })
-      } else {
-        responseHelper.deleteOriginalMessage(interaction, instance.delErrMsgCooldown);
-        return invalidMessage;
-      }
-    } else {
+    try {
       //convert to integer
       const scoreAsInt = parseInt(score.replace(/,/g, ''));
 
@@ -119,7 +109,7 @@ module.exports = {
 
               message.reply({ 
                 content: content, 
-                nonce: commandName,
+                nonce: module.exports.commandName,
                 files: [attachment], 
                 components: [row],
               }).then(() => {
@@ -147,7 +137,7 @@ module.exports = {
 
             message.reply({ 
               content: content, 
-              nonce: commandName,
+              nonce: module.exports.commandName,
             }).then((reply) => {
               setTimeout(() => reply.delete(), instance.delErrMsgCooldown * 1000)
               message.delete();
@@ -158,6 +148,9 @@ module.exports = {
           }
         }
       }
+    } catch(error) {
+      logger.error(error.message);
+      interaction.reply({content: error.message, ephemeral: true});
     }
   },
 
