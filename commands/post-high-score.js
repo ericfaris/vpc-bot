@@ -9,7 +9,7 @@ const { ObjectId } = require('mongodb');
 const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
 const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
 const { MessageActionRow, MessageSelectMenu } = require('discord.js');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -28,12 +28,12 @@ module.exports = {
     const [score, tableSearchTerm] = args;
     const re = new RegExp('^([1-9]|[1-9][0-9]{1,14})$');
     const pipeline = (new SearchPipelineHelper(tableSearchTerm)).pipeline;
-    const permissionHelper2 = new PermissionHelper2();
+    const permissionHelper = new PermissionHelper();
 
     logger.info(`score: ${score}, tableSearchTerm: ${tableSearchTerm}`);
 
     // Check if the Channel is valid
-    retVal = await permissionHelper2.isValidChannel(module.exports.channels, message ?? interaction, module.exports.commandName);
+    retVal = await permissionHelper.isValidChannel(module.exports.channels, message ?? interaction, module.exports.commandName);
     if (retVal) {message ? message.reply({content: retVal, ephemeral: true}) : interaction.reply({content: retVal, ephemeral: true}); return;}
 
     try {

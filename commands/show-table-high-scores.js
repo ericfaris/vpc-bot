@@ -2,7 +2,7 @@ require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
 const path = require('path');
 const responseHelper = require('../helpers/responseHelper');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 const {VPCDataService} = require('../services/vpcDataService')
 
 module.exports = {
@@ -19,11 +19,11 @@ module.exports = {
     let retVal;
     const logger = (new Logger(user)).logger;
     const vpcDataService = new VPCDataService();
-    const permissionHelper2 = new PermissionHelper2();
+    const permissionHelper = new PermissionHelper();
     const [tableSearchTerm, isEphemeral] = args;
 
     // Check if the Channel is valid
-    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    retVal = await permissionHelper.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
     if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     try{

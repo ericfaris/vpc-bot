@@ -1,6 +1,6 @@
 require('dotenv').config()
 const Logger = require('../helpers/loggingHelper');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 const path = require('path');
 
 module.exports = {
@@ -14,9 +14,9 @@ module.exports = {
   callback: async ({ client, channel, interaction, instance, user }) => {
     let result;
     let logger = (new Logger(user)).logger;
-    let permissionHelper2 = new PermissionHelper2();
+    let permissionHelper = new PermissionHelper();
 
-    result = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    result = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
     if (result) {interaction.reply({content: result, ephemeral: true}); return;}
 
     try{

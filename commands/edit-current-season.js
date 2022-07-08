@@ -4,7 +4,7 @@ const dot = require('mongo-dot-notation')
 const mongoHelper = require('../helpers/mongoHelper');
 const outputHelper = require('../helpers/outputHelper');
 const { ArgHelper } = require('../helpers/argHelper');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -19,15 +19,15 @@ module.exports = {
   expectedArgs: '<seasonnumber> <seasonname> <seasonstart> <seasonend>',
   callback: async ({ args, client, channel, interaction, instance }) => {
     let retVal;
-    const permissionHelper2 = new PermissionHelper2();
+    const permissionHelper = new PermissionHelper();
     const argHelper = new ArgHelper();
 
     // Check if the User has a valid Role
-    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    retVal = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
     if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     // Check if the Channel is valid
-    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    retVal = await permissionHelper.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
     if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
     
     try {

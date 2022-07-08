@@ -4,7 +4,7 @@ const Logger = require('../helpers/loggingHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { ArgHelper } = require('../helpers/argHelper');
 const { VPSDataService } = require('../services/vpsDataService');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -20,7 +20,7 @@ module.exports = {
   callback: async ({ args, client, channel, interaction, instance, user, message}) => {
     const logger = (new Logger(user)).logger;
     const argHelper = new ArgHelper();
-    const permissionHelper2 = new PermissionHelper2();
+    const permissionHelper = new PermissionHelper();
     const vpsDataService = new VPSDataService();
     let retVal;
     let ephemeral = false;
@@ -31,7 +31,7 @@ module.exports = {
     }
 
     // Check if the User has a valid Role
-    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    retVal = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
     if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     try {

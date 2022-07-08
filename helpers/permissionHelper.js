@@ -1,7 +1,7 @@
 require('dotenv').config()
 const Logger = require('./loggingHelper');
 
-class PermissionHelper2 {
+class PermissionHelper {
 
     constructor(){};
 
@@ -27,4 +27,4 @@ class PermissionHelper2 {
 
 }
 
-module.exports.PermissionHelper2 = PermissionHelper2;
+module.exports.PermissionHelper = PermissionHelper;

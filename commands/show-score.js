@@ -3,7 +3,7 @@ const path = require('path');
 var Table = require('easy-table')
 const responseHelper = require('../helpers/responseHelper');
 const mongoHelper = require('../helpers/mongoHelper');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -14,10 +14,10 @@ module.exports = {
   channels: process.env.CONTEST_CHANNELS,
   callback: async ({ interaction, channel, instance }) => {
     let retVal;
-    const permissionHelper2 = new PermissionHelper2();
+    const permissionHelper = new PermissionHelper();
 
     // Check if the Channel is valid
-    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    retVal = await permissionHelper.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
     if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
 
     try{

@@ -4,7 +4,7 @@ const date = require('date-and-time');
 const outputHelper = require('../helpers/outputHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { ArgHelper } = require('../helpers/argHelper');
-const { PermissionHelper2 } = require('../helpers/permissionHelper2');
+const { PermissionHelper } = require('../helpers/permissionHelper');
 const { CommandHelper } = require('../helpers/commandHelper');
 const { VPCDataService } = require('../services/vpcDataService')
 const { VPSDataService } = require('../services/vpsDataService');
@@ -24,7 +24,7 @@ module.exports = {
     let retVal;
     let ephemeral = false;
     const argHelper = new ArgHelper();
-    const permissionHelper2 = new PermissionHelper2();
+    const permissionHelper = new PermissionHelper();
     const commandHelper = new CommandHelper();
     const vpcDataService = new VPCDataService();
     const vpsDataService = new VPSDataService();
@@ -32,11 +32,11 @@ module.exports = {
     await interaction.deferReply();
 
     // Check if the User has a valid Role
-    retVal = await permissionHelper2.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
+    retVal = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
     if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
 
     // Check if the Channel is valid
-    retVal = await permissionHelper2.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
+    retVal = await permissionHelper.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
     if (retVal) {interaction.editReply({content: retVal, ephemeral: true}); return;}
 
     try{
