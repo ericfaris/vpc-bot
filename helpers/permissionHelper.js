@@ -6,7 +6,7 @@ class PermissionHelper {
     constructor(){};
 
     async hasRole(client, interaction, roles, commandName) {
-        let logger = (new Logger(interaction.member.user)).logger;
+        let logger = (new Logger(interaction?.member?.user)).logger;
         const guild = await client.guilds.fetch(process.env.GUILD_ID);
         const member = await guild.members.fetch(interaction.member.user.id);
         const hasRole = [...member.roles.cache.values()].some(value => roles?.indexOf(value?.name) > -1);
@@ -17,7 +17,7 @@ class PermissionHelper {
     }
 
     async isValidChannel(channels, interaction, commandName) {
-        let logger = (new Logger(interaction.member.user)).logger;
+        let logger = (new Logger(interaction?.member?.user)).logger;
         const isValidChannel = channels.includes(interaction.channel.name);
         logger.info(`channelName: ${interaction.channel.name}`);
         logger.info(`isValidChannel: ${isValidChannel}}`);
