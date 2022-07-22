@@ -3,6 +3,7 @@ const path = require('path');
 const date = require('date-and-time');
 const outputHelper = require('../helpers/outputHelper');
 const mongoHelper = require('../helpers/mongoHelper');
+const Logger = require('../helpers/loggingHelper');
 const { ArgHelper } = require('../helpers/argHelper');
 const { PermissionHelper } = require('../helpers/permissionHelper');
 const { CommandHelper } = require('../helpers/commandHelper');
@@ -20,7 +21,8 @@ module.exports = {
   channels: process.env.CONTEST_CHANNELS,
   minArgs: 2,
   expectedArgs: '<vpsid> <romrequired> <mode> <startdateoverride> <enddateoverride> <b2sidoverride> <notes>',
-  callback: async ({ args, client, channel, interaction, instance, message}) => {
+  callback: async ({ args, user, client, channel, interaction, instance, message}) => {
+    const logger = (new Logger(user)).logger;
     let retVal;
     let ephemeral = false;
     const argHelper = new ArgHelper();
