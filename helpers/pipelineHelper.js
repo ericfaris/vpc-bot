@@ -35,6 +35,8 @@ class SearchScorePipelineHelper {
         authorName: "$authors.authorName",
         vpsId: "$authors.vpsId",
         versionNumber: '$authors.versions.versionNumber',
+        score: '$authors.versions.scores.score',
+        user: '$authors.versions.scores.user',
         _id: 0
       }},
       { $sort: {tableName: 1, authorName: -1, versionNumber: -1, score: -1} },
@@ -43,12 +45,15 @@ class SearchScorePipelineHelper {
           tableName: '$tableName',
           authorName: "$authorName",
           vpsId: "$vpsId",
-          versionNumber: '$versionNumber'
+          versionNumber: '$versionNumber',
+          score: '$score',
+          user: '$user'
         }
       }},
       { $replaceRoot:{newRoot:"$_id"} },
-      { $sort: {tableName: 1, authorName: -1, versionNumber: -1} },
-      { $match: { "vpsId" : vpsId , "versionNumber" : versionNumber} }
+      { $sort: {tableName: 1, authorName: -1, versionNumber: -1, score: -1} },
+      { $match: { "vpsId" : vpsId , "versionNumber" : versionNumber} },
+      { $limit: 1 }
     ];
   }
 }
