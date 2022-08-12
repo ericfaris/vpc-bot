@@ -22,10 +22,6 @@ module.exports = {
     const permissionHelper = new PermissionHelper();
     const [tableSearchTerm, isEphemeral] = args;
 
-    // Check if the Channel is valid
-    retVal = await permissionHelper.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
-    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
-
     try{
       const tables = await vpcDataService.getScoresByTableAndAuthorUsingFuzzyTableSearch(tableSearchTerm);
       interaction.channel = channel; 
