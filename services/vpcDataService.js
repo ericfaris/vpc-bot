@@ -43,6 +43,11 @@ class VPCDataService {
             , this.options)).json();
     }
 
+    async getScoresByVpsId(vpsId) {
+        return (await fetch(`${this.baseApiUrl}/scoresByVpsId?vpsId=${vpsId}`
+            , this.options)).json();
+    }
+
     async getWeeks() {
         return (await fetch(`${this.baseApiUrl}/weeks`, this.options)).json();
     }
