@@ -54,7 +54,7 @@ module.exports = (client, user, instance, channel, message) => {
                       });
 
                       logger.info(`Trying to show high scores for ${selectedJson.tableName}`)
-                      await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
+                      await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, selectedJson.vpsId, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
 
                       logger.info('Checking to send a DM to user who had high score.')
                       if(existingUser && (existingUser.username !== user.username)) {
@@ -89,7 +89,7 @@ module.exports = (client, user, instance, channel, message) => {
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                           components: []
                         });
-                        await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
+                        await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, selectedJson.vpsId, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
                       }).catch(async (e) => {
                         logger.error(e)
                         await interaction.followUp({
@@ -164,7 +164,7 @@ module.exports = (client, user, instance, channel, message) => {
                               , files: [attachment]}).then(async (message) => {
               data.scoreId = highScoreId;
               await postHighScoreCommand.updateHighScore(data, message.url);
-              await showTableHighScoresCommand.callback( {args: [data.tableName, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
+              await showTableHighScoresCommand.callback( {args: [data.tableName, data.vpsId, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
             });
           }
         });
