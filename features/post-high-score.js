@@ -137,6 +137,10 @@ module.exports = (client, user, instance, channel, message) => {
         user: user,
         message: {
           url: ''
+        },
+        options: {
+          data: [
+          ]
         }
       };
 
@@ -164,6 +168,10 @@ module.exports = (client, user, instance, channel, message) => {
                               , files: [attachment]}).then(async (message) => {
               data.scoreId = highScoreId;
               await postHighScoreCommand.updateHighScore(data, message.url);
+
+              interaction.options.data.push({name: 'tablesearchterm', value: data.tableName});
+              interaction.options.data.push({name: 'vpsid', value: data.vpsId});
+              interaction.options.data.push({name: 'isephemeral', value: 'false'});
               await showTableHighScoresCommand.callback( {args: [data.tableName, data.vpsId, false], client: client, channel: channel, interaction: interaction, instance: instance, message: message, user: user});
             });
           }

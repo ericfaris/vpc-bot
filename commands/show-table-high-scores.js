@@ -24,9 +24,9 @@ module.exports = {
     const argHelper = new ArgHelper();
 
     try{
-      const tableSearchTerm = argHelper.getArg(interaction.options.data, 'string', 'tablesearchterm');
-      const vpsId = argHelper.getArg(interaction.options.data, 'string', 'vpsid');
-      const isEphemeral = argHelper.getArg(interaction.options.data, 'bool', 'isephemeral');
+      const tableSearchTerm = argHelper.getArg(interaction?.options?.data, 'string', 'tablesearchterm');
+      const vpsId = argHelper.getArg(interaction?.options?.data, 'string', 'vpsid');
+      const isEphemeral = argHelper.getArg(interaction?.options?.data, 'bool', 'isephemeral');
       let tables = null;
 
       if(tableSearchTerm) {
