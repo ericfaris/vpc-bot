@@ -54,6 +54,12 @@ module.exports = (client, user, instance, channel, message) => {
                       });
 
                       logger.info(`Trying to show high scores for ${selectedJson.tableName}`)
+
+                      interaction.options = {data: []};
+                      interaction.options.data.push({name: 'tablesearchterm', value: selectedJson.tableName});
+                      interaction.options.data.push({name: 'vpsid', value: selectedJson.vpsId});
+                      interaction.options.data.push({name: 'isephemeral', value: 'false'}); 
+
                       await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, selectedJson.vpsId, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
 
                       logger.info('Checking to send a DM to user who had high score.')
@@ -89,6 +95,12 @@ module.exports = (client, user, instance, channel, message) => {
                             `**Posted**: ${date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}\n`,
                           components: []
                         });
+
+                        interaction.options = {data: []};
+                        interaction.options.data.push({name: 'tablesearchterm', value: selectedJson.tableName});
+                        interaction.options.data.push({name: 'vpsid', value: selectedJson.vpsId});
+                        interaction.options.data.push({name: 'isephemeral', value: 'false'}); 
+
                         await showTableHighScoresCommand.callback( {args: [selectedJson.tableName, selectedJson.vpsId, false], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user});
                       }).catch(async (e) => {
                         logger.error(e)
