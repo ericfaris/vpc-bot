@@ -1,5 +1,6 @@
 require('dotenv').config()
 var outputHelper = require('../helpers/outputHelper');
+const Logger = require('../helpers/loggingHelper');
 
 module.exports = {
 
@@ -33,17 +34,24 @@ module.exports = {
     },
 
     postMessages: async (contentArray, interaction, isEphemeral) => {
+        const logger = (new Logger(null)).logger;
+
         for (const post of contentArray) {
             if (!isEphemeral && interaction.channel) {
+                logger.info('response helper logger 1');
                 await interaction.channel.send(post);
             }else if(interaction.hasOwnProperty('replied') && (!interaction.replied)) {
+                logger.info('response helper logger 2');
                 await interaction.reply({ content: post, ephemeral: isEphemeral})
                     .catch((error) => {
+                        logger.info('response helper logger 3');
                         interaction.reply({ content: error.message, ephemeral: isEphemeral });
                     })
             } else if (interaction.hasOwnProperty('replied') && (interaction.replied)) {
+                logger.info('response helper logger 4');
                 await interaction.followUp({ content: post, ephemeral: isEphemeral})
                     .catch((error) => {
+                        logger.info('response helper logger 5');
                         interaction.followUp({ content: error.message, ephemeral: isEphemeral });
                     })
             }

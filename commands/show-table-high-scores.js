@@ -38,6 +38,7 @@ module.exports = {
       }
       
       interaction.channel = channel; 
+      logger.info('show-table-high-score: interaction: ' + JSON.stringify(interaction));
       responseHelper.showHighScoreTables(tables, tableSearchTerm ?? vpsId, interaction, isEphemeral ?? true)
     } catch(error) {
       logger.error(error.message);

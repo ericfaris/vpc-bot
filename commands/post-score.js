@@ -8,6 +8,7 @@ const scoreHelper = require('../helpers/scoreHelper');
 const mongoHelper = require('../helpers/mongoHelper');
 const { MessageActionRow, MessageButton } = require('discord.js');
 const { PermissionHelper } = require('../helpers/permissionHelper');
+const Logger = require('../helpers/loggingHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -20,6 +21,7 @@ module.exports = {
   minArgs: 1,
   expectedArgs: '<score> <posttohighscorechannel>',
   callback: async ({ args, client, interaction, channel, instance, message, user }) => {
+    let logger = (new Logger(user)).logger;
     let retVal;
     let invalidMessage;
     let score = args[0];
@@ -41,6 +43,8 @@ module.exports = {
         invalidMessage = `The score needs to be a number between 1 and 999999999999999.`
           + ` This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
 
+        logger.info(invalidMessage);
+
         if (message) {
           message.reply(invalidMessage).then((reply) => {
             message.delete();
@@ -55,6 +59,7 @@ module.exports = {
         invalidMessage = 'The post-score slash command has been turned off.  Please using the following format to post your score:\n'
           + '`!score 1234567 (an image is REQUIRED as an attachment)`\n\n';
           
+        logger.info(invalidMessage);
         interaction.reply({ content: invalidMessage, ephemeral: true });
       } else {
         //parameter is GOOD
@@ -83,6 +88,7 @@ module.exports = {
               )
             }
             message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
+              logger.info('Emitting event to postHighScore');
               client.emit('postHighScore', user, scoreAsInt, attachment,
                 currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `copied from <#${channel.id}>`,
                 'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
