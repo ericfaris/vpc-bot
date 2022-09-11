@@ -6,6 +6,10 @@ const { PermissionHelper } = require('../helpers/permissionHelper');
 const { VPCDataService } = require('../services/vpcDataService')
 const { ArgHelper } = require('../helpers/argHelper');
 
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
   slash: true,
