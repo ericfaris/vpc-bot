@@ -7,7 +7,7 @@ module.exports = {
 
   createTableRow: (i, t, score, expandedLayout, showScores) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score?.username.replace('`', '\`'), Table.rightPadder(' '))
+    t.cell('User',  module.exports.truncate(score?.username.replace('`', '\`'), 11), Table.rightPadder(' '))
     if (showScores) {
       t.cell('Score', score?.score, (val, width) => {
         var str = numeral(val).format('0,0');
@@ -36,7 +36,7 @@ module.exports = {
 
   createTableRowSeason: (i, t, player, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '));
-    t.cell('User', player?.username, Table.rightPadder(' '));
+    t.cell('User', module.exports.truncate(player?.username, 15), Table.rightPadder(' '));
     t.cell('Points', player?.points, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
@@ -50,9 +50,14 @@ module.exports = {
     t.newRow();
   },
 
+  truncate: (str, n) => {
+    if (str.length <= n) return str; // Nothing to do
+    return str.slice(0, n-3) + '...';
+  },
+
   createTableRowHighScore: (i, t, score, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('User', score?.user?.username, Table.rightPadder(' '))
+    t.cell('User', module.exports.truncate(score?.user?.username, 11), Table.rightPadder(' '))
     t.cell('Score', score?.score, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
