@@ -67,7 +67,7 @@ module.exports = {
 
         const tables = await mongoHelper.aggregate(pipeline, 'tables');
 
-        if (tables.length > 0) {
+        if (tables.length > 0 && tables.length <= 10) {
           const options = [];
 
           let vpsId;
@@ -128,7 +128,29 @@ module.exports = {
           } else {
             await interaction.reply({ content: content, components: [row], ephemeral: true });
           }
-        } else {
+        }
+
+        if (tables.length > 10) {
+          logger.info(`found ${tables.length} tables.`)
+
+          let content = `More than 10 tables were found. The search term "${tableSearchTerm}" is too narrow, please lengthen your search term.` + 
+            `This message will be deleted in ${instance.delErrMsgCooldown} seconds.`;
+
+          if (message) {
+            message.reply({ 
+              content: content, 
+              nonce: module.exports.commandName,
+            }).then((reply) => {
+              setTimeout(() => reply.delete(), instance.delErrMsgCooldown * 1000)
+              message.delete();
+            });
+
+          } else {
+            await interaction.reply({ content: content, ephemeral: true });
+          }
+        }
+        
+        if (!tables || tables.length === 0) {
           logger.info('No tables found.');
 
           if (message) {
