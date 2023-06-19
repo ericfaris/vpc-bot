@@ -153,12 +153,12 @@ module.exports = {
       if (week.scores) {
         scores = week.scores;
         scores.forEach(function (score) {
-          player = leaderboard.find(x => x.username === score.username);
+          player = leaderboard.find(x => x.username.toLowerCase() === score.username.toLowerCase());
           if (player) {
             player.points += parseInt(score.points);
             player.score += parseInt(score.score);
           } else {
-            leaderboard.push({ "username": score.username, "score": score.score, "points": parseInt(score.points) })
+            leaderboard.push({ "username": score.username.toLowerCase(), "score": score.score, "points": parseInt(score.points) })
           }
         })
       }
