@@ -115,7 +115,7 @@ module.exports = {
 
   saveScore: async (user, score, currentWeek, client, interaction, message, channel) => {
     const userName = user.username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
-    const avatarUrl = user.displayAvatarURL({dynamic: true});
+    const avatarUrl = user.displayAvatarURL();
     let previousScore = 0;
     let mode = currentWeek.mode ?? 'default';
 
@@ -136,6 +136,7 @@ module.exports = {
       existing.diff = scoreAsInt - previousScore;
       existing.mode = mode;
       existing.posted = date.format(new Date(), 'MM/DD/YYYY HH:mm:ss');
+      existing.userAvatarUrl = avatarUrl;
     } else {
       scores.push({ 'username': userName.replace('`', ''), 'userAvatarUrl': avatarUrl, 'score': scoreAsInt, 'diff': scoreAsInt, 
         'mode': mode, 'posted': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss') });
