@@ -147,13 +147,13 @@ class RankingPipelineHelper {
             'total': -1
           }
         },
-        // {
-        //   '$match': {
-        //     '_id': {
-        //       '$in': players
-        //     }
-        //   }
-        // }
+        {
+          '$match': {
+            '_id': {
+              '$in': players
+            }
+          }
+        }
       ];
   }
 }

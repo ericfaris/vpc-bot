@@ -36,7 +36,7 @@ module.exports = {
       weeks.push(week.weekNumber-1);
       // weeks.push(week.weekNumber-2);
       // weeks.push(week.weekNumber-3);
-      const pArray = args[0].replace(/\s/g,'').split(",");
+      let pArray = args[0].replace(/\s/g,'').split(",");
       const pipeline = (new RankingPipelineHelper(weeks, pArray)).pipeline;
       const rankings = await mongoHelper.aggregate(pipeline, 'weeks');
       const chunkPlayers = module.exports.chunkWithMinSize(rankings, 4, 4);
@@ -44,11 +44,19 @@ module.exports = {
 
       retVal = ''
       let i = 1
+      let playersWithNoHistory = new Array();
+
       teams.forEach(team => {
         let roster = team.roster.map(u => u._id).join(', ');
         retVal += `**Team ${i}** (${team.totalScore}): ${roster}\n\n`;
-        i++; 
+        i++;
+
+        playersWithNoHistory = team.roster.map(u => u._id);
+        pArray = pArray.filter(x => !(playersWithNoHistory.includes(x)));
       })
+
+      playersWithNoHistory = pArray;
+      retVal += `**Did Not Play: **: ${playersWithNoHistory.join(', ')}\n\n`;
 
       interaction.reply({content: retVal, ephemeral: true});
     } catch(error) {
@@ -85,9 +93,15 @@ module.exports = {
       }
 
       let x = 0;
+      let y = numberOfTeams - 1;
       level.forEach(levelRank => {
-        if(x >= numberOfTeams) {x = numberOfTeams - 1}
-        teams[x].push(levelRank);
+        if(x >= numberOfTeams) {
+          teams[y].push(levelRank);
+          y--;
+        }
+        else {
+          teams[x].push(levelRank);
+        } 
         x++;
       })
 
@@ -101,6 +115,8 @@ module.exports = {
       teamWithSum.totalScore = teamWithSum.roster.reduce((pv, cv) => pv + cv.total,0);
       finalTeams.push(teamWithSum);
     })
+
+
 
     return finalTeams;
   }
