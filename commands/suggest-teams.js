@@ -14,12 +14,14 @@ module.exports = {
   description: 'Suggest teams for contest.',
   roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
   channels: process.env.CONTEST_CHANNELS,
-  minArgs: 1,
-  expectedArgs: '<participants>',
+  minArgs: 2,
+  expectedArgs: '<participants> <numberOfWeeksToTotal>',
   callback: async ({ args, channel, interaction, client, user, instance }) => {
     let logger = (new Logger(user)).logger;
     let permissionHelper = new PermissionHelper();
     let retVal = '';
+    let pArray = args[0].replace(/\s/g,'').split(",");
+    let totalWeeks = parseInt(args[1]);
 
     // Check if the User has a valid Role
     retVal = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
@@ -33,10 +35,11 @@ module.exports = {
      
       const week = await mongoHelper.findCurrentWeek(channel.name);
       const weeks = new Array();
-      weeks.push(week.weekNumber-1);
-      // weeks.push(week.weekNumber-2);
-      // weeks.push(week.weekNumber-3);
-      let pArray = args[0].replace(/\s/g,'').split(",");
+
+      for(let i=1;i<totalWeeks;i++) {
+        weeks.push(week.weekNumber-i);
+      }
+
       const pipeline = (new RankingPipelineHelper(weeks, pArray)).pipeline;
       const rankings = await mongoHelper.aggregate(pipeline, 'weeks');
       const chunkPlayers = module.exports.chunkWithMinSize(rankings, 4, 4);
