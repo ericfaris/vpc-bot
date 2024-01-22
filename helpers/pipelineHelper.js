@@ -116,4 +116,53 @@ class AllPipelineHelper {
   }
 }
 
-module.exports = { SearchPipelineHelper, SearchScorePipelineHelper, SearchScoreByVpsIdUsernameScorePipelineHelper, AllPipelineHelper  }
+class RankingPipelineHelper {
+  constructor(weeks, players) {
+      this.pipeline = [
+        {
+          '$match': {
+            'weekNumber': {
+              '$in': weeks
+            }
+          }
+        }, {
+          '$unwind': {
+            'path': '$scores'
+          }
+        }, {
+          '$project': {
+            '_id': 0, 
+            'username': '$scores.username', 
+            'score': '$scores.score'
+          }
+        }, {
+          '$group': {
+            '_id': '$username', 
+            'total': {
+              '$sum': '$score'
+            }
+          }
+        }, {
+          '$sort': {
+            'total': -1
+          }
+        },
+        // {
+        //   '$match': {
+        //     '_id': {
+        //       '$in': players
+        //     }
+        //   }
+        // }
+      ];
+  }
+}
+
+
+module.exports = { 
+  SearchPipelineHelper, 
+  SearchScorePipelineHelper, 
+  SearchScoreByVpsIdUsernameScorePipelineHelper, 
+  AllPipelineHelper, 
+  RankingPipelineHelper
+}
