@@ -16,15 +16,30 @@ module.exports = {
   roles: [process.env.BOT_CONTEST_ADMIN_ROLE_NAME],
   channels: process.env.CONTEST_CHANNELS,
   minArgs: 4,
-  expectedArgs: '<participants> <numberOfWeeksToTotal> <numberOfTeams> <minTeamSize>',
+  expectedArgs: '<messageId> <numberOfWeeksToTotal> <numberOfTeams> <minTeamSize>',
   callback: async ({ args, channel, interaction, client, user, instance }) => {
     let logger = (new Logger(user)).logger;
     let permissionHelper = new PermissionHelper();
     let retVal = '';
-    let pArray = args[0].replace(/\s/g,'').split(",");
+    let pArray = new Array();
+    let messageId = String(args[0])
     let totalWeeks = parseInt(args[1]);
     let numberOfTeams = parseInt(args[2]);
     let minTeamSize = parseInt(args[3]);
+    
+    const message = await channel.messages.fetch(messageId);
+    userReactions = message.reactions.cache;
+    let users;
+    try {
+      for (const reaction of userReactions.values()) {
+        users = await reaction.users.fetch();
+      }
+    }
+    finally{} 
+
+    users.forEach(u => {
+      pArray.push(u.username);
+    })
 
     // Check if the User has a valid Role
     retVal = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
