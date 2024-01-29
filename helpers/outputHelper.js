@@ -26,7 +26,7 @@ module.exports = {
 
   createTableRowTeam: (i, t, team, expandedLayout) => {
     t.cell('Rank', i, Table.leftPadder(' '))
-    t.cell('Team', team?.name, Table.rightPadder(' '))
+    t.cell('Team', module.exports.truncate(team?.name, 11), Table.rightPadder(' '))
     t.cell('Score', team?.totalScore, (val, width) => {
       var str = numeral(val).format('0,0');
       return width ? Table.padLeft(str, width) : str;
