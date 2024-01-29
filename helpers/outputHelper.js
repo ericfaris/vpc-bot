@@ -203,7 +203,7 @@ module.exports = {
     teams.forEach((team) => {
       const teamMembersScores = [];
       team.members.forEach((member) => {
-        const foundMember = scores.find(x => x.username === member);
+        const foundMember = scores.find(x => x.username === member.trim());
         if (foundMember) {
           teamMembersScores.push(foundMember);
         } else {
@@ -384,7 +384,7 @@ module.exports = {
 
       const teamMembersScores = [];
       team.members.forEach((member) => {
-        const foundMember = scores.find(x => x.username === member);
+        const foundMember = scores.find(x => x.username === member.trim());
         if (foundMember) {
           teamMembersScores.push(foundMember);
         } else {
