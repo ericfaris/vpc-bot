@@ -34,12 +34,40 @@ module.exports = {
       let playoff = {
         'channelName' : channel.name,
         'seasonNumber' : parseInt(currentSeason.seasonNumber),
-        'seeds' : leaderboard
+        'seeds' : leaderboard,
+        'isArchived' : false
       }
 
       await mongoHelper.insertOne(playoff, 'playoffs');
 
-      return "Playoff created."
+      const round = {
+        'channelName': channel.name,
+        'seasonNumber': parseInt(currentSeason.seasonNumber),
+        'roundName': '1st Round',
+        'games': [
+          16,
+          1,
+          9,
+          8,
+          12,
+          5,
+          13,
+          4,
+          14,
+          3,
+          11,
+          6,
+          10,
+          7,
+          15,
+          2
+        ],
+        'isArchived': false
+      }
+
+      await mongoHelper.insertOne(round, 'rounds');
+
+      return 'Playoff created.'
     } catch(error) {
       logger.error(error.message);
       interaction.reply({content: error.message, ephemeral: ephemeral});
