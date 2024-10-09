@@ -131,7 +131,7 @@ module.exports = {
 
           if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
             client.emit('advancePlayoffRound', channel, currentWeek);
-            client.emit('postBraggingRights', process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
+            client.emit('postBraggingRights', instance, process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
           }  
 
           interaction.editReply({content: retVal, ephemeral: ephemeral});

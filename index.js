@@ -1,9 +1,8 @@
-require('dotenv').config()
 const Logger = require('./helpers/loggingHelper');
-const DiscordJS = require('discord.js')
-const { Intents } = DiscordJS
-const WOKCommands = require('wokcommands')
-const path = require('path')
+const { Client, IntentsBitField, Partials } = require("discord.js");
+const WOKCommands = require("wokcommands");
+const path = require("path");
+require("dotenv/config");
 
 //const cron = require('node-cron');
 let logger = (new Logger(null)).logger;
@@ -35,25 +34,29 @@ logger.info(`BRAGGING_RIGHTS_CHANNEL_ID: ${process.env.BRAGGING_RIGHTS_CHANNEL_I
 logger.info(`CHANNELS_WITH_SCORES: ${process.env.CHANNELS_WITH_SCORES}`);
 logger.info(`CONTEST_CHANNELS: ${process.env.CONTEST_CHANNELS}`);
 
-const client = new DiscordJS.Client({
+const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    Intents.FLAGS.DIRECT_MESSAGES,
-    Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.DirectMessages,
+    IntentsBitField.Flags.MessageContent,
   ],
-})
+  partials: [Partials.Channel],
+});
 
 client.on('ready', () => {
     logger.info('Loading commands');
-    new WOKCommands(client, {
+    new WOKCommands({
+      client,
       commandsDir: path.join(__dirname, process.env.COMMANDS_DIR),
-      featuresDir: path.join(__dirname, process.env.FEATURES_DIR),
-      showWarns: false,
-      delErrMsgCooldown: process.env.SECONDS_TO_DELETE_MESSAGE,
-      botOwners: process.env.BOT_OWNER,
-      testServers: process.env.GUILD_ID
+      events: {
+        dir: path.join(__dirname, "events"),
+      },
+      //featuresDir: path.join(__dirname, process.env.FEATURES_DIR),
+      //showWarns: false,
+      //delErrMsgCooldown: process.env.SECONDS_TO_DELETE_MESSAGE,
+      botOwners: [process.env.BOT_OWNER],
+      testServers: [process.env.GUILD_ID]
     })
     logger.info('Bot is ready for work');
 })

@@ -1,9 +1,6 @@
 require('dotenv').config()
-const Logger = require('../helpers/loggingHelper');
 const path = require('path');
-const responseHelper = require('../helpers/responseHelper');
 const { PermissionHelper } = require('../helpers/permissionHelper');
-const {VPCDataService} = require('../services/vpcDataService')
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -14,9 +11,7 @@ module.exports = {
   description: 'Show high score table list.',
   channels: [process.env.HIGH_SCORES_CHANNEL_NAME],
   callback: async ({ channel, interaction, instance, user }) => {
-    let logger = (new Logger(user)).logger;
     let retVal;
-    const vpcDataService = new VPCDataService();
     const permissionHelper = new PermissionHelper();
 
     // Check if the Channel is valid

@@ -6,7 +6,7 @@ var numeral = require('numeral');
 const outputHelper = require('../helpers/outputHelper');
 const scoreHelper = require('../helpers/scoreHelper');
 const mongoHelper = require('../helpers/mongoHelper');
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { PermissionHelper } = require('../helpers/permissionHelper');
 const Logger = require('../helpers/loggingHelper');
 
@@ -72,24 +72,24 @@ module.exports = {
           let attachment = message.attachments?.first();
 
           if (attachment) {
-            const row = new MessageActionRow()
+            const row = new ActionRowBuilder()
               .addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                   .setCustomId('showLeaderboard')
                   .setLabel('Show Leaderboard')
-                  .setStyle('PRIMARY'),
+                  .setStyle(ButtonStyle.Primary),
               );
             if(showPlayoffButton){
               row.addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                   .setCustomId('showPlayoffs')
                   .setLabel('Show Playoffs')
-                  .setStyle('PRIMARY')
+                  .setStyle(ButtonStyle.Primary)
               )
             }
             message.reply({ content: content, files: [attachment], components: [row] }).then((reply) => {
               logger.info('Emitting event to postHighScore');
-              client.emit('postHighScore', user, scoreAsInt, attachment,
+              client.emit('crossPostHighScore', instance, user, scoreAsInt, attachment,
                 currentWeek, process.env.HIGH_SCORES_CHANNEL_ID, `copied from <#${channel.id}>`,
                 'just posted a score for', (reHighScoreCheck.test(content) || postToHighScoreChannel?.toLowerCase() === 'y'));
               message.delete();
