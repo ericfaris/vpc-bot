@@ -127,11 +127,12 @@ module.exports = {
             retVal = `New week created for the ${channel.name} channel.`;
           }
     
-          await commandHelper.execute(instance, interaction, message, 'create-high-score-table', [newWeek.vpsId]);
+          // await commandHelper.execute(instance, interaction, message, 'create-high-score-table', [newWeek.vpsId]);
 
           if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
             client.emit('advancePlayoffRound', channel, currentWeek);
             client.emit('postBraggingRights', instance, process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
+            client.emit('createHighScoreTable', instance, newWeek.vpsId, interaction, channel)
           }  
 
           interaction.editReply({content: retVal, ephemeral: ephemeral});
