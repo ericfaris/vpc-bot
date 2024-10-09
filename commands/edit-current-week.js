@@ -76,9 +76,9 @@ module.exports = {
         retVal = `Week updated for the ${channel.name} channel.`;
       }
       interaction.reply({content: retVal, ephemeral: true});
-    } catch(error) {
-      logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: true});
+    } catch(e) {
+      logger.error(e);
+      interaction.reply({content: e.message, ephemeral: true});
     }
   },
 }

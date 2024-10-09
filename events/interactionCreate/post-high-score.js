@@ -8,20 +8,20 @@ const mongoHelper = require('../../helpers/mongoHelper');
 const { InteractionType } = require('discord.js');
 
 module.exports = async (interaction, instance) => {
-    let logger = (new Logger(user)).logger;
+    let logger = (new Logger(interaction.user)).logger;
 
     var user = interaction.user;
     var channel = interaction.channel;
     var client = instance.client;
 
-    if (interaction.type !== InteractionType.MessageComponent && interaction.commandName !== 'post-high-score') return {};
-
-    let selectedJson = JSON.parse(interaction.values[0]);
-    let pipeline = (new SearchScorePipelineHelper(selectedJson.vpsId, selectedJson.v)).pipeline;
-    const tables = await mongoHelper.aggregate(pipeline, 'tables');
-    let existingUser;
+    if (interaction.type !== InteractionType.MessageComponent || interaction.commandName !== 'post-high-score') return;
 
     try {
+        let selectedJson = JSON.parse(interaction.values[0]);
+        let pipeline = (new SearchScorePipelineHelper(selectedJson.vpsId, selectedJson.v)).pipeline;
+        const tables = await mongoHelper.aggregate(pipeline, 'tables');
+        let existingUser;
+
         if (tables.length === 1) {
             let data = tables[0];
             selectedJson.tableName = data.tableName;
@@ -117,10 +117,18 @@ module.exports = async (interaction, instance) => {
         }
     } catch (e) {
         logger.error(e);
-        await interaction.followUp({
-            content: `${e}`,
-            components: [],
-            files: [],
-        });
+        if (!interaction.replied) {
+            await interaction.reply({
+                content: `${e}`,
+                components: [],
+                files: [],
+            });
+        } else {
+            await interaction.followUp({
+                content: `${e}`,
+                components: [],
+                files: [],
+            });
+        }
     }
 }

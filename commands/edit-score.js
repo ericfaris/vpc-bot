@@ -33,9 +33,9 @@ module.exports = {
       const user = client.users.cache.find(user => user.username == username) || {username: username};
       retVal = await postScore.saveScore(user, score, currentWeek, client, interaction, message, channel);
       interaction.reply({content: retVal, ephemeral: true});
-    } catch(error) {
-      logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: true});
+    } catch(e) {
+      logger.error(e);
+      interaction.reply({content: e.message, ephemeral: true});
     }
   },
 }

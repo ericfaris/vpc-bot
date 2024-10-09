@@ -6,7 +6,6 @@ const mongoHelper = require('../helpers/mongoHelper');
 const Logger = require('../helpers/loggingHelper');
 const { ArgHelper } = require('../helpers/argHelper');
 const { PermissionHelper } = require('../helpers/permissionHelper');
-const { CommandHelper } = require('../helpers/commandHelper');
 const { VPCDataService } = require('../services/vpcDataService')
 const { VPSDataService } = require('../services/vpsDataService');
 
@@ -27,7 +26,6 @@ module.exports = {
     let ephemeral = false;
     const argHelper = new ArgHelper();
     const permissionHelper = new PermissionHelper();
-    const commandHelper = new CommandHelper();
     const vpcDataService = new VPCDataService();
     const vpsDataService = new VPSDataService();
 
@@ -128,7 +126,7 @@ module.exports = {
           }
     
           if (channel.name === process.env.COMPETITION_CHANNEL_NAME) {
-            client.emit('advancePlayoffRound', channel, currentWeek);
+            client.emit('advancePlayoffRound', instance, interaction, currentWeek);
             client.emit('postBraggingRights', instance, process.env.BRAGGING_RIGHTS_CHANNEL_ID, currentWeek);
             client.emit('createHighScoreTable', instance, newWeek.vpsId, interaction, channel)
           }  
@@ -140,9 +138,9 @@ module.exports = {
       } else {
         interaction.editReply({content: `No VPS Tables were found.  Please double check your VPS ID.`, ephemeral: ephemeral});
       }
-    } catch(error) {
-      logger.error(error.message);
-      interaction.editReply({content: error.message, ephemeral: true});
+    } catch(e) {
+      logger.error(e);
+      interaction.editReply({content: e.message, ephemeral: true});
     }
   },
 }

@@ -21,13 +21,13 @@ module.exports = {
 
     // Check if the User has a valid Role
     retVal = await permissionHelper.hasRole(client, interaction, module.exports.roles, module.exports.commandName);
-    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+    if (retVal) { interaction.reply({ content: retVal, ephemeral: true }); return; }
 
     // Check if the Channel is valid
     retVal = await permissionHelper.isValidChannel(module.exports.channels, interaction, module.exports.commandName);
-    if (retVal) {interaction.reply({content: retVal, ephemeral: true}); return;}
+    if (retVal) { interaction.reply({ content: retVal, ephemeral: true }); return; }
 
-    try{
+    try {
 
       const t = new Table;
       const [team] = args || {};
@@ -57,10 +57,10 @@ module.exports = {
 
       // return text table string
       retVal = 'Team created successfully. \n\n' + t.toString();
-      interaction.reply({content: retVal, ephemeral: true});
-    } catch(error) {
-      logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: true});
+      interaction.reply({ content: retVal, ephemeral: true });
+    } catch (e) {
+      logger.error(e);
+      interaction.reply({ content: e.message, ephemeral: true });
     }
 
   },
