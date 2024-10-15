@@ -2,6 +2,7 @@ require('dotenv').config()
 const path = require('path');
 const mongoHelper = require('../helpers/mongoHelper');
 const { PermissionHelper } = require('../helpers/permissionHelper');
+const Logger = require('../helpers/loggingHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -11,10 +12,11 @@ module.exports = {
   hidden: true,
   description: 'Remove high score by rank from a high score table (MANAGE_GUILD)',
   roles: [process.env.BOT_HIGH_SCORE_ADMIN_ROLE_NAME],
-  channels: [process.env.HIGH_SCORES_CHANNEL_NAME],
+  channels: [process.env.HIGH_SCORES_CHANNEL_NAME, process.env.CONTEST_CHANNELS],
   minArgs: 3,
   expectedArgs: '<vpsid> <username> <score>',
   callback: async ({ args, channel, interaction, client, instance }) => {
+    let logger = (new Logger(user)).logger;
     let retVal;
     const permissionHelper = new PermissionHelper();
 

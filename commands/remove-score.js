@@ -3,6 +3,7 @@ const path = require('path');
 const mongoHelper = require('../helpers/mongoHelper');
 const removeHighScoreCommand = require('../commands/remove-high-score');
 const { PermissionHelper } = require('../helpers/permissionHelper');
+const Logger = require('../helpers/loggingHelper');
 
 module.exports = {
   commandName: path.basename(__filename).split('.')[0],
@@ -16,6 +17,7 @@ module.exports = {
   minArgs: 1,
   expectedArgs: '<rank>',
   callback: async ({ args, channel, interaction, client, instance, user, message }) => {
+    let logger = (new Logger(user)).logger;
     let retVal;
     const permissionHelper = new PermissionHelper();
 
