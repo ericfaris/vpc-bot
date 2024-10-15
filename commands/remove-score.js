@@ -17,7 +17,7 @@ module.exports = {
   minArgs: 1,
   expectedArgs: '<rank>',
   callback: async ({ args, channel, interaction, client, instance, user, message }) => {
-    let logger = (new Logger(user)).logger;
+    let logger = (new Logger(interaction.user)).logger;
     let retVal;
     const permissionHelper = new PermissionHelper();
 

@@ -16,7 +16,7 @@ module.exports = {
   minArgs: 3,
   expectedArgs: '<vpsid> <username> <score>',
   callback: async ({ args, channel, interaction, client, instance }) => {
-    let logger = (new Logger(user)).logger;
+    let logger = (new Logger(interaction.user)).logger;
     let retVal;
     const permissionHelper = new PermissionHelper();
 
