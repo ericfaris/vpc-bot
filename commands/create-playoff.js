@@ -68,9 +68,9 @@ module.exports = {
       await mongoHelper.insertOne(round, 'rounds');
 
       return 'Playoff created.'
-    } catch(error) {
-      logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: ephemeral});
+    } catch(e) {
+      logger.error(e);
+      interaction.reply({content: e.message, ephemeral: ephemeral});
     }
   },
 

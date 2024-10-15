@@ -8,7 +8,8 @@ const { table } = require('console');
 const { ObjectId } = require('mongodb');
 const { SearchPipelineHelper } = require('../helpers/pipelineHelper');
 const { SearchScoreByVpsIdUsernameScorePipelineHelper } = require('../helpers/pipelineHelper');
-const { MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+
 const { PermissionHelper } = require('../helpers/permissionHelper');
 
 module.exports = {
@@ -91,9 +92,9 @@ module.exports = {
           });
           logger.info(`found ${tables.length} tables.`)
 
-          const row = new MessageActionRow()
+          const row = new ActionRowBuilder()
             .addComponents(
-              new MessageSelectMenu()
+              new StringSelectMenuBuilder()
                 .setCustomId('select')
                 .setPlaceholder('Please select table for high score...')
                 .addOptions(options),
@@ -170,9 +171,9 @@ module.exports = {
           }
         }
       }
-    } catch(error) {
-      logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: true});
+    } catch(e) {
+      logger.error(e);
+      interaction.reply({content: e.message, ephemeral: true});
     }
   },
 

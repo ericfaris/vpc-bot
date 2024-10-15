@@ -27,9 +27,9 @@ module.exports = {
       });
 
       interaction.reply({content: result, ephemeral: false});
-    } catch(error) {
-      logger.error(error.message);
-      interaction.reply({content: error.message, ephemeral: ephemeral});
+    } catch(e) {
+      logger.error(e);
+      interaction.reply({content: e.message, ephemeral: true});
     }
   },
 }

@@ -38,20 +38,17 @@ module.exports = {
 
         for (const post of contentArray) {
             if (!isEphemeral && interaction.channel) {
-                logger.info('response helper logger 1');
                 await interaction.channel.send(post);
-            }else if(interaction.hasOwnProperty('replied') && (!interaction.replied)) {
-                logger.info('response helper logger 2');
-                await interaction.reply({ content: post, ephemeral: isEphemeral})
+            } else if (interaction.hasOwnProperty('replied') && (!interaction.replied)) {
+                await interaction.reply({ content: post, ephemeral: isEphemeral })
                     .catch((error) => {
-                        logger.info('response helper logger 3');
+                        logger.error(error);
                         interaction.reply({ content: error.message, ephemeral: isEphemeral });
                     })
             } else if (interaction.hasOwnProperty('replied') && (interaction.replied)) {
-                logger.info('response helper logger 4');
-                await interaction.followUp({ content: post, ephemeral: isEphemeral})
+                await interaction.followUp({ content: post, ephemeral: isEphemeral })
                     .catch((error) => {
-                        logger.info('response helper logger 5');
+                        logger.error(error);
                         interaction.followUp({ content: error.message, ephemeral: isEphemeral });
                     })
             }
@@ -61,18 +58,18 @@ module.exports = {
     showScore: async (score, numOfScores, t, interaction, isEphemeral) => {
         outputHelper.createTableRow(score.rank.toString() + ' of ' + numOfScores.toString(), t, score, true);
         let post = '`' + t.toString() + '`';
-        await interaction.reply({ content: post, ephemeral: isEphemeral})
+        await interaction.reply({ content: post, ephemeral: isEphemeral })
             .catch((error) => {
                 interaction.reply({ content: error.message, ephemeral: isEphemeral });
             })
     },
 
     showTeams: async (scores, teams, interaction, isEphemeral) => {
-        interaction.reply({ content: outputHelper.printTeamLeaderboard(scores, teams, false), ephemeral: isEphemeral})
+        interaction.reply({ content: outputHelper.printTeamLeaderboard(scores, teams, false), ephemeral: isEphemeral })
             .catch((error) => {
                 interaction.reply({ content: error.message, ephemeral: true });
             })
-},
+    },
 
     postJsonDataFiles: async (client) => {
         var today = new Date();

@@ -7,18 +7,27 @@ class Logger {
             transports: [
                 new transports.File({
                     filename: 'data/server.log',
+                    level: 'info',
                     format: format.combine(
+                        format.errors({stack: true}),
                         format.timestamp({ format: 'MMM-DD-YYYY HH:mm:ss' }),
                         format.align(),
-                        format.printf(info => `${info.level}: ${[info.timestamp]}: ${user?.username ?? 'SERVER'}: ${info.message}`),
+                        format.printf(({timestamp, level, message, stack}) => {
+                            const text = `${timestamp} ${level.toUpperCase()} ${user?.username ?? 'SERVER'} ${message}`;
+                            return stack ? text + '\n' + stack : text;
+                        }),
                     )
                 }),
                 new transports.Console({
                     level: 'info',
                     format: format.combine(
+                        format.errors({stack: true}),
                         format.timestamp({ format: 'MMM-DD-YYYY HH:mm:ss' }),
                         format.colorize(),
-                        format.printf(info => `${info.level}: ${[info.timestamp]}: ${user?.username ?? 'SERVER'}: ${info.message}`),
+                        format.printf(({timestamp, level, message, stack}) => {
+                            const text = `${timestamp} ${level.toUpperCase()} ${user?.username ?? 'SERVER'} ${message}`;
+                            return stack ? text + '\n' + stack : text;
+                        }),
                     )
                 })
             ]
