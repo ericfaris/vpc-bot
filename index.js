@@ -52,9 +52,8 @@ client.on('ready', () => {
       events: {
         dir: path.join(__dirname, "events"),
       },
-      //featuresDir: path.join(__dirname, process.env.FEATURES_DIR),
-      //showWarns: false,
-      //delErrMsgCooldown: process.env.SECONDS_TO_DELETE_MESSAGE,
+      showWarns: false,
+      delErrMsgCooldown: process.env.SECONDS_TO_DELETE_MESSAGE,
       botOwners: [process.env.BOT_OWNER],
       testServers: [process.env.GUILD_ID]
     })
