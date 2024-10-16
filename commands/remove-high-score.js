@@ -10,7 +10,7 @@ module.exports = {
   testOnly: true,
   guildOnly: true,
   hidden: true,
-  description: 'Remove high score by rank from a high score table (MANAGE_GUILD)',
+  description: 'Remove high score from a high score table (MANAGE_GUILD)',
   roles: [process.env.BOT_HIGH_SCORE_ADMIN_ROLE_NAME],
   channels: [process.env.HIGH_SCORES_CHANNEL_NAME, process.env.CONTEST_CHANNELS],
   minArgs: 3,
