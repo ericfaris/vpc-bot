@@ -20,7 +20,7 @@ class PermissionHelper {
         let logger = (new Logger(interaction?.member?.user)).logger;
         const isValidChannel = channels.includes(interaction?.channel?.name);
         logger.info(`channelName: ${interaction?.channel?.name}`);
-        logger.info(`isValidChannel: ${isValidChannel}}`);
+        logger.info(`isValidChannel: ${isValidChannel}`);
 
         return (!isValidChannel ? `The ${commandName} slash command cannot be used in this channel.` : null);
     }
