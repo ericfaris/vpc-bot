@@ -11,7 +11,7 @@ class PermissionHelper {
         const member = await guild.members.fetch(interaction?.member?.user?.id);
         const hasRole = [...member.roles.cache.values()].some(value => roles?.indexOf(value?.name) > -1);
         logger.info(`roles: ${roles.join(', ')}`);
-        logger.info(`hasRole: ${hasRole}}`);
+        logger.info(`hasRole: ${hasRole}`);
 
         return (!hasRole ? `${interaction.member.user.username} DOES NOT have the correct role to run ${commandName}.` : null);
     }

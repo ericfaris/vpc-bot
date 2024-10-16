@@ -114,6 +114,7 @@ module.exports = {
   },
 
   saveScore: async (user, score, currentWeek, client, interaction, message, channel) => {
+    let logger = (new Logger(user)).logger;
     const userName = user.username?.trimRight() || (interaction ? interaction.member.user.username : interaction) || (message ? message.member.user.username : message);
     const avatarUrl = user.displayAvatarURL();
     let previousScore = 0;
@@ -157,13 +158,16 @@ module.exports = {
     }
 
     let scoreDiff = scoreAsInt - previousScore;
-
-    // return text table string
-    return '**NEW WEEKLY SCORE POSTED:**\n'
+    let retVal = '**NEW WEEKLY SCORE POSTED:**\n'
       + `**User:** <@${user.id}>\n`
       + `**Table:** ${currentWeek.table}\n`
       + (mode != 'default' ? `**Mode:** ${mode}\n` : '')
       + `**Score:** ${numeral(scoreAsInt).format('0,0')} (${(scoreDiff >= 0 ? '+' : '')} ${numeral(scoreAsInt - previousScore).format(0, 0)})\n`
       + `**Rank:** ${currentRank} (${(changeInRank >= 0 ? '+' + changeInRank : changeInRank)})`;
+
+
+    // return text table string
+    logger.info(retVal);
+    return retVal
   },
 }

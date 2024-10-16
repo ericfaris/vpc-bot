@@ -184,28 +184,34 @@ module.exports = {
     return tables.length > 0 ? true : false
   },
 
-  saveHighScore: async (data, interaction) => {   
-    const newHighScore = await mongoHelper.findOneAndUpdate(
-      { tableName: data.tableName },
-      { $push: { 'authors.$[a].versions.$[v].scores' : {
-        '_id': mongoHelper.generateObjectId(),
-        'user': interaction.user,
-        'username': data.u.replace('`',''),
-        'score': data.s,
-        'mode': data.mode,
-        'postUrl': interaction.message.url,
-        'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
-      }},
-      { returnDocument: 'after',
-        arrayFilters: [
-          { 'a.vpsId': data.vpsId },
-          { 'v.versionNumber': data.versionNumber }
-        ]
-      },
-      'tables'
-    );
+  saveHighScore: async (data, interaction) => {
+    let logger = (new Logger(interaction.user)).logger;
 
-    return newHighScore.value;
+    try {
+      const newHighScore = await mongoHelper.findOneAndUpdate(
+        { tableName: data.tableName },
+        { $push: { 'authors.$[a].versions.$[v].scores' : {
+          '_id': mongoHelper.generateObjectId(),
+          'user': interaction.user,
+          'username': data.u.replace('`',''),
+          'score': data.s,
+          'mode': data.mode,
+          'postUrl': interaction.message.url,
+          'createdAt': date.format(new Date(), 'MM/DD/YYYY HH:mm:ss')}
+        }},
+        { returnDocument: 'after',
+          arrayFilters: [
+            { 'a.vpsId': data.vpsId },
+            { 'v.versionNumber': data.versionNumber }
+          ]
+        },
+        'tables'
+      );
+      logger.info(`high score saved: tableName: ${data.tableName}, username: ${data.u.replace('`','')}, score: ${data.s}`)
+      return newHighScore.value;
+    } catch(e) {
+      logger.error(e);
+    }
   },
 
   updateHighScore: async (data, postUrl) => {   
