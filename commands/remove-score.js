@@ -49,7 +49,7 @@ module.exports = {
       await removeHighScoreCommand.callback({ args: [currentWeek.vpsId, username, score], client: client, channel: channel ?? interaction.channel, interaction: interaction, instance: instance, message: message, user: user });
 
       if (retArray.length > 0) {
-        retVal = 'Score removed successfully.';
+        retVal = 'Score removed successfully from weekly leaderboard and high scores.';
       } else {
         retVal = 'No score removed. Rank of ' + rank + ' not found.';
       }
