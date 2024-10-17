@@ -8,6 +8,7 @@ require("dotenv/config");
 let logger = (new Logger(null)).logger;
 
 logger.info('Starting bot');
+logger.info(`VERSION: ${process.env.VERSION}`);
 logger.info(`BOT_TOKEN: ${process.env.BOT_TOKEN}`);
 logger.info(`BOT_USER: ${process.env.BOT_USER}`);
 logger.info(`BOT_CONTEST_ADMIN_ROLE_NAME: ${process.env.BOT_CONTEST_ADMIN_ROLE_NAME}`);

@@ -21,6 +21,9 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
+      - name: Extract tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
       - name: Install NPM Dependencies
         run: npm install
 
@@ -77,3 +80,4 @@ jobs:
             BRAGGING_RIGHTS_CHANNEL_ID=${{ secrets.BRAGGING_RIGHTS_CHANNEL_ID }}
             CHANNELS_WITH_SCORES=${{ secrets.CHANNELS_WITH_SCORES }}
             CONTEST_CHANNELS=${{ secrets.CONTEST_CHANNELS }}
+            VERSION=${{ env.TAG_NAME }}
