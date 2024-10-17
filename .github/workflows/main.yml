@@ -80,4 +80,4 @@ jobs:
             BRAGGING_RIGHTS_CHANNEL_ID=${{ secrets.BRAGGING_RIGHTS_CHANNEL_ID }}
             CHANNELS_WITH_SCORES=${{ secrets.CHANNELS_WITH_SCORES }}
             CONTEST_CHANNELS=${{ secrets.CONTEST_CHANNELS }}
-            VERSION=${{ env.TAG_NAME }}
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
