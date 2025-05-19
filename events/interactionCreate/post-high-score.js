@@ -14,9 +14,11 @@ module.exports = async (interaction, instance) => {
     var channel = interaction.channel;
     var client = instance.client;
 
-    if (interaction.type !== InteractionType.MessageComponent || interaction.commandName !== 'post-high-score') return;
-
     try {
+        if (interaction.type !== InteractionType.MessageComponent 
+            || (interaction.commandName != null && interaction.commandName !== 'post-high-score') 
+            || (interaction.customId != null && interaction.customId !== 'select')) return;
+
         let selectedJson = JSON.parse(interaction.values[0]);
         let pipeline = (new SearchScorePipelineHelper(selectedJson.vpsId, selectedJson.v)).pipeline;
         const tables = await mongoHelper.aggregate(pipeline, 'tables');
